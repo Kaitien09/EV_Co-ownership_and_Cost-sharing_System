@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EV Co-ownership - Đăng nhập & Đăng ký</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            background: white;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .form-container {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .message {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            display: none;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .user-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .user-info h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .user-info p {
+            margin: 8px 0;
+            color: #555;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            margin-top: 10px;
+        }
+
+        .contracts-list {
+            margin-top: 20px;
+        }
+
+        .contract-item {
+            background: white;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .contract-item h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .contract-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-cho-duyet { background: #fff3cd; color: #856404; }
+        .status-da-duyet { background: #d4edda; color: #155724; }
+        .status-dang-hieu-luc { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚡ EV Co-ownership</h1>
+            <p>Hệ thống đồng sở hữu xe điện</p>
+        </div>
+
+        <div id="authSection">
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('login')">Đăng nhập</button>
+                <button class="tab" onclick="showTab('register')">Đăng ký</button>
+            </div>
+
+            <div class="form-container">
+                <!-- Login Form -->
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="loginEmail">Email</label>
+                        <input type="email" id="loginEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Mật khẩu</label>
+                        <input type="password" id="loginPassword" required>
+                    </div>
+                    <button type="submit" class="btn">Đăng nhập</button>
+                    <div id="loginMessage" class="message"></div>
+                </form>
+
+                <!-- Register Form -->
+                <form id="registerForm" class="hidden">
+                    <div class="form-group">
+                        <label for="registerName">Họ tên</label>
+                        <input type="text" id="registerName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerEmail">Email</label>
+                        <input type="email" id="registerEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerPhone">Số điện thoại</label>
+                        <input type="tel" id="registerPhone" pattern="[0-9]{10,11}">
+                    </div>
+                    <div class="form-group">
+                        <label for="registerPassword">Mật khẩu</label>
+                        <input type="password" id="registerPassword" minlength="6" required>
+                    </div>
+                    <button type="submit" class="btn">Đăng ký</button>
+                    <div id="registerMessage" class="message"></div>
+                </form>
+            </div>
+        </div>
+
+        <div id="profileSection" class="form-container hidden">
+            <div class="user-info">
+                <h3>Thông tin cá nhân</h3>
+                <p><strong>Họ tên:</strong> <span id="userName"></span></p>
+                <p><strong>Email:</strong> <span id="userEmail"></span></p>
+                <p><strong>Vai trò:</strong> <span id="userRole"></span></p>
+            </div>
+
+            <button class="btn" onclick="showContracts()">Xem hợp đồng của tôi</button>
+            <button class="btn btn-secondary" onclick="logout()">Đăng xuất</button>
+
+            <div id="contractsList" class="contracts-list hidden"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8080/api';
+        let authToken = localStorage.getItem('authToken');
+        let currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+
+        // Check if user is already logged in
+        if (authToken && currentUser) {
+            showProfile();
+        }
+
+        function showTab(tab) {
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+
+            if (tab === 'login') {
+                document.getElementById('loginForm').classList.remove('hidden');
+                document.getElementById('registerForm').classList.add('hidden');
+            } else {
+                document.getElementById('loginForm').classList.add('hidden');
+                document.getElementById('registerForm').classList.remove('hidden');
+            }
+        }
+
+        // Login
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                const response = await fetch(`${API_URL}/auth/dang-nhap`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        matKhau: password
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok && data.token) {
+                    showMessage('loginMessage', 'Đăng nhập thành công!', 'success');
+                    authToken = data.token;
+                    currentUser = {
+                        id: data.idNguoiDung,
+                        hoTen: data.hoTen,
+                        email: data.email,
+                        vaiTro: data.vaiTro
+                    };
+                    localStorage.setItem('authToken', authToken);
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    
+                    setTimeout(() => {
+                        showProfile();
+                    }, 1000);
+                } else {
+                    showMessage('loginMessage', data.message || 'Đăng nhập thất bại', 'error');
+                }
+            } catch (error) {
+                showMessage('loginMessage', 'Lỗi kết nối: ' + error.message, 'error');
+            }
+        });
+
+        // Register
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const phone = document.getElementById('registerPhone').value;
+            const password = document.getElementById('registerPassword').value;
+
+            try {
+                const response = await fetch(`${API_URL}/auth/dang-ky`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        hoTen: name,
+                        email: email,
+                        soDienThoai: phone,
+                        matKhau: password
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok && data.token) {
+                    showMessage('registerMessage', 'Đăng ký thành công!', 'success');
+                    authToken = data.token;
+                    currentUser = {
+                        id: data.idNguoiDung,
+                        hoTen: data.hoTen,
+                        email: data.email,
+                        vaiTro: data.vaiTro
+                    };
+                    localStorage.setItem('authToken', authToken);
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    
+                    setTimeout(() => {
+                        showProfile();
+                    }, 1000);
+                } else {
+                    showMessage('registerMessage', data.message || 'Đăng ký thất bại', 'error');
+                }
+            } catch (error) {
+                showMessage('registerMessage', 'Lỗi kết nối: ' + error.message, 'error');
+            }
+        });
+
+        function showProfile() {
+            document.getElementById('authSection').classList.add('hidden');
+            document.getElementById('profileSection').classList.remove('hidden');
+            
+            document.getElementById('userName').textContent = currentUser.hoTen;
+            document.getElementById('userEmail').textContent = currentUser.email;
+            document.getElementById('userRole').textContent = currentUser.vaiTro;
+        }
+
+        async function showContracts() {
+            const contractsList = document.getElementById('contractsList');
+            
+            try {
+                const response = await fetch(`${API_URL}/hop-dong/nguoi-dung/${currentUser.id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                if (response.ok) {
+                    const contracts = await response.json();
+                    
+                    if (contracts.length === 0) {
+                        contractsList.innerHTML = '<p style="text-align:center;color:#999;padding:20px;">Chưa có hợp đồng nào</p>';
+                    } else {
+                        contractsList.innerHTML = '<h3>Danh sách hợp đồng</h3>';
+                        contracts.forEach(contract => {
+                            const div = document.createElement('div');
+                            div.className = 'contract-item';
+                            div.innerHTML = `
+                                <h4>Hợp đồng ${contract.maHopDong}</h4>
+                                <p><strong>Chủ xe:</strong> ${contract.tenChuXe}</p>
+                                <p><strong>Tỷ lệ sở hữu:</strong> ${contract.tyLeSoHuu}%</p>
+                                <p><strong>Giá trị:</strong> ${contract.giaTriHopDong.toLocaleString('vi-VN')} VNĐ</p>
+                                <p><strong>Trạng thái:</strong> <span class="contract-status status-${contract.trangThai.toLowerCase().replace('_', '-')}">${contract.trangThai}</span></p>
+                            `;
+                            contractsList.appendChild(div);
+                        });
+                    }
+                    
+                    contractsList.classList.remove('hidden');
+                } else {
+                    alert('Không thể tải danh sách hợp đồng');
+                }
+            } catch (error) {
+                alert('Lỗi kết nối: ' + error.message);
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('currentUser');
+            authToken = null;
+            currentUser = null;
+            
+            document.getElementById('authSection').classList.remove('hidden');
+            document.getElementById('profileSection').classList.add('hidden');
+            document.getElementById('contractsList').classList.add('hidden');
+            
+            document.getElementById('loginForm').reset();
+            document.getElementById('registerForm').reset();
+        }
+
+        function showMessage(elementId, message, type) {
+            const messageEl = document.getElementById(elementId);
+            messageEl.textContent = message;
+            messageEl.className = `message ${type}`;
+            messageEl.style.display = 'block';
+            
+            setTimeout(() => {
+                messageEl.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

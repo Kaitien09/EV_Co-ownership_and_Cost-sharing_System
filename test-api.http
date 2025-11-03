@@ -1,0 +1,342 @@
+### 🚀 TEST API - Hệ Thống Đồng Sở Hữu EV
+### URL: http://localhost:8080
+
+###############################################
+### 1️⃣ AUTHENTICATION - ĐĂNG KÝ & ĐĂNG NHẬP
+###############################################
+
+### 1.1. Đăng ký người dùng mới (CHU_XE)
+POST http://localhost:8080/api/auth/dang-ky
+Content-Type: application/json
+
+{
+  "tenDangNhap": "chuXe1",
+  "matKhau": "Password123!",
+  "email": "chuxe1@example.com"
+}
+
+### 1.2. Đăng ký người dùng ADMIN
+POST http://localhost:8080/api/auth/dang-ky
+Content-Type: application/json
+
+{
+  "tenDangNhap": "admin1",
+  "matKhau": "Admin123!",
+  "email": "admin@example.com",
+  "loaiNguoiDung": "Admin"
+}
+
+### 1.3.1 Đăng nhập CHU_XE (Lưu token)
+# @name loginChuXe
+POST http://localhost:8080/api/auth/dang-nhap
+Content-Type: application/json
+
+{
+  "email": "chuxe1@example.com",
+  "matKhau": "Password123!"
+}
+
+###
+### 1.3.2 Đăng nhập CHU_XE (Lưu token) (sau khi đổi mật khẩu)
+# @name loginChuXe
+POST http://localhost:8080/api/auth/dang-nhap
+Content-Type: application/json
+
+{
+  "email": "chuxe1@example.com",
+  "matKhau": "NewPassword456!"
+}
+
+### 1.4. Đăng nhập ADMIN (Lưu token)
+# @name loginAdmin
+POST http://localhost:8080/api/auth/dang-nhap
+Content-Type: application/json
+
+{
+  "email": "admin@example.com",
+  "matKhau": "Admin123!"
+}
+
+###
+
+###############################################
+### 2️⃣ NGƯỜI DÙNG - QUẢN LÝ PROFILE
+###############################################
+
+@tokenChuXe = {{loginChuXe.response.body.token}}
+@tokenAdmin = {{loginAdmin.response.body.token}}
+
+### 🔍 TEST BIẾN (Kiểm tra biến có hoạt động không)
+# @tokenChuXe
+# @tokenAdmin
+
+### 2.1. Lấy thông tin profile (CHU_XE)
+GET http://localhost:8080/api/nguoi-dung/profile
+Authorization: Bearer {{tokenChuXe}}
+
+### 2.2. Cập nhật email (nếu backend hỗ trợ)
+# PUT http://localhost:8080/api/nguoi-dung/profile
+# Authorization: Bearer {{tokenChuXe}}
+# Content-Type: application/json
+# 
+# {
+#   "email": "newemail@example.com"
+# }
+# Lưu ý: Endpoint này chưa hoạt động đúng. Dùng endpoint 3.3 để cập nhật thông tin cá nhân
+
+### 2.3. Đổi mật khẩu
+PUT http://localhost:8080/api/nguoi-dung/doi-mat-khau
+Authorization: Bearer {{tokenChuXe}}
+Content-Type: application/json
+
+{
+  "matKhauCu": "Password123!",
+  "matKhauMoi": "NewPassword456!",
+  "xacNhanMatKhau": "NewPassword456!"
+}
+
+###############################################
+### 3️⃣ CHỦ XE - QUẢN LÝ HỒ SƠ
+###############################################
+
+### 3.1. Tạo hồ sơ chủ xe
+# @name createChuXe
+POST http://localhost:8080/api/chu-xe
+Authorization: Bearer {{tokenChuXe}}
+Content-Type: application/json
+
+{
+  "nguoiDungId": 2,
+  "hoTen": "Nguyen Van A",
+  "cccd": "079012345678",
+  "sdt": "0912345678",
+  "gplx": "B12345678",
+  "diaChi": "123 Nguyen Hue, Q1, TP.HCM"
+}
+
+### 3.2. Lấy hồ sơ chủ xe của mình (theo nguoiDungId)
+GET http://localhost:8080/api/chu-xe/nguoi-dung/2
+Authorization: Bearer {{tokenChuXe}}
+
+### 3.3. Cập nhật hồ sơ chủ xe (thay {chu_xe_id} bằng ID thực)
+PUT http://localhost:8080/api/chu-xe/2
+Authorization: Bearer {{tokenChuXe}}
+Content-Type: application/json
+
+{
+  "nguoiDungId": 2,
+  "hoTen": "Nguyen Van A Updated",
+  "cccd": "079012345678",
+  "sdt": "0987654321",
+  "gplx": "B12345678",
+  "diaChi": "789 Tran Hung Dao, Q5, TP.HCM"
+}
+
+###############################################
+### 4️⃣ HỢP ĐỒNG ĐỒNG SỞ HỮU
+###############################################
+
+### 4.1. Tạo hợp đồng mới (CHU_XE)
+# @name createHopDong
+POST http://localhost:8080/api/hop-dong
+Authorization: Bearer {{tokenChuXe}}
+Content-Type: application/json
+
+{
+  "chuXeId": 2,
+  "xeId": 2,
+  "ngayBatDau": "2025-11-01T00:00:00",
+  "ngayKetThuc": "2028-11-01T00:00:00"
+}
+
+### 4.2. Lấy danh sách hợp đồng chờ duyệt (ADMIN)
+GET http://localhost:8080/api/hop-dong/cho-duyet
+Authorization: Bearer {{tokenAdmin}}
+
+### 4.3. Duyệt hợp đồng (ADMIN) - ID: 1
+POST http://localhost:8080/api/hop-dong/1/duyet?nguoiDuyetId=1&approve=true
+Authorization: Bearer {{tokenAdmin}}
+
+### 4.4. Từ chối hợp đồng (ADMIN) - Thay {hop_dong_id} bằng ID thực
+POST http://localhost:8080/api/hop-dong/2/duyet?nguoiDuyetId=1&approve=false&lyDo=Thiếu giấy tờ chứng minh sở hữu xe. Vui lòng bổ sung.
+Authorization: Bearer {{tokenAdmin}}
+
+### 4.5. Tìm kiếm hợp đồng theo trạng thái
+# Endpoint này chưa được implement trong backend
+# GET http://localhost:8080/api/hop-dong?trang_thai=CHO_DUYET
+# Authorization: Bearer {{tokenChuXe}}
+
+### 4.6. Lấy chi tiết hợp đồng - ID: 1
+GET http://localhost:8080/api/hop-dong/1
+Authorization: Bearer {{tokenChuXe}}
+
+### 4.7. Kích hoạt hợp đồng (ADMIN) - Sau khi duyệt - ID: 1
+POST http://localhost:8080/api/hop-dong/1/kich-hoat
+Authorization: Bearer {{tokenAdmin}}
+
+### 4.8. Kết thúc hợp đồng (ADMIN hoặc CHU_XE) - ID: 1
+POST http://localhost:8080/api/hop-dong/1/ket-thuc
+Authorization: Bearer {{tokenAdmin}}
+
+###############################################
+### 5️⃣ GIẤY TỜ CHỦ XE
+###############################################
+
+### 5.1. Upload giấy phép lái xe
+POST http://localhost:8080/api/giay-to/chu-xe/2
+Authorization: Bearer {{tokenChuXe}}
+Content-Type: application/json
+
+{
+  "loaiGiayTo": "GPLX",
+  "soGiayTo": "B12345678",
+  "ngayCap": "2020-01-15",
+  "noiCap": "Sở GTVT TP.HCM",
+  "hinhAnhMatTruoc": "data:image/jpeg;base64,/9j/4AAQSkZJRg...",
+  "hinhAnhMatSau": "data:image/jpeg;base64,/9j/4AAQSkZJRg..."
+}
+
+### 5.2. Upload CCCD
+POST http://localhost:8080/api/giay-to/chu-xe/2
+Authorization: Bearer {{tokenChuXe}}
+Content-Type: application/json
+
+{
+  "loaiGiayTo": "CCCD",
+  "soGiayTo": "079012345678",
+  "ngayCap": "2021-06-10",
+  "noiCap": "Cục Cảnh Sát ĐKQL Cư Trú & DLQG Về Dân Cư",
+  "hinhAnhMatTruoc": "data:image/jpeg;base64,/9j/4AAQSkZJRg...",
+  "hinhAnhMatSau": "data:image/jpeg;base64,/9j/4AAQSkZJRg..."
+}
+
+### 5.3. Upload hộ khẩu
+POST http://localhost:8080/api/giay-to/chu-xe/2
+Authorization: Bearer {{tokenChuXe}}
+Content-Type: application/json
+
+{
+  "loaiGiayTo": "HoKhau",
+  "soGiayTo": "HK-123456",
+  "ngayCap": "2023-01-20",
+  "noiCap": "UBND Quận 1, TP.HCM",
+  "hinhAnhMatTruoc": "data:image/jpeg;base64,/9j/4AAQSkZJRg..."
+}
+
+### 5.4. Lấy tất cả giấy tờ của chủ xe
+GET http://localhost:8080/api/giay-to/chu-xe/3
+Authorization: Bearer {{tokenChuXe}}
+
+### 5.4.1 Lấy chi tiết giấy tờ cụ thể (để kiểm tra ID)
+GET http://localhost:8080/api/giay-to/1
+Authorization: Bearer {{tokenChuXe}}
+
+### 5.4.2 Gửi yêu cầu xác thực GPLX (ID: 1)
+POST http://localhost:8080/api/giay-to/1/gui-xac-thuc
+Authorization: Bearer {{tokenChuXe}}
+
+### 5.4.3 Gửi yêu cầu xác thực CCCD (ID: 2)
+POST http://localhost:8080/api/giay-to/2/gui-xac-thuc
+Authorization: Bearer {{tokenChuXe}}
+
+### 5.4.4 Gửi yêu cầu xác thực HoKhau (ID: 3)
+POST http://localhost:8080/api/giay-to/3/gui-xac-thuc
+Authorization: Bearer {{tokenChuXe}}
+
+### 5.5. Duyệt giấy tờ (ADMIN)
+POST http://localhost:8080/api/giay-to/1/duyet?nguoiDuyetId=1&approve=true
+Authorization: Bearer {{tokenAdmin}}
+
+### 5.6. Từ chối giấy tờ (ADMIN)
+POST http://localhost:8080/api/giay-to/2/duyet?nguoiDuyetId=1&approve=false&lyDo=Hình ảnh không rõ ràng, vui lòng upload lại
+Authorization: Bearer {{tokenAdmin}}
+
+### 5.7. Lấy danh sách giấy tờ chờ duyệt (ADMIN)
+GET http://localhost:8080/api/giay-to/cho-duyet
+Authorization: Bearer {{tokenAdmin}}
+
+###############################################
+### 6️⃣ HỢP ĐỒNG PHÁP LÝ ĐIỆN TỬ
+###############################################
+### ✅ SECTION ĐÃ ĐƯỢC IMPLEMENT HOÀN CHỈNH
+
+### 6.1. Tạo hợp đồng pháp lý
+# @name createHopDongPhapLy
+POST http://localhost:8080/api/hop-dong-phap-ly
+Authorization: Bearer {{tokenChuXe}}
+Content-Type: application/json
+
+{
+  "hopDongDongSoHuuId": 1,
+  "noiDungHopDong": "HỢP ĐỒNG ĐỒNG SỞ HỮU XE ĐIỆN\n\nBÊN A (Chủ xe):\nHọ tên: Nguyen Van A\nCCCD: 079012345678\nĐịa chỉ: 123 Nguyen Hue, Q1, TP.HCM\n\nBÊN B (Công ty):\nTên công ty: EV Co-Ownership Platform\nMã số thuế: 0123456789\n\nĐiều 1: MỤC ĐÍCH HỢP ĐỒNG\nBên A đồng ý góp 50% giá trị xe điện và chia sẻ quyền sở hữu với nền tảng.\n\nĐiều 2: QUYỀN VÀ NGHĨA VỤ\n- Bên A có quyền sử dụng xe theo lịch đã thỏa thuận\n- Bên A có nghĩa vụ bảo dưỡng xe định kỳ\n- Bên B hỗ trợ bảo hiểm và sửa chữa\n\nĐiều 3: THỜI HẠN HỢP ĐỒNG\nThời hạn: 3 năm kể từ ngày ký\n\nĐiều 4: ĐIỀU KHOẢN KHÁC\nHợp đồng này có giá trị pháp lý khi được ký bởi cả hai bên.",
+  "tepHopDong": "JVBERi0xLjQKJeLjz9MKMSAwIG9iago8PAovVHlwZSAvQ2F0YWxvZwovUGFnZXMgMiAwIFIKPj4KZW5kb2JqCjIgMCBvYmoKPDwKL1R5cGUgL1BhZ2VzCi9LaWRzIFszIDAgUl0KL0NvdW50IDEKL01lZGlhQm94IFswIDAgNTk1IDg0Ml0KPj4KZW5kb2JqCjMgMCBvYmoKPDwKL1R5cGUgL1BhZ2UKL1BhcmVudCAyIDAgUgovQ29udGVudHMgNCAwIFIKPj4KZW5kb2JqCjQgMCBvYmoKPDwKL0xlbmd0aCA0NAo+PgpzdHJlYW0KQLQKNC41OSAyMTkuMTIgVGQKKEhlbGxvIFdvcmxkKSBUagpFVAplbmRzdHJlYW0KZW5kb2JqCnhyZWYKMCA1CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMDAxNSAwMDAwMCBuIAowMDAwMDAwMDc0IDAwMDAwIG4gCjAwMDAwMDAxNTMgMDAwMDAgbiAKMDAwMDAwMDIyOSAwMDAwMCBuIAp0cmFpbGVyCjw8Ci9TaXplIDUKL1Jvb3QgMSAwIFIKPj4Kc3RhcnR4cmVmCjMyMgolJUVPRgo="
+}
+
+### 6.2. Lấy danh sách hợp đồng pháp lý
+GET http://localhost:8080/api/hop-dong-phap-ly
+Authorization: Bearer {{tokenChuXe}}
+
+### 6.3. Lấy chi tiết hợp đồng pháp lý - Thay {hop_dong_id} bằng ID thực
+GET http://localhost:8080/api/hop-dong-phap-ly/1
+Authorization: Bearer {{tokenChuXe}}
+
+### 6.4. Ký hợp đồng điện tử - Thay {hop_dong_id} bằng ID thực
+POST http://localhost:8080/api/hop-dong-phap-ly/1/ky
+Authorization: Bearer {{tokenChuXe}}
+Content-Type: application/json
+
+{
+  "chuKyDienTu": "SHA256:a3f5c892b7e4d1f6e8c9a0b2d3e4f5g6h7i8j9k0l1m2n3o4p5q6r7s8t9u0v1w2"
+}
+
+### 6.5. Xác minh hợp đồng - Thay {hop_dong_id} bằng ID thực
+GET http://localhost:8080/api/hop-dong-phap-ly/1/xac-minh
+Authorization: Bearer {{tokenChuXe}}
+
+### 6.6. Tải hợp đồng pháp lý (PDF) - Thay {hop_dong_id} bằng ID thực
+GET http://localhost:8080/api/hop-dong-phap-ly/1/tai-xuong
+Authorization: Bearer {{tokenChuXe}}
+
+### 6.7. Hủy hợp đồng (ADMIN only) - Thay {hop_dong_id} bằng ID thực
+DELETE http://localhost:8080/api/hop-dong-phap-ly/1
+Authorization: Bearer {{tokenAdmin}}
+
+###############################################
+### 7️⃣ WORKFLOW TEST HOÀN CHỈNH
+###############################################
+
+### ▶️ Test Flow 1: Đăng ký → Đăng nhập → Tạo hồ sơ
+# 1. Đăng ký user mới (1.1)
+# 2. Đăng nhập (1.3.1) - Lưu token
+# 3. Lấy profile (2.1)
+# 4. Tạo hồ sơ chủ xe (3.1)
+
+### ▶️ Test Flow 2: Upload giấy tờ → Tạo hợp đồng
+# 1. Upload GPLX (5.1)
+# 2. Upload CCCD (5.2)
+# 3. Upload hộ khẩu (5.3)
+# 4. Tạo hợp đồng (4.1)
+
+### ▶️ Test Flow 3: Admin duyệt giấy tờ và hợp đồng
+# 1. Đăng nhập admin (1.4)
+# 2. Xem danh sách giấy tờ chờ duyệt (5.7)
+# 3. Duyệt giấy tờ (5.5)
+# 4. Xem danh sách hợp đồng chờ duyệt (4.2)
+# 5. Duyệt hợp đồng (4.3)
+# 6. Kích hoạt hợp đồng (4.7)
+
+### ▶️ Test Flow 4: Xem thông tin hợp đồng
+# 1. Lấy chi tiết hợp đồng (4.6)
+# 2. Lấy danh sách hợp đồng theo chủ xe (GET /api/hop-dong/chu-xe/{chuXeId})
+# 3. Lấy danh sách hợp đồng theo xe (GET /api/hop-dong/xe/{xeId})
+
+
+###############################################
+### �📊 HEALTH CHECK
+###############################################
+
+### Health check
+GET http://localhost:8080/actuator/health
+
+### Test root endpoint
+GET http://localhost:8080/

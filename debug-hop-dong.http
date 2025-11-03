@@ -1,0 +1,74 @@
+### DEBUG: Tạo hợp đồng với logging đầy đủ
+
+### 1. Đăng nhập để lấy token
+# @name loginDebug
+POST http://localhost:8080/api/auth/dang-nhap
+Content-Type: application/json
+
+{
+  "email": "chuxe1@example.com",
+  "matKhau": "Password123!"
+}
+
+###
+
+### 2. Kiểm tra chu_xe_id = 2 có tồn tại không
+GET http://localhost:8080/api/chu-xe/nguoi-dung/2
+Authorization: Bearer {{loginDebug.response.body.token}}
+
+###
+
+### 3. Kiểm tra xe_id = 1 có tồn tại không (nếu có endpoint)
+# GET http://localhost:8080/api/xe/1
+# Authorization: Bearer {{loginDebug.response.body.token}}
+
+###
+
+### 4. Tạo hợp đồng với các tham số khác nhau
+
+### 4a. Test với ngayKetThuc = null
+POST http://localhost:8080/api/hop-dong
+Authorization: Bearer {{loginDebug.response.body.token}}
+Content-Type: application/json
+
+{
+  "chuXeId": 2,
+  "xeId": 1,
+  "ngayBatDau": "2025-11-01T00:00:00"
+}
+
+###
+
+### 4b. Test với định dạng ISO khác
+POST http://localhost:8080/api/hop-dong
+Authorization: Bearer {{loginDebug.response.body.token}}
+Content-Type: application/json
+
+{
+  "chuXeId": 2,
+  "xeId": 1,
+  "ngayBatDau": "2025-11-01T00:00:00.000",
+  "ngayKetThuc": "2028-11-01T00:00:00.000"
+}
+
+###
+
+### 4c. Test với chu_xe_id khác (nếu có)
+POST http://localhost:8080/api/hop-dong
+Authorization: Bearer {{loginDebug.response.body.token}}
+Content-Type: application/json
+
+{
+  "chuXeId": 1,
+  "xeId": 1,
+  "ngayBatDau": "2025-11-01T00:00:00",
+  "ngayKetThuc": "2028-11-01T00:00:00"
+}
+
+###
+
+### 5. Kiểm tra xem có lỗi constraint trong database không
+### Query trực tiếp vào database:
+### SELECT * FROM chu_xe WHERE chu_xe_id = 2;
+### SELECT * FROM xe WHERE xe_id = 1;
+### SELECT * FROM hop_dong_dong_so_huu ORDER BY hop_dong_id DESC;
