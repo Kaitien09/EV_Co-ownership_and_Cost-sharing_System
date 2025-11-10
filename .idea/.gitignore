@@ -1,3 +1,8 @@
 # Default ignored files
 /shelf/
 /workspace.xml
+<<<<<<< HEAD
+=======
+# Editor-based HTTP Client requests
+/httpRequests/
+>>>>>>> 55294f1febbb6b157416cdadd51c7d4ea6436e64
