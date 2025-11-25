@@ -19,22 +19,13 @@ export default function UserInfoCard() {
             Thông tin cá nhân
           </h4>
 
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-7 2xl:gap-x-32">
+          <div className="grid grid-cols-1 gap-4 lg">
             <div>
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                Họ tên
+                Họ và tên
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                Kai
-              </p>
-            </div>
-
-            <div>
-              <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                Tên
-              </p>
-              <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                Tiên
+                Kai Tiên
               </p>
             </div>
 
