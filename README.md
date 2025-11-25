@@ -1,90 +1,192 @@
-# EV Co-ownership & Cost-sharing System
+# TailAdmin React - Free React Tailwind Admin Dashboard Template
 
-## Giới thiệu
+TailAdmin is a free and open-source admin dashboard template built on **React and Tailwind CSS**, providing developers
+with everything they need to create a comprehensive, data-driven back-end,
+dashboard, or admin panel solution for upcoming web projects.
 
-**EV Co-ownership & Cost-sharing System** là hệ thống phần mềm toàn diện cho việc quản lý đồng sở hữu và chia sẻ chi phí xe điện. Hệ thống kết nối Chủ xe, Nhà vận hành, Khách hàng và Trung tâm dịch vụ trong một nền tảng thống nhất.
+With TailAdmin, you get access to all the necessary dashboard UI components, elements, and pages required to build a
+feature-rich and complete dashboard or admin panel. Whether you're building dashboard or admin panel for a complex web
+application or a simple website, TailAdmin is the perfect solution to help you get up and running quickly.
 
-## Tính năng
+![TailAdmin React.js Dashboard Preview](./banner.png)
 
-### Cho Chủ xe (Co-owner)
-- **Quản lý tài khoản & quyền sở hữu**: Đăng ký, xác thực, quản lý tỷ lệ sở hữu, hợp đồng điện tử
-- **Đặt lịch & sử dụng xe**: Lịch chung, đặt lịch trước, hệ thống ưu tiên công bằng
-- **Chi phí & thanh toán**: Tự động chia chi phí, thanh toán trực tuyến, báo cáo tài chính
-- **Quản lý nhóm**: Thành viên, bỏ phiếu, quỹ chung, phân tích AI
+## Overview
 
-### Cho Khách hàng
-- Nhắc nhở bảo dưỡng định kỳ
-- Đặt lịch dịch vụ trực tuyến
-- Quản lý hồ sơ & chi phí bảo dưỡng
-- Thanh toán trực tuyến
+TailAdmin provides essential UI components and layouts for building feature-rich, data-driven admin dashboards and
+control panels. It's built on:
 
-### Cho Nhà vận hành (Admin)
-- Quản lý nhóm xe đồng sở hữu
-- Quản lý hợp đồng pháp lý điện tử
-- Check-in/Check-out xe (QR code, ký số)
-- Giám sát tranh chấp và báo cáo tài chính
+- React 19
+- TypeScript
+- Tailwind CSS
 
-### Cho Trung tâm dịch vụ
-- Quản lý khách hàng & xe điện
-- Lịch hẹn & phân công kỹ thuật viên
-- Quy trình bảo dưỡng & quản lý phụ tùng
-- Quản lý nhân sự & báo cáo tài chính
-- AI gợi ý nhu cầu phụ tùng
+### Quick Links
 
+- [✨ Visit Website](https://tailadmin.com)
+- [📄 Documentation](https://tailadmin.com/docs)
+- [⬇️ Download](https://tailadmin.com/download)
+- [🖌️ Figma Design File (Community Edition)](https://www.figma.com/community/file/1214477970819985778)
+- [⚡ Get PRO Version](https://tailadmin.com/pricing)
 
-## Công nghệ sử dụng
+### Demos
 
-### Backend
-- **Java Spring Boot** - Framework chính
-- **Spring Security** - Xác thực và phân quyền
-- **JPA/Hibernate** - ORM và quản lý database
-- **Maven** - Quản lý dependencies
+- [Free Version](https://free-react-demo.tailadmin.com/)
+- [Pro Version](https://react-demo.tailadmin.com)
 
-### Frontend
-- **React** - UI framework chính
-- **Vite** - Build tool và dev server
-- **Modern CSS** - Styling và responsive design
+### Other Versions
 
-### Database
-- **MySQL** - Database hệ thống chính
-- **Flyway** - Quản lý database migration
+- [HTML Version](https://github.com/TailAdmin/tailadmin-free-tailwind-dashboard-template)
+- [Next.js Version](https://github.com/TailAdmin/free-nextjs-admin-dashboard)
+- [Vue.js Version](https://github.com/TailAdmin/vue-tailwind-admin-dashboard)
 
-### DevOps
-- **Docker** - Containerization
-- **Docker Compose** - Triển khai đa container
+## Installation
 
-## Bắt đầu
+### Prerequisites
 
-### Yêu cầu hệ thống
-- Java 17+
-- Node.js 18+
-- MySQL 8.0+
-- Maven 3.6+
+To get started with TailAdmin, ensure you have the following prerequisites installed and set up:
 
-### Cài đặt & Chạy
+- Node.js 18.x or later (recommended to use Node.js 20.x or later)
 
-**1. Clone repository:**
+### Cloning the Repository
+
+Clone the repository using the following command:
+
 ```bash
-git clone https://github.com/Kaitien09/EV_Co-ownership_and_Cost-sharing_System.git
-cd EV_Sharing
+git clone https://github.com/TailAdmin/free-react-tailwind-admin-dashboard.git
 ```
-**2. Khởi động MySQL container:**
-```bash
-docker-compose up -d mysql
-```
-- MySQL container tạo database EV_db tự động
-- Flyway migration áp dụng các bảng và dữ liệu ban đầu
 
-**3. Chạy backend:**
-```bash
-cd backend
-.\mvnw clean install
-.\mvnw spring-boot:run
-```
-- Backend sẽ kết nối tới MySQL container (hoặc thông tin trong application.yml)
+> Windows Users: place the repository near the root of your drive if you face issues while cloning.
 
-# Contributing
-- Fork repository
-- Tạo branch riêng
-- Commit và push lên branch của bạn
-- Tạo Pull Request
+1. Install dependencies:
+
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
+
+   > Use the `--legacy-peer-deps` flag, if you face issues while installing.
+
+2. Start the development server:
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
+
+## Components
+
+TailAdmin is a pre-designed starting point for building a web-based dashboard using React.js and Tailwind CSS. The
+template includes:
+
+- Sophisticated and accessible sidebar
+- Data visualization components
+- Prebuilt profile management and 404 page
+- Tables and Charts(Line and Bar)
+- Authentication forms and input elements
+- Alerts, Dropdowns, Modals, Buttons and more
+- Can't forget Dark Mode 🕶️
+
+All components are built with React and styled using Tailwind CSS for easy customization.
+
+## Feature Comparison
+
+### Free Version
+
+- 1 Unique Dashboard
+- 30+ dashboard components
+- 50+ UI elements
+- Basic Figma design files
+- Community support
+
+### Pro Version
+
+- 7 Unique Dashboards: Analytics, Ecommerce, Marketing, CRM, SaaS, Stocks, Logistics (more coming soon)
+- 500+ dashboard components and UI elements
+- Complete Figma design file
+- Email support
+
+To learn more about pro version features and pricing, visit our [pricing page](https://tailadmin.com/pricing).
+
+## Changelog
+
+### Version 2.0.2 - [March 25, 2025]
+
+- Upgraded to React 19
+- Included overrides for packages to prevent peer dependency errors.
+- Migrated from react-flatpickr to flatpickr package for React 19 support
+
+### Version 2.0.1 - [February 27, 2025]
+
+#### Update Overview
+
+- Upgraded to Tailwind CSS v4 for better performance and efficiency.
+- Updated class usage to match the latest syntax and features.
+- Replaced deprecated class and optimized styles.
+
+#### Next Steps
+
+- Run npm install or yarn install to update dependencies.
+- Check for any style changes or compatibility issues.
+- Refer to the Tailwind CSS v4 [Migration Guide](https://tailwindcss.com/docs/upgrade-guide) on this release. if needed.
+- This update keeps the project up to date with the latest Tailwind improvements. 🚀
+
+### Version 2.0.0 - [February 2025]
+
+A major update with comprehensive redesign and modern React patterns implementation.
+
+#### Major Improvements
+
+- Complete UI redesign with modern React patterns
+- New features: collapsible sidebar, chat, and calendar
+- Improved performance and accessibility
+- Updated data visualization using ApexCharts
+
+#### Key Features
+
+- Redesigned dashboards (Ecommerce, Analytics, Marketing, CRM)
+- Enhanced navigation with React Router integration
+- Advanced tables with sorting and filtering
+- Calendar with drag-and-drop support
+- New UI components and improved existing ones
+
+#### Breaking Changes
+
+- Updated sidebar component API
+- Migrated charts to ApexCharts
+- Revised authentication system
+
+[Read more](https://tailadmin.com/docs/update-logs/react) on this release.
+
+### Version 1.3.7 - [June 20, 2024]
+
+#### Enhancements
+
+1. Remove Repetition of DefaultLayout in every Pages
+2. Add ClickOutside Component for reduce repeated functionality in Header Message, Notification and User Dropdowns.
+
+### Version 1.3.6 - [Jan 31, 2024]
+
+#### Enhancements
+
+1. Integrate flatpickr in [Date Picker/Form Elements]
+2. Change color after select an option [Select Element/Form Elements].
+3. Make it functional [Multiselect Dropdown/Form Elements].
+4. Make best value editable [Pricing Table One/Pricing Table].
+5. Rearrange Folder structure.
+
+### Version 1.2.0 - [Apr 28, 2023]
+
+- Add Typescript in TailAdmin React.
+
+### Version 1.0.0 - Initial Release - [Mar 13, 2023]
+
+- Initial release of TailAdmin React.
+
+## License
+
+TailAdmin React.js Free Version is released under the MIT License.
+
+## Support
+
+If you find this project helpful, please consider giving it a star on GitHub. Your support helps us continue developing
+and maintaining this template.
