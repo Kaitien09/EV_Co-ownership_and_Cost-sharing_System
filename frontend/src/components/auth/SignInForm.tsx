@@ -30,7 +30,6 @@ export default function SignInForm() {
         setError(data.error || "Đăng nhập thất bại");
       } else {
         localStorage.setItem("user", JSON.stringify(data));
-        // BỎ ALERT Ở ĐÂY
         window.location.href = "/";
       }
     } catch (err) {

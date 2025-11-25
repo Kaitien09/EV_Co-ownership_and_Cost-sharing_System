@@ -22,6 +22,12 @@ public class AuthController {
     @PostMapping("/dang-ky")
     public ResponseEntity<?> dangKy(@Valid @RequestBody DangKyRequest request) {
         try {
+            System.out.println("=== ĐĂNG KÝ REQUEST ===");
+            System.out.println("Email: " + request.getEmail());
+            System.out.println("GPLX: " + request.getGplx());
+            System.out.println("GPLX Anh: " + request.getGplxAnh()); // LOG QUAN TRỌNG
+            System.out.println("======================");
+
             NguoiDung nguoiDung = NguoiDung.builder()
                     .tenDangNhap(request.getTenDangNhap())
                     .email(request.getEmail())
@@ -30,19 +36,22 @@ public class AuthController {
                     .trangThai(TrangThaiNguoiDung.HOAT_DONG)
                     .build();
 
-
             ChuXe chuXe = ChuXe.builder()
                     .nguoiDung(nguoiDung)
                     .hoTen(request.getHoTen())
                     .cccd(request.getCccd())
                     .sdt(request.getSdt())
                     .gplx(request.getGplx())
+                    .gplxAnh(request.getGplxAnh())
                     .diaChi(request.getDiaChi())
                     .build();
+
+            System.out.println("ChuXe gplxAnh: " + chuXe.getGplxAnh()); // LOG NÀY
 
             Map<String, Object> result = authService.dangKy(nguoiDung, chuXe);
             return ResponseEntity.ok(result);
         } catch (RuntimeException e) {
+            System.out.println("Lỗi đăng ký: " + e.getMessage());
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
     }
@@ -79,6 +88,7 @@ public class AuthController {
         private String cccd;
         private String sdt;
         private String gplx;
+        private String gplxAnh;
         private String diaChi;
     }
 
