@@ -11,6 +11,7 @@ export default function SignUpForm() {
 
   // States cho form
   const [formData, setFormData] = useState({
+    tenDangNhap: "",
     hoTen: "",
     email: "",
     matKhau: "",
@@ -33,6 +34,13 @@ export default function SignUpForm() {
     setError("");
     setUploading(true);
 
+    // Kiểm tra tên đăng nhập, email, mật khẩu, ảnh GPLX
+    if (!formData.tenDangNhap || !formData.email || !formData.matKhau || !gplxFile) {
+      setError("Vui lòng điền đầy đủ thông tin và chọn ảnh GPLX");
+      setUploading(false);
+      return;
+    }
+
     try {
       let gplxAnh = "";
 
@@ -47,15 +55,11 @@ export default function SignUpForm() {
           setUploading(false);
           return;
         }
-      } else {
-        setError("Vui lòng chọn ảnh GPLX");
-        setUploading(false);
-        return;
       }
 
       // Gửi thông tin đăng ký
       await authService.register({
-        tenDangNhap: formData.email,
+        tenDangNhap: formData.tenDangNhap,
         email: formData.email,
         matKhau: formData.matKhau,
         loaiNguoiDung: "KHACH_HANG",
@@ -94,8 +98,7 @@ export default function SignUpForm() {
 
   return (
     <div className="flex flex-col flex-1 w-full overflow-y-auto lg:w-1/2 no-scrollbar">
-      <div className="w-full max-w-md mx-auto mb-5 sm:pt-10">
-      </div>
+      <div className="w-full max-w-md mx-auto mb-5 sm:pt-10"></div>
       <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
         <div>
           <h1 className="mb-2 text-title-md font-semibold text-gray-800 dark:text-white/90">
@@ -103,15 +106,18 @@ export default function SignUpForm() {
           </h1>
           {error && <p className="mb-3 text-sm text-red-500">{error}</p>}
           <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Tên đăng nhập */}
             <div>
-              <Label>Họ và tên *</Label>
+              <Label>Tên đăng nhập *</Label>
               <Input
                 type="text"
-                value={formData.hoTen}
-                onChange={(e) => handleChange("hoTen")(e.target.value)}
-                placeholder="Nhập họ và tên"
+                value={formData.tenDangNhap}
+                onChange={(e) => handleChange("tenDangNhap")(e.target.value)}
+                placeholder="Nhập tên đăng nhập"
               />
             </div>
+
+            {/* Email */}
             <div>
               <Label>Email *</Label>
               <Input
@@ -121,6 +127,8 @@ export default function SignUpForm() {
                 placeholder="Nhập email"
               />
             </div>
+
+            {/* Mật khẩu */}
             <div>
               <Label>Mật khẩu *</Label>
               <div className="relative">
@@ -138,6 +146,19 @@ export default function SignUpForm() {
                 </span>
               </div>
             </div>
+
+            {/* Họ tên */}
+            <div>
+              <Label>Họ và tên *</Label>
+              <Input
+                type="text"
+                value={formData.hoTen}
+                onChange={(e) => handleChange("hoTen")(e.target.value)}
+                placeholder="Nhập họ và tên"
+              />
+            </div>
+
+            {/* CCCD */}
             <div>
               <Label>CCCD *</Label>
               <Input
@@ -147,6 +168,8 @@ export default function SignUpForm() {
                 placeholder="Nhập CCCD"
               />
             </div>
+
+            {/* SĐT */}
             <div>
               <Label>Số điện thoại *</Label>
               <Input
@@ -156,6 +179,8 @@ export default function SignUpForm() {
                 placeholder="Nhập số điện thoại"
               />
             </div>
+
+            {/* GPLX */}
             <div>
               <Label>Số GPLX *</Label>
               <Input
@@ -165,6 +190,8 @@ export default function SignUpForm() {
                 placeholder="Nhập số GPLX"
               />
             </div>
+
+            {/* Ảnh GPLX */}
             <div>
               <Label>Ảnh GPLX *</Label>
               <input
@@ -179,6 +206,8 @@ export default function SignUpForm() {
                 </p>
               )}
             </div>
+
+            {/* Địa chỉ */}
             <div>
               <Label>Địa chỉ *</Label>
               <Input
@@ -188,14 +217,13 @@ export default function SignUpForm() {
                 placeholder="Nhập địa chỉ"
               />
             </div>
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={uploading}
-            >
+
+            {/* Nút submit */}
+            <Button type="submit" className="w-full" disabled={uploading}>
               {uploading ? "Đang xử lý..." : "Đăng ký"}
             </Button>
           </form>
+
           <p className="mt-4 text-sm text-center text-gray-500 dark:text-gray-400">
             Bạn đã có tài khoản?{" "}
             <Link to="/signin" className="text-brand-500 hover:text-brand-600">
