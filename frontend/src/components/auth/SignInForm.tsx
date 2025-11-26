@@ -1,40 +1,31 @@
 import { useState } from "react";
 import { Link } from "react-router";
-import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../icons";
+import { EyeCloseIcon, EyeIcon } from "../../icons";
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
-import Checkbox from "../form/input/Checkbox";
 import Button from "../ui/button/Button";
+import { authService } from "../../services/api"; // Import từ service
 
 export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const [isChecked, setIsChecked] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:8080/api/auth/dang-nhap", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tenDangNhap: email, matKhau: password }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || "Đăng nhập thất bại");
-      } else {
-        localStorage.setItem("user", JSON.stringify(data));
-        window.location.href = "/";
-      }
-    } catch (err) {
-      console.error(err);
-      setError("Lỗi kết nối server");
+      const userData = await authService.login(email, password);
+      localStorage.setItem("user", JSON.stringify(userData));
+      window.location.href = "/";
+    } catch (err: any) {
+      setError(err.message || "Lỗi kết nối server");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -58,9 +49,7 @@ export default function SignInForm() {
             <form onSubmit={handleSubmit}>
               <div className="space-y-6">
                 <div>
-                  <Label>
-                    Email <span className="text-error-500">*</span>{" "}
-                  </Label>
+                  <Label>Email <span className="text-error-500">*</span></Label>
                   <Input
                     placeholder="info@gmail.com"
                     value={email}
@@ -68,9 +57,7 @@ export default function SignInForm() {
                   />
                 </div>
                 <div>
-                  <Label>
-                    Password <span className="text-error-500">*</span>{" "}
-                  </Label>
+                  <Label>Password <span className="text-error-500">*</span></Label>
                   <div className="relative">
                     <Input
                       type={showPassword ? "text" : "password"}
@@ -91,8 +78,13 @@ export default function SignInForm() {
                   </div>
                 </div>
                 <div>
-                  <Button type="submit" className="w-full" size="sm">
-                    Đăng nhập
+                  <Button
+                    type="submit"
+                    className="w-full"
+                    size="sm"
+                    disabled={loading}
+                  >
+                    {loading ? "Đang đăng nhập..." : "Đăng nhập"}
                   </Button>
                 </div>
               </div>
