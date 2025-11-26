@@ -10,7 +10,10 @@ import PageMeta from "../components/common/PageMeta";
 
 interface CalendarEvent extends EventInput {
   extendedProps: {
-    calendar: string;
+    bookerName: string;
+    licensePlate: string;
+    startTime: string;
+    endTime: string;
   };
 }
 
@@ -18,88 +21,129 @@ const Calendar: React.FC = () => {
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(
     null
   );
-  const [eventTitle, setEventTitle] = useState("");
-  const [eventStartDate, setEventStartDate] = useState("");
-  const [eventEndDate, setEventEndDate] = useState("");
-  const [eventLevel, setEventLevel] = useState("");
+  const [bookerName, setBookerName] = useState("");
+  const [selectedVehicle, setSelectedVehicle] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [startTime, setStartTime] = useState("08:00");
+  const [endTime, setEndTime] = useState("17:00");
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const calendarRef = useRef<FullCalendar>(null);
   const { isOpen, openModal, closeModal } = useModal();
 
-  const calendarsEvents = {
-    Danger: "danger",
-    Success: "success",
-    Primary: "primary",
-    Warning: "warning",
-  };
+  // Danh sách biển số xe
+  const vehicleList = [
+    "29A-12345",
+    "29A-67890",
+    "29A-54321",
+    "29A-98765",
+    "29A-11111",
+    "29A-22222",
+  ];
 
   useEffect(() => {
-    // Initialize with some events
+    // Khởi tạo với một số lịch đặt xe mẫu
     setEvents([
       {
         id: "1",
-        title: "Event Conf.",
-        start: new Date().toISOString().split("T")[0],
-        extendedProps: { calendar: "Danger" },
+        title: "Văn A",
+        start: new Date().toISOString().split("T")[0] + "T08:00:00",
+        end: new Date().toISOString().split("T")[0] + "T17:00:00",
+        extendedProps: {
+          bookerName: "Văn A",
+          licensePlate: "29A-12345",
+          startTime: "08:00",
+          endTime: "17:00"
+        },
       },
       {
         id: "2",
-        title: "Meeting",
-        start: new Date(Date.now() + 86400000).toISOString().split("T")[0],
-        extendedProps: { calendar: "Success" },
+        title: "Trần B",
+        start: new Date(Date.now() + 86400000).toISOString().split("T")[0] + "T09:00:00",
+        end: new Date(Date.now() + 86400000).toISOString().split("T")[0] + "T16:00:00",
+        extendedProps: {
+          bookerName: "Trần B",
+          licensePlate: "29A-67890",
+          startTime: "09:00",
+          endTime: "16:00"
+        },
       },
       {
         id: "3",
-        title: "Workshop",
-        start: new Date(Date.now() + 172800000).toISOString().split("T")[0],
-        end: new Date(Date.now() + 259200000).toISOString().split("T")[0],
-        extendedProps: { calendar: "Primary" },
+        title: "Văn C",
+        start: new Date(Date.now() + 172800000).toISOString().split("T")[0] + "T07:00:00",
+        end: new Date(Date.now() + 259200000).toISOString().split("T")[0] + "T18:00:00",
+        extendedProps: {
+          bookerName: "Văn C",
+          licensePlate: "29A-54321",
+          startTime: "07:00",
+          endTime: "18:00"
+        },
       },
     ]);
   }, []);
 
   const handleDateSelect = (selectInfo: DateSelectArg) => {
     resetModalFields();
-    setEventStartDate(selectInfo.startStr);
-    setEventEndDate(selectInfo.endStr || selectInfo.startStr);
+    const startStr = selectInfo.startStr;
+    const endStr = selectInfo.endStr || selectInfo.startStr;
+
+    setStartDate(startStr.split('T')[0]);
+    setEndDate(endStr.split('T')[0]);
     openModal();
   };
 
   const handleEventClick = (clickInfo: EventClickArg) => {
     const event = clickInfo.event;
     setSelectedEvent(event as unknown as CalendarEvent);
-    setEventTitle(event.title);
-    setEventStartDate(event.start?.toISOString().split("T")[0] || "");
-    setEventEndDate(event.end?.toISOString().split("T")[0] || "");
-    setEventLevel(event.extendedProps.calendar);
+    setBookerName(event.extendedProps.bookerName || "");
+    setSelectedVehicle(event.extendedProps.licensePlate || "");
+    setStartDate(event.start?.toISOString().split("T")[0] || "");
+    setEndDate(event.end?.toISOString().split("T")[0] || "");
+    setStartTime(event.extendedProps.startTime || "08:00");
+    setEndTime(event.extendedProps.endTime || "17:00");
     openModal();
   };
 
-  const handleAddOrUpdateEvent = () => {
+  const handleAddOrUpdateBooking = () => {
+    if (!bookerName || !selectedVehicle || !startDate) {
+      alert("Vui lòng điền đầy đủ thông tin bắt buộc");
+      return;
+    }
+
     if (selectedEvent) {
-      // Update existing event
+      // Cập nhật lịch đặt xe hiện có
       setEvents((prevEvents) =>
         prevEvents.map((event) =>
           event.id === selectedEvent.id
             ? {
                 ...event,
-                title: eventTitle,
-                start: eventStartDate,
-                end: eventEndDate,
-                extendedProps: { calendar: eventLevel },
+                title: bookerName,
+                start: `${startDate}T${startTime}:00`,
+                end: `${endDate}T${endTime}:00`,
+                extendedProps: {
+                  bookerName: bookerName,
+                  licensePlate: selectedVehicle,
+                  startTime: startTime,
+                  endTime: endTime
+                },
               }
             : event
         )
       );
     } else {
-      // Add new event
+      // Thêm lịch đặt xe mới
       const newEvent: CalendarEvent = {
         id: Date.now().toString(),
-        title: eventTitle,
-        start: eventStartDate,
-        end: eventEndDate,
-        allDay: true,
-        extendedProps: { calendar: eventLevel },
+        title: bookerName,
+        start: `${startDate}T${startTime}:00`,
+        end: `${endDate}T${endTime}:00`,
+        extendedProps: {
+          bookerName: bookerName,
+          licensePlate: selectedVehicle,
+          startTime: startTime,
+          endTime: endTime
+        },
       };
       setEvents((prevEvents) => [...prevEvents, newEvent]);
     }
@@ -108,27 +152,29 @@ const Calendar: React.FC = () => {
   };
 
   const resetModalFields = () => {
-    setEventTitle("");
-    setEventStartDate("");
-    setEventEndDate("");
-    setEventLevel("");
+    setBookerName("");
+    setSelectedVehicle("");
+    setStartDate("");
+    setEndDate("");
+    setStartTime("08:00");
+    setEndTime("17:00");
     setSelectedEvent(null);
   };
 
   return (
     <>
       <PageMeta
-        title="React.js Calendar Dashboard | TailAdmin - Next.js Admin Dashboard Template"
-        description="This is React.js Calendar Dashboard page for TailAdmin - React.js Tailwind CSS Admin Dashboard Template"
+        title="Quản lý đặt lịch xe | Hệ thống quản lý phương tiện"
+        description="Trang quản lý lịch đặt xe cho hệ thống quản lý phương tiện"
       />
-      <div className="rounded-2xl border  border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+      <div className="rounded-2xl border border-gray-200 bg-white p-10 dark:border-gray-800 dark:bg-white/[0.03]">
         <div className="custom-calendar">
           <FullCalendar
             ref={calendarRef}
             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
             initialView="dayGridMonth"
             headerToolbar={{
-              left: "prev,next addEventButton",
+              left: "prev,next addBookingButton",
               center: "title",
               right: "dayGridMonth,timeGridWeek,timeGridDay",
             }}
@@ -138,8 +184,8 @@ const Calendar: React.FC = () => {
             eventClick={handleEventClick}
             eventContent={renderEventContent}
             customButtons={{
-              addEventButton: {
-                text: "Add Event +",
+              addBookingButton: {
+                text: "Đặt lịch xe +",
                 click: openModal,
               },
             }}
@@ -153,94 +199,89 @@ const Calendar: React.FC = () => {
           <div className="flex flex-col px-2 overflow-y-auto custom-scrollbar">
             <div>
               <h5 className="mb-2 font-semibold text-gray-800 modal-title text-theme-xl dark:text-white/90 lg:text-2xl">
-                {selectedEvent ? "Edit Event" : "Add Event"}
+                {selectedEvent ? "Chỉnh sửa lịch đặt xe" : "Đặt lịch xe mới"}
               </h5>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                Plan your next big moment: schedule or edit an event to stay on
-                track
-              </p>
             </div>
-            <div className="mt-8">
+            <div className="mt-8 space-y-6">
               <div>
+                <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+                  Tên người đặt *
+                </label>
+                <input
+                  type="text"
+                  value={bookerName}
+                  onChange={(e) => setBookerName(e.target.value)}
+                  className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                  placeholder="Nhập tên người đặt xe"
+                />
+              </div>
+
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+                  Chọn xe *
+                </label>
+                <select
+                  value={selectedVehicle}
+                  onChange={(e) => setSelectedVehicle(e.target.value)}
+                  className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:focus:border-brand-800"
+                >
+                  <option value="">Chọn biển số xe</option>
+                  {vehicleList.map((licensePlate) => (
+                    <option key={licensePlate} value={licensePlate}>
+                      {licensePlate}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-6">
                 <div>
                   <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
-                    Event Title
+                    Ngày đi *
                   </label>
                   <input
-                    id="event-title"
-                    type="text"
-                    value={eventTitle}
-                    onChange={(e) => setEventTitle(e.target.value)}
-                    className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:focus:border-brand-800"
                   />
                 </div>
-              </div>
-              <div className="mt-6">
-                <label className="block mb-4 text-sm font-medium text-gray-700 dark:text-gray-400">
-                  Event Color
-                </label>
-                <div className="flex flex-wrap items-center gap-4 sm:gap-5">
-                  {Object.entries(calendarsEvents).map(([key, value]) => (
-                    <div key={key} className="n-chk">
-                      <div
-                        className={`form-check form-check-${value} form-check-inline`}
-                      >
-                        <label
-                          className="flex items-center text-sm text-gray-700 form-check-label dark:text-gray-400"
-                          htmlFor={`modal${key}`}
-                        >
-                          <span className="relative">
-                            <input
-                              className="sr-only form-check-input"
-                              type="radio"
-                              name="event-level"
-                              value={key}
-                              id={`modal${key}`}
-                              checked={eventLevel === key}
-                              onChange={() => setEventLevel(key)}
-                            />
-                            <span className="flex items-center justify-center w-5 h-5 mr-2 border border-gray-300 rounded-full box dark:border-gray-700">
-                              <span
-                                className={`h-2 w-2 rounded-full bg-white ${
-                                  eventLevel === key ? "block" : "hidden"
-                                }`}
-                              ></span>
-                            </span>
-                          </span>
-                          {key}
-                        </label>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
 
-              <div className="mt-6">
-                <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
-                  Enter Start Date
-                </label>
-                <div className="relative">
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+                    Ngày về
+                  </label>
                   <input
-                    id="event-start-date"
                     type="date"
-                    value={eventStartDate}
-                    onChange={(e) => setEventStartDate(e.target.value)}
-                    className="dark:bg-dark-900 h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent bg-none px-4 py-2.5 pl-4 pr-11 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                    className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:focus:border-brand-800"
                   />
                 </div>
               </div>
 
-              <div className="mt-6">
-                <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
-                  Enter End Date
-                </label>
-                <div className="relative">
+              <div className="grid grid-cols-2 gap-6">
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+                    Giờ đi
+                  </label>
                   <input
-                    id="event-end-date"
-                    type="date"
-                    value={eventEndDate}
-                    onChange={(e) => setEventEndDate(e.target.value)}
-                    className="dark:bg-dark-900 h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent bg-none px-4 py-2.5 pl-4 pr-11 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                    type="time"
+                    value={startTime}
+                    onChange={(e) => setStartTime(e.target.value)}
+                    className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:focus:border-brand-800"
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+                    Giờ về
+                  </label>
+                  <input
+                    type="time"
+                    value={endTime}
+                    onChange={(e) => setEndTime(e.target.value)}
+                    className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:focus:border-brand-800"
                   />
                 </div>
               </div>
@@ -251,14 +292,14 @@ const Calendar: React.FC = () => {
                 type="button"
                 className="flex w-full justify-center rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] sm:w-auto"
               >
-                Close
+                Đóng
               </button>
               <button
-                onClick={handleAddOrUpdateEvent}
+                onClick={handleAddOrUpdateBooking}
                 type="button"
                 className="btn btn-success btn-update-event flex w-full justify-center rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-600 sm:w-auto"
               >
-                {selectedEvent ? "Update Changes" : "Add Event"}
+                {selectedEvent ? "Cập nhật" : "Đặt lịch"}
               </button>
             </div>
           </div>
@@ -269,10 +310,9 @@ const Calendar: React.FC = () => {
 };
 
 const renderEventContent = (eventInfo: any) => {
-  const colorClass = `fc-bg-${eventInfo.event.extendedProps.calendar.toLowerCase()}`;
   return (
     <div
-      className={`event-fc-color flex fc-event-main ${colorClass} p-1 rounded-sm`}
+      className="event-fc-color flex fc-event-main fc-bg-primary p-1 rounded-sm"
     >
       <div className="fc-daygrid-event-dot"></div>
       <div className="fc-event-time">{eventInfo.timeText}</div>
