@@ -65,7 +65,7 @@ const navItems: NavItem[] = [
   {
     name: "Lịch sử và phân tích",
     icon: <PageIcon />,
-    path: "/blank",
+    path: "/History",
   },
 {
     name: "Trung tâm dịch vụ",
