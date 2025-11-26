@@ -39,7 +39,11 @@ const navItems: NavItem[] = [
 {
     icon: <UserCircleIcon />,
     name: "Hợp đồng",
+<<<<<<< HEAD
     path: "/hop-dong",
+=======
+    path: "/hop-dongdong",
+>>>>>>> 7650b4749c65b9ff718eb671a00bac81207ebd74
   },
   {
     icon: <CalenderIcon />,
@@ -56,7 +60,12 @@ const navItems: NavItem[] = [
   {
     name: "Nhóm đồng sở hữu",
     icon: <TableIcon />,
+<<<<<<< HEAD
     path:"/nhom",},
+=======
+    path:"/nhom",
+  },
+>>>>>>> 7650b4749c65b9ff718eb671a00bac81207ebd74
   {
     name: "Lịch sử và phân tích",
     icon: <PageIcon />,
