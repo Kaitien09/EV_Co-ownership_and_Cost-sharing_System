@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import SignIn from "./pages/AuthPages/SignIn";
 import SignUp from "./pages/AuthPages/SignUp";
 import NotFound from "./pages/OtherPage/NotFound";
@@ -19,22 +19,64 @@ import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
 import HistoryCalendar from "./pages/HistoryCalendar";
+import HopDongPage from "./pages/HopDong/HopDongPage";
+import TaoHopDongPage from './pages/hopdong/TaoHopDongPage';
+import ChiTietHopDongPage from './pages/hopdong/ChiTietHopDongPage';
+import ChinhSuaHopDongPage from './pages/hopdong/ChinhSuaHopDongPage';
+import DanhSachNhomPage from './pages/NhomSoHuu/DanhSachNhomPage';
+import NhomDongSoHuuPage from './pages/NhomSoHuu/NhomDongSoHuuPage';
+import QuanLyThanhVienPage from './pages/NhomSoHuu/QuanLyThanhVienPage';
+import BoPhieuPage from './pages/NhomSoHuu/BoPhieuPage';
+import QuyChungPage from './pages/NhomSoHuu/QuyChungPage';
+import AIPhanTichPage from './pages/NhomSoHuu/AIPhanTichPage';
+import ThanhToanPage from './pages/ChiPhi/ThanhToanPage';
+import ChiTietThanhToanPage from './pages/ChiPhi/ChiTietThanhToanPage';
+import TaoChiPhiPage from './pages/ChiPhi/TaoChiPhiPage';
+import RequireAuth from "./components/auth/RequireAuth";
 
 export default function App() {
   return (
     <Router>
       <ScrollToTop />
       <Routes>
-        {/* Dashboard Layout */}
-        <Route element={<AppLayout />}>
-          <Route index path="/" element={<Home />} />
+        {/* Auth routes */}
+        <Route path="/signin" element={<SignIn />} />
+        <Route path="/signup" element={<SignUp />} />
 
+        {/* Protected routes */}
+        <Route
+          element={
+            <RequireAuth>
+              <AppLayout />
+            </RequireAuth>
+          }
+        >
+          <Route index path="/" element={<Home />} />
 
           {/* Others Page */}
           <Route path="/profile" element={<UserProfiles />} />
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/blank" element={<Blank />} />
           <Route path="/history" element={<HistoryCalendar />} />
+
+          {/* Hợp đồng */}
+          <Route path="/hop-dong" element={<HopDongPage />} />
+          <Route path="/hop-dong/tao-moi" element={<TaoHopDongPage />} />
+          <Route path="/hop-dong/:id" element={<ChiTietHopDongPage />} />
+          <Route path="/hop-dong/:id/chinh-sua" element={<ChinhSuaHopDongPage />} />
+
+          {/* Nhóm sở hữu */}
+          <Route path="/nhom" element={<DanhSachNhomPage />} />
+          <Route path="/nhom/:id" element={<NhomDongSoHuuPage />} />
+          <Route path="/nhom/:id/quan-ly-thanh-vien" element={<QuanLyThanhVienPage />} />
+          <Route path="/nhom/:id/bo-phieu" element={<BoPhieuPage />} />
+          <Route path="/nhom/:id/quy-chung" element={<QuyChungPage />} />
+          <Route path="/nhom/:id/ai-phan-tich" element={<AIPhanTichPage />} />
+
+          {/* Chi phí / Thanh toán */}
+          <Route path="/thanh-toan" element={<ThanhToanPage />} />
+          <Route path="/chi-tiet-thanh-toan/:chiPhiId" element={<ChiTietThanhToanPage />} />
+          <Route path="/tao-chi-phi" element={<TaoChiPhiPage />} />
 
           {/* Forms */}
           <Route path="/form-elements" element={<FormElements />} />
@@ -54,10 +96,6 @@ export default function App() {
           <Route path="/line-chart" element={<LineChart />} />
           <Route path="/bar-chart" element={<BarChart />} />
         </Route>
-
-        {/* Auth Layout */}
-        <Route path="/signin" element={<SignIn />} />
-        <Route path="/signup" element={<SignUp />} />
 
         {/* Fallback Route */}
         <Route path="*" element={<NotFound />} />
