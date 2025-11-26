@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
-import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../icons";
+import { EyeCloseIcon, EyeIcon } from "../../icons";
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import Button from "../ui/button/Button";
+import { authService, uploadService } from "../../services/api"; // Import từ service
 
 export default function SignUpForm() {
   const navigate = useNavigate();
@@ -27,25 +28,6 @@ export default function SignUpForm() {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  // Hàm upload ảnh GPLX
-  const uploadGplxImage = async (file: File): Promise<string> => {
-    const formData = new FormData();
-    formData.append("file", file);
-
-    const res = await fetch("http://localhost:8080/api/upload/gplx", {
-      method: "POST",
-      body: formData,
-    });
-
-    if (!res.ok) {
-      const errorData = await res.json();
-      throw new Error(errorData.error || "Upload ảnh thất bại");
-    }
-
-    const data = await res.json();
-    return data.filePath; // Trả về đường dẫn ảnh
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -57,9 +39,10 @@ export default function SignUpForm() {
       // Upload ảnh GPLX nếu có file
       if (gplxFile) {
         try {
-          gplxAnh = await uploadGplxImage(gplxFile);
+          const uploadResult = await uploadService.uploadGplx(gplxFile);
+          gplxAnh = uploadResult.filePath;
           console.log("Ảnh GPLX uploaded:", gplxAnh);
-        } catch (uploadError) {
+        } catch (uploadError: any) {
           setError(`Lỗi upload ảnh: ${uploadError.message}`);
           setUploading(false);
           return;
@@ -71,33 +54,23 @@ export default function SignUpForm() {
       }
 
       // Gửi thông tin đăng ký
-      const res = await fetch("http://localhost:8080/api/auth/dang-ky", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          tenDangNhap: formData.email,
-          email: formData.email,
-          matKhau: formData.matKhau,
-          loaiNguoiDung: "KHACH_HANG",
-          hoTen: formData.hoTen,
-          cccd: formData.cccd,
-          sdt: formData.sdt,
-          gplx: formData.gplx,
-          gplxAnh: gplxAnh, // Thêm đường dẫn ảnh
-          diaChi: formData.diaChi,
-        }),
+      await authService.register({
+        tenDangNhap: formData.email,
+        email: formData.email,
+        matKhau: formData.matKhau,
+        loaiNguoiDung: "KHACH_HANG",
+        hoTen: formData.hoTen,
+        cccd: formData.cccd,
+        sdt: formData.sdt,
+        gplx: formData.gplx,
+        gplxAnh: gplxAnh,
+        diaChi: formData.diaChi,
       });
 
-      if (!res.ok) {
-        const data = await res.json();
-        setError(data.error || "Đăng ký thất bại");
-        return;
-      }
-
       navigate("/signin");
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      setError("Lỗi server, vui lòng thử lại sau");
+      setError(err.message || "Lỗi server, vui lòng thử lại sau");
     } finally {
       setUploading(false);
     }
@@ -106,12 +79,10 @@ export default function SignUpForm() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Kiểm tra loại file
       if (!file.type.startsWith('image/')) {
         setError("Vui lòng chọn file ảnh");
         return;
       }
-      // Kiểm tra kích thước file (max 10MB)
       if (file.size > 10 * 1024 * 1024) {
         setError("File ảnh không được vượt quá 10MB");
         return;
