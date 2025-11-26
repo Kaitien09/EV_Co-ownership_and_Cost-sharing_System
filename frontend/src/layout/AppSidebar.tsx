@@ -39,7 +39,7 @@ const navItems: NavItem[] = [
 {
     icon: <UserCircleIcon />,
     name: "Hợp đồng",
-    path: "/profile",
+    path: "/hop-dongdong",
   },
   {
     icon: <CalenderIcon />,
@@ -50,17 +50,13 @@ const navItems: NavItem[] = [
   {
     icon: <CalenderIcon />,
     name: "Thanh toán chi phí",
-    path: "/calendar",
+    path: "/thanh-toan",
   },
 
   {
     name: "Nhóm đồng sở hữu",
     icon: <TableIcon />,
-    subItems: [
-        { name: "Chi phí", path: "/basic-tables", pro: false },
-        { name: "Quỹ chung", path: "/basic-tables", pro: false },
-        {name: "Biểu quyết", path: "/basic-tables", pro: false },
-        ],
+    path:"/nhom",
   },
   {
     name: "Lịch sử và phân tích",
