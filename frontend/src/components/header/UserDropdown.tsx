@@ -25,7 +25,7 @@ export default function UserDropdown() {
 
   // Lấy thông tin user từ localStorage
   const user = JSON.parse(localStorage.getItem("user") || "{}");
-  const name = user?.tenNguoiDung || "User";
+  const name = user?.tenDangNhap || "User";
   const email = user?.email || "user@example.com";
 
   return (
