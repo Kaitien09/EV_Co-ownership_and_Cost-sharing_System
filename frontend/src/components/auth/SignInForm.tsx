@@ -8,7 +8,7 @@ import { authService } from "../../services/api"; // Import từ service
 
 export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState(""); // đổi từ email sang username
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -19,7 +19,8 @@ export default function SignInForm() {
     setLoading(true);
 
     try {
-      const userData = await authService.login(email, password);
+      // Gửi tên đăng nhập và mật khẩu thay vì email
+      const userData = await authService.login(username, password);
       localStorage.setItem("user", JSON.stringify(userData));
       window.location.href = "/";
     } catch (err: any) {
@@ -31,8 +32,7 @@ export default function SignInForm() {
 
   return (
     <div className="flex flex-col flex-1">
-      <div className="w-full max-w-md pt-10 mx-auto">
-      </div>
+      <div className="w-full max-w-md pt-10 mx-auto"></div>
       <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
         <div>
           <div className="mb-5 sm:mb-8">
@@ -49,15 +49,15 @@ export default function SignInForm() {
             <form onSubmit={handleSubmit}>
               <div className="space-y-6">
                 <div>
-                  <Label>Email <span className="text-error-500">*</span></Label>
+                  <Label>Tên đăng nhập <span className="text-error-500">*</span></Label>
                   <Input
-                    placeholder="info@gmail.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Nhập tên đăng nhập"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
                   />
                 </div>
                 <div>
-                  <Label>Password <span className="text-error-500">*</span></Label>
+                  <Label>Mật khẩu <span className="text-error-500">*</span></Label>
                   <div className="relative">
                     <Input
                       type={showPassword ? "text" : "password"}
