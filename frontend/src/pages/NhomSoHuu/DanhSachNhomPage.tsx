@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router";
 
 interface NhomDongSoHuu {
@@ -15,8 +15,7 @@ interface NhomDongSoHuu {
 const DanhSachNhomPage: React.FC = () => {
   const navigate = useNavigate();
 
-  // Dữ liệu mẫu - danh sách các nhóm user đang tham gia
-  const [danhSachNhom, setDanhSachNhom] = useState<NhomDongSoHuu[]>([
+  const [danhSachNhom] = useState<NhomDongSoHuu[]>([
     {
       nhomId: 1,
       tenNhom: "Nhóm Đồng Sở Hữu EV 01",
@@ -35,16 +34,6 @@ const DanhSachNhomPage: React.FC = () => {
       soThanhVien: 4,
       soDuQuy: 8000000,
       tyLeSoHuu: 25,
-      vaiTro: 'ThanhVien'
-    },
-    {
-      nhomId: 3,
-      tenNhom: "Nhóm Xe Điện Công Nghệ",
-      ngayTao: "2023-12-10",
-      trangThai: 'Ngung',
-      soThanhVien: 2,
-      soDuQuy: 0,
-      tyLeSoHuu: 50,
       vaiTro: 'ThanhVien'
     }
   ]);
@@ -76,9 +65,14 @@ const DanhSachNhomPage: React.FC = () => {
     navigate(`/nhom/${nhomId}`);
   };
 
+  const handleQuayLai = () => {
+    navigate('/nhom-so-huu');
+  };
+
   return (
     <div className="p-6 bg-[#f8fafc] min-h-screen">
       <div className="mb-6">
+
         <h1 className="text-2xl font-bold text-gray-800 mb-2">Danh sách nhóm đồng sở hữu</h1>
         <p className="text-gray-600">Chọn một nhóm để xem chi tiết và quản lý</p>
       </div>
@@ -122,24 +116,18 @@ const DanhSachNhomPage: React.FC = () => {
               </div>
             </div>
 
-            <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-sm font-medium transition-colors">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleChonNhom(nhom.nhomId);
+              }}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-sm font-medium transition-colors"
+            >
               Xem chi tiết
             </button>
           </div>
         ))}
       </div>
-
-      {/* Thông báo nếu không có nhóm nào */}
-      {danhSachNhom.length === 0 && (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
-          <div className="text-gray-400 text-6xl mb-4">👥</div>
-          <h3 className="text-lg font-semibold text-gray-800 mb-2">Bạn chưa tham gia nhóm nào</h3>
-          <p className="text-gray-600 mb-4">Tham gia một nhóm đồng sở hữu để bắt đầu trải nghiệm</p>
-          <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg text-sm font-medium">
-            Tìm nhóm
-          </button>
-        </div>
-      )}
     </div>
   );
 };
