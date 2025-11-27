@@ -40,6 +40,10 @@ import TheoDoiVaGiamSatPage from './pages/TheoDoiVaGiamSatPage';
 import BaoCaoPage from './pages/BaoCaoPage';
 import QLNhomXeDongSoHuuPage from './pages/QLNhomXeDongSoHuuPage';
 import ChiTietNhomPage from './pages/ChiTietNhomPage';
+import DichVuLayout from "./pages/TrungTamDichVu/DichVuLayout";
+import LichHenDichVu from "./pages/LichHenDichVu";
+import QuanLyHoSoChiPhi from "./pages/QuanLyHoSoChiPhi";
+
 
 export default function App() {
   return (
@@ -97,6 +101,23 @@ export default function App() {
 
           {/* Tables */}
           <Route path="/basic-tables" element={<BasicTables />} />
+
+           {/* Lịch hẹn dịch vụ*/}
+           <Route path="/lich-hen-dich-vu" element={<LichHenDichVu/>} />
+
+           {/* Quản lý hồ sơ & chi phí*/}
+           <Route path="/ho-so-chi-phi" element={<QuanLyHoSoChiPhi/>} />
+
+           {/* Trung tâm dịch vụ - Sử dụng layout riêng */}
+                   <Route
+                     path="/dich-vu/*"
+                     element={
+                       <RequireAuth>
+                         <DichVuLayout />
+                       </RequireAuth>
+                     }
+                   />
+
 
           {/* Ui Elements */}
           <Route path="/alerts" element={<Alerts />} />
