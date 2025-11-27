@@ -160,7 +160,7 @@ const ChiTietNhomPage: React.FC = () => {
         <nav className="flex mb-4" aria-label="Breadcrumb">
           <ol className="inline-flex items-center space-x-1 md:space-x-3">
             <li className="inline-flex items-center">
-              <Link to="/quan-ly/nhom-xe" className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">
+              <Link to="/admin" className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">
                 Nhóm xe đồng sở hữu
               </Link>
             </li>
@@ -179,14 +179,8 @@ const ChiTietNhomPage: React.FC = () => {
               {nhom.tenNhom}
             </h1>
             <p className="text-gray-600 dark:text-gray-400">
-              Thông tin chi tiết nhóm đồng sở hữu (Chế độ xem)
+              Thông tin chi tiết nhóm đồng sở hữu
             </p>
-          </div>
-          <div className="text-sm text-gray-500 dark:text-gray-400 bg-yellow-50 dark:bg-yellow-900/20 px-3 py-2 rounded-lg border border-yellow-200 dark:border-yellow-800">
-            <svg className="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            Chế độ xem - Chỉ được phép xem thông tin
           </div>
         </div>
       </div>

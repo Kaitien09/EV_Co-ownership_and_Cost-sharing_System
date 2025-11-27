@@ -32,6 +32,9 @@ const navItems: NavItem[] = [
     name: "Trang chủ", path: "/",
   },
   {
+      name: "Hợp đồng",
+      path:"/hop-dong",},
+  {
     icon: <CalenderIcon />,
     name: "Đặt lịch",
     path: "/calendar",
@@ -77,7 +80,7 @@ const navItems: NavItem[] = [
   },
     {
         name: "Quản lý hợp đồng pháp lý điện tử",
-        path: "admin/ql-hd",
+        path: "admin/hop-dong-phap-ly",
       },
       {
         name: "Quản lý Check-in/Check-out",

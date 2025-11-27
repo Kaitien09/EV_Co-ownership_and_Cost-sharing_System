@@ -34,7 +34,7 @@ export default function UserAvatarCard() {
   if (!chuXe) return <div>Không tìm thấy thông tin chủ xe</div>;
 
   return (
-    <div className="p-6 border border-gray-200 rounded-2xl dark:border-gray-800 bg-white shadow-sm w-full mx-auto space-y-6">
+    <div className="p-6 border border-gray-200 rounded-2xl dark:border-gray-800 bg-white shadow-sm w-full mx-auto space-y-6 flex flex-col items-center justify-center text-center">
 
       {/* Avatar mặc định */}
       <div className="w-24 h-24 rounded-full overflow-hidden border border-gray-300">

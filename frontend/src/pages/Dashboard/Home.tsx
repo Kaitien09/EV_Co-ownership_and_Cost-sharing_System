@@ -1,39 +1,468 @@
-import EcommerceMetrics from "../../components/ecommerce/EcommerceMetrics";
-import MonthlySalesChart from "../../components/ecommerce/MonthlySalesChart";
-import StatisticsChart from "../../components/ecommerce/StatisticsChart";
-import MonthlyTarget from "../../components/ecommerce/MonthlyTarget";
-import RecentOrders from "../../components/ecommerce/RecentOrders";
-import DemographicCard from "../../components/ecommerce/DemographicCard";
+import { useState, useEffect } from "react";
 import PageMeta from "../../components/common/PageMeta";
 
+// Mock data - Thay thế bằng API thực tế của bạn
+const mockUserBookings = [
+  { id: 1, licensePlate: "29A-12345", startDate: "2024-01-15T08:00:00", endDate: "2024-01-15T17:00:00", distance: 120 },
+  { id: 2, licensePlate: "29A-67890", startDate: "2024-01-18T09:00:00", endDate: "2024-01-18T16:00:00", distance: 85 },
+  { id: 3, licensePlate: "29A-12345", startDate: "2024-01-22T07:00:00", endDate: "2024-01-22T18:00:00", distance: 150 },
+  { id: 4, licensePlate: "29A-98765", startDate: "2024-01-25T10:00:00", endDate: "2024-01-25T15:00:00", distance: 60 },
+  { id: 5, licensePlate: "29A-67890", startDate: "2024-01-28T08:30:00", endDate: "2024-01-28T17:30:00", distance: 110 },
+];
+
+// Dữ liệu quãng đường theo xe
+const mockDistanceData = [
+  { vehicle: "29A-12345", userDistance: 270, totalDistance: 800, ownership: 30 },
+  { vehicle: "29A-67890", userDistance: 195, totalDistance: 600, ownership: 25 },
+  { vehicle: "29A-98765", userDistance: 60, totalDistance: 400, ownership: 15 },
+];
+
+// Dữ liệu thời gian sử dụng theo ngày trong tuần cho từng xe
+const mockUsageData = [
+  {
+    day: "Thứ 2",
+    vehicles: [
+      { licensePlate: "29A-12345", hours: 4 },
+      { licensePlate: "29A-67890", hours: 2 },
+      { licensePlate: "29A-98765", hours: 0 }
+    ]
+  },
+  {
+    day: "Thứ 3",
+    vehicles: [
+      { licensePlate: "29A-12345", hours: 3 },
+      { licensePlate: "29A-67890", hours: 6 },
+      { licensePlate: "29A-98765", hours: 1 }
+    ]
+  },
+  {
+    day: "Thứ 4",
+    vehicles: [
+      { licensePlate: "29A-12345", hours: 8 },
+      { licensePlate: "29A-67890", hours: 0 },
+      { licensePlate: "29A-98765", hours: 2 }
+    ]
+  },
+  {
+    day: "Thứ 5",
+    vehicles: [
+      { licensePlate: "29A-12345", hours: 2 },
+      { licensePlate: "29A-67890", hours: 5 },
+      { licensePlate: "29A-98765", hours: 3 }
+    ]
+  },
+  {
+    day: "Thứ 6",
+    vehicles: [
+      { licensePlate: "29A-12345", hours: 7 },
+      { licensePlate: "29A-67890", hours: 4 },
+      { licensePlate: "29A-98765", hours: 1 }
+    ]
+  },
+  {
+    day: "Thứ 7",
+    vehicles: [
+      { licensePlate: "29A-12345", hours: 9 },
+      { licensePlate: "29A-67890", hours: 3 },
+      { licensePlate: "29A-98765", hours: 0 }
+    ]
+  },
+  {
+    day: "CN",
+    vehicles: [
+      { licensePlate: "29A-12345", hours: 1 },
+      { licensePlate: "29A-67890", hours: 2 },
+      { licensePlate: "29A-98765", hours: 3 }
+    ]
+  },
+];
+
+// Màu sắc cho từng xe
+const vehicleColors: { [key: string]: string } = {
+  "29A-12345": "#FF6B6B", // Đỏ cam
+  "29A-67890": "#4ECDC4", // Xanh ngọc
+  "29A-98765": "#FFD93D", // Vàng
+};
+
 export default function Home() {
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [bookings, setBookings] = useState(mockUserBookings);
+  const [distanceData, setDistanceData] = useState(mockDistanceData);
+  const [usageData, setUsageData] = useState(mockUsageData);
+
+  // Lấy ngày có lịch trong tháng
+  const getBookedDates = () => {
+    const bookedDates = new Set();
+    bookings.forEach(booking => {
+      const date = new Date(booking.startDate).getDate();
+      bookedDates.add(date);
+    });
+    return bookedDates;
+  };
+
+  // Tạo lịch tháng
+  const renderMiniCalendar = () => {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const daysInMonth = lastDay.getDate();
+    const startingDay = firstDay.getDay();
+
+    const bookedDates = getBookedDates();
+
+    const days = [];
+
+    // Ô trống cho các ngày đầu tháng
+    for (let i = 0; i < startingDay; i++) {
+      days.push(<div key={`empty-${i}`} className="w-8 h-8"></div>);
+    }
+
+    // Các ngày trong tháng
+    for (let day = 1; day <= daysInMonth; day++) {
+      const isBooked = bookedDates.has(day);
+      const isToday = new Date().getDate() === day &&
+                     new Date().getMonth() === month &&
+                     new Date().getFullYear() === year;
+
+      days.push(
+        <div
+          key={day}
+          className={`w-8 h-8 flex items-center justify-center text-sm rounded-full border ${
+            isToday
+              ? 'bg-blue-500 text-white border-blue-500'
+              : isBooked
+              ? 'bg-green-100 text-green-800 border-green-300'
+              : 'border-gray-200 text-gray-700'
+          }`}
+        >
+          {day}
+        </div>
+      );
+    }
+
+    return days;
+  };
+
+  const formatDateTime = (dateString: string) => {
+    const date = new Date(dateString);
+    return {
+      date: date.toLocaleDateString('vi-VN'),
+      time: date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
+    };
+  };
+
+  const calculateUsageHours = (startDate: string, endDate: string) => {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const diffMs = end.getTime() - start.getTime();
+    return Math.round(diffMs / (1000 * 60 * 60));
+  };
+
+  // Tính toán điểm cho biểu đồ đường của từng xe
+  const calculateLinePoints = (vehiclePlate: string) => {
+    const vehicleData = usageData.map(day =>
+      day.vehicles.find(v => v.licensePlate === vehiclePlate)?.hours || 0
+    );
+
+    const maxHours = Math.max(...vehicleData);
+    if (maxHours === 0) return "";
+
+    const points = vehicleData.map((hours, index) => {
+      const x = (index / (vehicleData.length - 1)) * 100;
+      const y = 100 - (hours / maxHours) * 80; // Để lại 20% khoảng trống ở trên
+      return `${x},${y}`;
+    }).join(' ');
+    return points;
+  };
+
+  // Lấy tổng thời gian sử dụng của một xe trong tuần
+  const getTotalHoursByVehicle = (vehiclePlate: string) => {
+    return usageData.reduce((total, day) => {
+      const vehicle = day.vehicles.find(v => v.licensePlate === vehiclePlate);
+      return total + (vehicle?.hours || 0);
+    }, 0);
+  };
+
   return (
     <>
       <PageMeta
-        title="React.js Ecommerce Dashboard | TailAdmin - React.js Admin Dashboard Template"
-        description="This is React.js Ecommerce Dashboard page for TailAdmin - React.js Tailwind CSS Admin Dashboard Template"
+        title="Dashboard Quản lý Đồng Sở hữu Xe | Hệ thống chia sẻ chi phí xe điện"
+        description="Dashboard quản lý đồng sở hữu và chia sẻ chi phí xe điện"
       />
-      <div className="grid grid-cols-12 gap-4 md:gap-6">
-        <div className="col-span-12 space-y-6 xl:col-span-7">
-          <EcommerceMetrics />
 
-          <MonthlySalesChart />
+      <div className="grid grid-cols-12 gap-6">
+        {/* Bên trái - Lịch và danh sách lịch đặt */}
+        <div className="col-span-12 lg:col-span-6 space-y-6">
+          {/* Lịch nhỏ */}
+          <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-800">
+                {currentDate.toLocaleDateString('vi-VN', { month: 'long', year: 'numeric' })}
+              </h3>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1))}
+                  className="p-1 hover:bg-gray-100 rounded"
+                >
+                  ‹
+                </button>
+                <button
+                  onClick={() => setCurrentDate(new Date())}
+                  className="px-2 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
+                >
+                  Hôm nay
+                </button>
+                <button
+                  onClick={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1))}
+                  className="p-1 hover:bg-gray-100 rounded"
+                >
+                  ›
+                </button>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-7 gap-1 mb-2">
+              {['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'].map(day => (
+                <div key={day} className="text-center text-sm font-medium text-gray-500 py-1">
+                  {day}
+                </div>
+              ))}
+            </div>
+
+            <div className="grid grid-cols-7 gap-1">
+              {renderMiniCalendar()}
+            </div>
+
+            <div className="mt-4 flex items-center gap-4 text-sm">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-green-100 border border-green-300 rounded"></div>
+                <span className="text-gray-600">Có lịch đặt</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-blue-500 rounded"></div>
+                <span className="text-gray-600">Hôm nay</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Danh sách lịch đặt của tôi */}
+          <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">Lịch đặt của tôi</h3>
+            <div className="space-y-3">
+              {bookings.slice(0, 10).map(booking => {
+                const start = formatDateTime(booking.startDate);
+                const end = formatDateTime(booking.endDate);
+                const usageHours = calculateUsageHours(booking.startDate, booking.endDate);
+
+                return (
+                  <div key={booking.id} className="flex items-center justify-between p-3 border border-gray-100 rounded-lg hover:bg-gray-50">
+                    <div className="flex items-center gap-3">
+                      <div
+                        className="w-10 h-10 rounded-lg flex items-center justify-center"
+                        style={{ backgroundColor: `${vehicleColors[booking.licensePlate]}20` }}
+                      >
+                        <span
+                          className="font-semibold text-sm"
+                          style={{ color: vehicleColors[booking.licensePlate] }}
+                        >
+                          🚗
+                        </span>
+                      </div>
+                      <div>
+                        <div
+                          className="font-medium"
+                          style={{ color: vehicleColors[booking.licensePlate] }}
+                        >
+                          {booking.licensePlate}
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          {start.date} • {start.time} - {end.time}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="font-medium text-gray-800">{usageHours}h</div>
+                      <div className="text-sm text-gray-500">{booking.distance}km</div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
 
-        <div className="col-span-12 xl:col-span-5">
-          <MonthlyTarget />
-        </div>
+        {/* Bên phải - Biểu đồ thống kê */}
+        <div className="col-span-12 lg:col-span-6 space-y-6">
+          {/* Biểu đồ cột ngang - Quãng đường vs Tỷ lệ sở hữu */}
+          <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">
+              Quãng đường sử dụng vs Tỷ lệ sở hữu
+            </h3>
+            <div className="space-y-4">
+              {distanceData.map((item, index) => (
+                <div key={index} className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span
+                      className="font-medium"
+                      style={{ color: vehicleColors[item.vehicle] }}
+                    >
+                      {item.vehicle}
+                    </span>
+                    <span className="text-gray-500">
+                      {item.userDistance}km / {item.totalDistance}km ({item.ownership}% sở hữu)
+                    </span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-3">
+                    <div
+                      className="h-3 rounded-full"
+                      style={{
+                        width: `${(item.userDistance / item.totalDistance) * 100}%`,
+                        backgroundColor: vehicleColors[item.vehicle]
+                      }}
+                    ></div>
+                  </div>
+                  <div className="flex justify-between text-xs text-gray-500">
+                    <span>Tỷ lệ sử dụng: {Math.round((item.userDistance / item.totalDistance) * 100)}%</span>
+                    <span>Còn lại: {item.totalDistance - item.userDistance}km</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
 
-        <div className="col-span-12">
-          <StatisticsChart />
-        </div>
+          {/* Biểu đồ đường - Thời gian sử dụng theo ngày trong tuần */}
+          <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">
+              Thời gian sử dụng xe trong tuần (giờ/ngày)
+            </h3>
+            <div className="h-64 relative">
+              {/* Biểu đồ đường */}
+              <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                {/* Đường lưới ngang */}
+                {[0, 20, 40, 60, 80, 100].map((y, index) => (
+                  <line
+                    key={`grid-h-${index}`}
+                    x1="0"
+                    y1={y}
+                    x2="100"
+                    y2={y}
+                    stroke="#e5e7eb"
+                    strokeWidth="0.5"
+                  />
+                ))}
 
-        <div className="col-span-12 xl:col-span-5">
-          <DemographicCard />
-        </div>
+                {/* Đường lưới dọc */}
+                {usageData.map((_, index) => {
+                  const x = (index / (usageData.length - 1)) * 100;
+                  return (
+                    <line
+                      key={`grid-v-${index}`}
+                      x1={x}
+                      y1="0"
+                      x2={x}
+                      y2="100"
+                      stroke="#e5e7eb"
+                      strokeWidth="0.5"
+                    />
+                  );
+                })}
 
-        <div className="col-span-12 xl:col-span-7">
-          <RecentOrders />
+                {/* Vẽ đường cho từng xe */}
+                {distanceData.map(vehicle => (
+                  <polyline
+                    key={vehicle.vehicle}
+                    fill="none"
+                    stroke={vehicleColors[vehicle.vehicle]}
+                    strokeWidth="1.5" // Nét mảnh hơn
+                    points={calculateLinePoints(vehicle.vehicle)}
+                  />
+                ))}
+
+                {/* Điểm trên biểu đồ cho từng xe */}
+                {distanceData.map(vehicle => {
+                  const vehicleData = usageData.map(day =>
+                    day.vehicles.find(v => v.licensePlate === vehicle.vehicle)?.hours || 0
+                  );
+
+                  const maxHours = Math.max(...vehicleData);
+                  if (maxHours === 0) return null;
+
+                  return vehicleData.map((hours, index) => {
+                    if (hours === 0) return null;
+
+                    const x = (index / (vehicleData.length - 1)) * 100;
+                    const y = 100 - (hours / maxHours) * 80;
+
+                    return (
+                      <circle
+                        key={`${vehicle.vehicle}-${index}`}
+                        cx={x}
+                        cy={y}
+                        r="1.5" // Điểm nhỏ hơn
+                        fill={vehicleColors[vehicle.vehicle]}
+                        className="hover:r-2 transition-all"
+                      />
+                    );
+                  });
+                })}
+              </svg>
+
+              {/* Trục X - Các ngày trong tuần */}
+              <div className="absolute bottom-0 left-0 right-0 flex justify-between text-xs text-gray-500 px-2">
+                {usageData.map((day, index) => (
+                  <div key={index} className="text-center flex-1">
+                    {day.day}
+                  </div>
+                ))}
+              </div>
+
+              {/* Trục Y - Giờ sử dụng */}
+              <div className="absolute left-0 top-0 bottom-0 flex flex-col justify-between text-xs text-gray-500 py-2">
+                <span>10h</span>
+                <span>8h</span>
+                <span>6h</span>
+                <span>4h</span>
+                <span>2h</span>
+                <span>0h</span>
+              </div>
+            </div>
+
+            {/* Chú thích màu xe */}
+            <div className="mt-4 flex items-center justify-center gap-4 text-xs flex-wrap">
+              {distanceData.map(vehicle => (
+                <div key={vehicle.vehicle} className="flex items-center gap-2">
+                  <div
+                    className="w-3 h-1.5 rounded-full"
+                    style={{ backgroundColor: vehicleColors[vehicle.vehicle] }}
+                  ></div>
+                  <span className="text-gray-600">
+                    {vehicle.vehicle} ({getTotalHoursByVehicle(vehicle.vehicle)}h/tuần)
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            {/* Thống kê chi tiết */}
+            <div className="mt-4 grid grid-cols-7 gap-2 text-xs">
+              {usageData.map((day, index) => (
+                <div key={index} className="text-center">
+                  <div className="text-gray-400 mb-1">{day.day}</div>
+                  {day.vehicles.map(vehicle => (
+                    vehicle.hours > 0 && (
+                      <div
+                        key={vehicle.licensePlate}
+                        className="text-[10px] font-medium mb-0.5"
+                        style={{ color: vehicleColors[vehicle.licensePlate] }}
+                      >
+                        {vehicle.hours}h
+                      </div>
+                    )
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </>
