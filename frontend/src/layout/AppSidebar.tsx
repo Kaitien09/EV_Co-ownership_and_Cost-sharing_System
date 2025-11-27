@@ -71,6 +71,29 @@ const navItems: NavItem[] = [
       { name: "Lịch sử bảo dưỡng", path: "/blank", pro: false },
     ],
   },
+    {
+        name: "Quản lý hợp đồng pháp lý điện tử",
+        path: "/ql-hd",
+      },
+      {
+        name: "Quản lý Check-in/Check-out",
+        path: "/ql-check",
+      },
+      {
+        name: "Quản lý dịch vụ xe",
+        path: "/ql-dv",
+      },
+      {
+        name: "Theo dõi và giám sát tranh chấp",
+        path: "/theo-doi",
+      },
+      {
+        name: "Báo cáo tài chính",
+        path: "/bao-cao",
+      },
+      {
+          name: "Quản lý nhóm đồng sở hữu",
+          path:"/quan-ly/nhom-xe",},
 ];
 
 const othersItems: NavItem[] = [

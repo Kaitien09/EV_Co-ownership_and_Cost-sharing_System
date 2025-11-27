@@ -28,7 +28,7 @@ public class ChuXeController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/nguoi-dung/{nguoiDungId}")
+    @GetMapping("/chu-xe/{nguoiDungId}")
     public ResponseEntity<ChuXe> getChuXeByNguoiDungId(@PathVariable Integer nguoiDungId) {
         Optional<ChuXe> chuXe = chuXeService.getChuXeByNguoiDungId(nguoiDungId);
         return chuXe.map(ResponseEntity::ok)

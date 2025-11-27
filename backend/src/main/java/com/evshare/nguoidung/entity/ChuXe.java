@@ -41,6 +41,7 @@ public class ChuXe {
     @Column(name = "gplx_anh", length = 255)
     private String gplxAnh;
 
+
     @OneToMany(mappedBy = "chuXe")
     private List<ThanhVienNhom> thanhVienNhoms;
 

@@ -2,6 +2,7 @@ package com.evshare.nguoidung.service;
 
 import com.evshare.nguoidung.entity.NguoiDung;
 import com.evshare.nguoidung.entity.ChuXe;
+import com.evshare.nguoidung.entity.LoaiNguoiDung;
 import com.evshare.nguoidung.entity.TrangThaiNguoiDung;
 import com.evshare.nguoidung.repository.NguoiDungRepository;
 import com.evshare.nguoidung.repository.ChuXeRepository;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -20,9 +22,19 @@ public class AuthService {
     private final ChuXeRepository chuXeRepository;
     private final PasswordEncoder passwordEncoder;
 
+    // ===== Helper để thêm thông tin ChuXe vào map trả về =====
+    private void addChuXeInfoToResult(ChuXe chuXe, Map<String, Object> result) {
+        result.put("chuXeId", chuXe.getChuXeId());
+        result.put("hoTen", chuXe.getHoTen());
+        result.put("cccd", chuXe.getCccd());
+        result.put("sdt", chuXe.getSdt());
+        result.put("gplx", chuXe.getGplx());
+        result.put("gplxAnh", chuXe.getGplxAnh());
+        result.put("diaChi", chuXe.getDiaChi());
+    }
+
     @Transactional
     public Map<String, Object> dangKy(NguoiDung nguoiDung, ChuXe chuXe) {
-        // Kiểm tra trùng tên đăng nhập và email
         if (nguoiDungRepository.existsByTenDangNhap(nguoiDung.getTenDangNhap())) {
             throw new RuntimeException("Tên đăng nhập đã tồn tại");
         }
@@ -30,25 +42,27 @@ public class AuthService {
             throw new RuntimeException("Email đã tồn tại");
         }
 
-        // Set trạng thái HOAT_DONG để có thể login ngay
         nguoiDung.setTrangThai(TrangThaiNguoiDung.HOAT_DONG);
-
-        // Mã hóa mật khẩu và set ngày tạo
         nguoiDung.setMatKhau(passwordEncoder.encode(nguoiDung.getMatKhau()));
         nguoiDung.setNgayTao(LocalDateTime.now());
 
-        // Lưu người dùng
         NguoiDung savedNguoiDung = nguoiDungRepository.save(nguoiDung);
 
-        // Tạo chủ xe
-        chuXe.setNguoiDung(savedNguoiDung);
-        ChuXe savedChuXe = chuXeRepository.save(chuXe);
+        Map<String, Object> result = new HashMap<>();
+        result.put("message", "Đăng ký thành công");
+        result.put("nguoiDungId", savedNguoiDung.getNguoiDungId());
+        result.put("loaiNguoiDung", savedNguoiDung.getLoaiNguoiDung());
+        result.put("tenDangNhap", savedNguoiDung.getTenDangNhap());
+        result.put("email", savedNguoiDung.getEmail());
 
-        return Map.of(
-                "message", "Đăng ký thành công",
-                "nguoiDungId", savedNguoiDung.getNguoiDungId(),
-                "chuXeId", savedChuXe.getChuXeId()
-        );
+        // Chỉ tạo và trả thông tin ChuXe nếu user là KHACH_HANG
+        if (nguoiDung.getLoaiNguoiDung() == LoaiNguoiDung.KHACH_HANG) {
+            chuXe.setNguoiDung(savedNguoiDung);
+            ChuXe savedChuXe = chuXeRepository.save(chuXe);
+            addChuXeInfoToResult(savedChuXe, result);
+        }
+
+        return result;
     }
 
     public Map<String, Object> dangNhap(String tenDangNhap, String matKhau) {
@@ -63,19 +77,21 @@ public class AuthService {
             throw new RuntimeException("Tài khoản đã bị khóa");
         }
 
-        // Lấy thông tin chủ xe
-        ChuXe chuXe = chuXeRepository.findByNguoiDungId(nguoiDung.getNguoiDungId())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy thông tin chủ xe"));
+        Map<String, Object> result = new HashMap<>();
+        result.put("message", "Đăng nhập thành công");
+        result.put("nguoiDungId", nguoiDung.getNguoiDungId());
+        result.put("loaiNguoiDung", nguoiDung.getLoaiNguoiDung());
+        result.put("tenDangNhap", nguoiDung.getTenDangNhap());
+        result.put("email", nguoiDung.getEmail());
 
-        return Map.of(
-                "message", "Đăng nhập thành công",
-                "nguoiDungId", nguoiDung.getNguoiDungId(),
-                "chuXeId", chuXe.getChuXeId(),
-                "loaiNguoiDung", nguoiDung.getLoaiNguoiDung(),
-                "tenDangNhap", nguoiDung.getTenDangNhap(),
-                "hoTen", chuXe.getHoTen(),
-                "email", nguoiDung.getEmail()
-        );
+        // Chỉ lấy ChuXe nếu KHACH_HANG
+        if (nguoiDung.getLoaiNguoiDung() == LoaiNguoiDung.KHACH_HANG) {
+            ChuXe chuXe = chuXeRepository.findByNguoiDungId(nguoiDung.getNguoiDungId())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy thông tin chủ xe"));
+            addChuXeInfoToResult(chuXe, result);
+        }
+
+        return result;
     }
 
     @Transactional
