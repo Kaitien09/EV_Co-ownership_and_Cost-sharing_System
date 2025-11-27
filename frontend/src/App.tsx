@@ -29,19 +29,23 @@ import QuanLyThanhVienPage from './pages/NhomSoHuu/QuanLyThanhVienPage';
 import BoPhieuPage from './pages/NhomSoHuu/BoPhieuPage';
 import QuyChungPage from './pages/NhomSoHuu/QuyChungPage';
 import AIPhanTichPage from './pages/NhomSoHuu/AIPhanTichPage';
-import ThanhToanPage from "./pages/ChiPhi/ThanhToanPage";
-import ChiTietThanhToanPage from "./pages/ChiPhi/ChiTietThanhToanPage";
-import TaoChiPhiPage from "./pages/ChiPhi/TaoChiPhiPage";
+import ThanhToanPage from './pages/ChiPhi/ThanhToanPage';
+import ChiTietThanhToanPage from './pages/ChiPhi/ChiTietThanhToanPage';
+import TaoChiPhiPage from './pages/ChiPhi/TaoChiPhiPage';
 import RequireAuth from "./components/auth/RequireAuth";
-import DichVuLayout from "./pages/TrungTamDichVu/DichVuLayout";
-import LichHenDichVu from "./pages/LichHenDichVu";
-import QuanLyHoSoChiPhi from "./pages/QuanLyHoSoChiPhi";
+import QLHopDongPhapLyPage from './pages/QLHopDongPhapLyPage';
+import QLCheckInVaOutPage from './pages/QLCheckInVaOutPage';
+import QLDichVuXePage from './pages/QLDichVuXePage';
+import TheoDoiVaGiamSatPage from './pages/TheoDoiVaGiamSatPage';
+import BaoCaoPage from './pages/BaoCaoPage';
+import QLNhomXeDongSoHuuPage from './pages/QLNhomXeDongSoHuuPage';
+import ChiTietNhomPage from './pages/ChiTietNhomPage';
 
 export default function App() {
   return (
     <Router>
       <ScrollToTop />
-      <Routes>s
+      <Routes>
         {/* Auth routes */}
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
@@ -76,18 +80,18 @@ export default function App() {
           <Route path="/nhom/:id/quy-chung" element={<QuyChungPage />} />
           <Route path="/nhom/:id/ai-phan-tich" element={<AIPhanTichPage />} />
 
-          {/* Lịch hẹn dịch vụ*/}
-           <Route path="/lich-hen-dich-vu" element={<LichHenDichVu/>} />
-
-           {/* Quản lý hồ sơ & chi phí*/}
-                      <Route path="/ho-so-chi-phi" element={<QuanLyHoSoChiPhi/>} />
-
-
           {/* Chi phí / Thanh toán */}
           <Route path="/thanh-toan" element={<ThanhToanPage />} />
           <Route path="/chi-tiet-thanh-toan/:chiPhiId" element={<ChiTietThanhToanPage />} />
           <Route path="/tao-chi-phi" element={<TaoChiPhiPage />} />
-
+          //
+          <Route path="/ql-check" element={<QLCheckInVaOutPage />} />
+          <Route path="/ql-dv" element={<QLDichVuXePage />} />
+          <Route path="/ql-hd" element={<QLHopDongPhapLyPage />} />
+          <Route path="/theo-doi" element={<TheoDoiVaGiamSatPage />} />
+          <Route path="/bao-cao" element={<BaoCaoPage />} />
+          <Route path="quan-ly/nhom-xe" element={<QLNhomXeDongSoHuuPage />} />
+          <Route path="quan-ly/nhom-xe/:id" element={<ChiTietNhomPage />} />
           {/* Forms */}
           <Route path="/form-elements" element={<FormElements />} />
 
@@ -106,16 +110,6 @@ export default function App() {
           <Route path="/line-chart" element={<LineChart />} />
           <Route path="/bar-chart" element={<BarChart />} />
         </Route>
-
-        {/* Trung tâm dịch vụ - Sử dụng layout riêng */}
-        <Route
-          path="/dich-vu/*"
-          element={
-            <RequireAuth>
-              <DichVuLayout />
-            </RequireAuth>
-          }
-        />
 
         {/* Fallback Route */}
         <Route path="*" element={<NotFound />} />
