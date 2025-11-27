@@ -31,12 +31,6 @@ const navItems: NavItem[] = [
     icon: <GridIcon />,
     name: "Trang chủ", path: "/",
   },
-{
-    icon: <UserCircleIcon />,
-    name: "Hồ sơ",
-    path: "/profile",
-  },
-
   {
     icon: <CalenderIcon />,
     name: "Đặt lịch",
