@@ -4,11 +4,11 @@ import { EyeCloseIcon, EyeIcon } from "../../icons";
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import Button from "../ui/button/Button";
-import { authService } from "../../services/api"; // Import từ service
+import { authService } from "../../services/api";
 
 export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const [username, setUsername] = useState(""); // đổi từ email sang username
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -19,16 +19,31 @@ export default function SignInForm() {
     setLoading(true);
 
     try {
-      // Gửi tên đăng nhập và mật khẩu thay vì email
       const userData = await authService.login(username, password);
+
+      // Lưu user
       localStorage.setItem("user", JSON.stringify(userData));
-      window.location.href = "/";
+
+      // Redirect theo loaiNguoiDung
+      const role = userData.loaiNguoiDung;
+      if (role === "KHACH_HANG") {
+        window.location.href = "/";
+      } else if (role === "ADMIN") {
+        window.location.href = "/admin";
+      } else if (role === "NHAN_VIÊN") {
+        window.location.href = "/nhanvien";
+      } else {
+        window.location.href = "/";
+      }
+
     } catch (err: any) {
       setError(err.message || "Lỗi kết nối server");
     } finally {
       setLoading(false);
     }
   };
+
+
 
   return (
     <div className="flex flex-col flex-1">
