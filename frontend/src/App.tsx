@@ -33,17 +33,10 @@ import ThanhToanPage from './pages/ChiPhi/ThanhToanPage';
 import ChiTietThanhToanPage from './pages/ChiPhi/ChiTietThanhToanPage';
 import TaoChiPhiPage from './pages/ChiPhi/TaoChiPhiPage';
 import RequireAuth from "./components/auth/RequireAuth";
-import QLHopDongPhapLyPage from './pages/admin/QLHopDongPhapLyPage';
-import QLCheckInVaOutPage from './pages/admin/QLCheckInVaOutPage';
-import QLDichVuXePage from './pages/admin/QLDichVuXePage';
-import TheoDoiVaGiamSatPage from './pages/admin/TheoDoiVaGiamSatPage';
-import BaoCaoPage from './pages/admin/BaoCaoPage';
-import QLNhomXeDongSoHuuPage from './pages/admin/QLNhomXeDongSoHuuPage';
-import ChiTietNhomPage from './pages/admin/ChiTietNhomPage';
 import DichVuLayout from "./pages/TrungTamDichVu/DichVuLayout";
 import LichHenDichVu from "./pages/LichHenDichVu";
 import QuanLyHoSoChiPhi from "./pages/QuanLyHoSoChiPhi";
-import ChiTietHopDongPhapLyPage from "./pages/admin/ChiTietHopDongPhapLyPage";
+import AdminLayout from "./pages/admin/AdminLayout";
 
 export default function App() {
   return (
@@ -88,15 +81,7 @@ export default function App() {
           <Route path="/thanh-toan" element={<ThanhToanPage />} />
           <Route path="/chi-tiet-thanh-toan/:chiPhiId" element={<ChiTietThanhToanPage />} />
           <Route path="/tao-chi-phi" element={<TaoChiPhiPage />} />
-          //admin
-          <Route path="/admin/ql-check" element={<QLCheckInVaOutPage />} />
-          <Route path="/admin/ql-dv" element={<QLDichVuXePage />} />
-          <Route path="/admin/theo-doi" element={<TheoDoiVaGiamSatPage />} />
-          <Route path="/admin/bao-cao" element={<BaoCaoPage />} />
-          <Route path="/admin" element={<QLNhomXeDongSoHuuPage />} />
-          <Route path="/admin/:id" element={<ChiTietNhomPage />} />
-          <Route path="/admin/hop-dong-phap-ly" element={<QLHopDongPhapLyPage />} />
-          <Route path="/admin/hop-dong-phap-ly/:id" element={<ChiTietHopDongPhapLyPage />} />
+
           {/* Forms */}
           <Route path="/form-elements" element={<FormElements />} />
 
@@ -108,16 +93,6 @@ export default function App() {
 
            {/* Quản lý hồ sơ & chi phí*/}
            <Route path="/ho-so-chi-phi" element={<QuanLyHoSoChiPhi/>} />
-
-           {/* Trung tâm dịch vụ - Sử dụng layout riêng */}
-                   <Route
-                     path="/dich-vu/*"
-                     element={
-                       <RequireAuth>
-                         <DichVuLayout />
-                       </RequireAuth>
-                     }
-                   />
 
 
           {/* Ui Elements */}
@@ -132,6 +107,23 @@ export default function App() {
           <Route path="/line-chart" element={<LineChart />} />
           <Route path="/bar-chart" element={<BarChart />} />
         </Route>
+
+        <Route
+             path="/dich-vu/*"
+             element={
+               <RequireAuth>
+                 <DichVuLayout />
+               </RequireAuth>
+             }
+           />
+           <Route
+             path="/admin/*"
+             element={
+               <RequireAuth>
+                 <AdminLayout />
+               </RequireAuth>
+             }
+           />
 
         {/* Fallback Route */}
         <Route path="*" element={<NotFound />} />

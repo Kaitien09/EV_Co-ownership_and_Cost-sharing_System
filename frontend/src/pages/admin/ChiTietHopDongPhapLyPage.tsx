@@ -129,7 +129,7 @@ const ChiTietHopDongPhapLyPage: React.FC = () => {
     return <span className={`px-2 py-1 text-xs rounded-full ${status.class}`}>{status.text}</span>;
   };
 
-  const handleBack = () => navigate("/admin/hop-dong-phap-ly");
+  const handleBack = () => navigate("/admin/ql-hd");
 
   if (!hopDong) {
     return (

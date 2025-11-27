@@ -5,11 +5,10 @@ interface CheckInOut {
   bookingId: string;
   customerName: string;
   vehicle: string;
+  groupName: string;
   checkInTime?: string;
   checkOutTime?: string;
   status: 'checked-in' | 'checked-out' | 'pending';
-  staff: string;
-  notes?: string;
 }
 
 const QLCheckInVaOutPage: React.FC = () => {
@@ -19,56 +18,127 @@ const QLCheckInVaOutPage: React.FC = () => {
       bookingId: "BK-2024-001",
       customerName: "Nguyễn Văn A",
       vehicle: "BMW X5 - 51A-12345",
+      groupName: "Nhóm Đồng Sở Hữu A",
       checkInTime: "2024-01-15 08:30",
       checkOutTime: "2024-01-15 17:15",
-      status: 'checked-out',
-      staff: "Nhân viên A",
-      notes: "Xe sạch sẽ, không vấn đề"
+      status: 'checked-out'
     },
     {
       id: "2",
       bookingId: "BK-2024-002",
       customerName: "Trần Thị B",
       vehicle: "Mercedes C300 - 51B-67890",
+      groupName: "Nhóm Đồng Sở Hữu B",
       checkInTime: "2024-01-15 09:00",
-      status: 'checked-in',
-      staff: "Nhân viên B",
-      notes: "Cần thay dầu máy"
+      status: 'checked-in'
     },
     {
       id: "3",
       bookingId: "BK-2024-003",
       customerName: "Lê Văn C",
       vehicle: "Audi Q7 - 51C-54321",
-      status: 'pending',
-      staff: "-"
+      groupName: "Nhóm Đồng Sở Hữu C",
+      checkInTime: "2024-01-16 08:15",
+      checkOutTime: "2024-01-16 18:30",
+      status: 'checked-out'
     },
     {
       id: "4",
       bookingId: "BK-2024-004",
       customerName: "Phạm Thị D",
       vehicle: "Toyota Camry - 51D-98765",
+      groupName: "Nhóm Đồng Sở Hữu D",
       checkInTime: "2024-01-14 10:30",
       checkOutTime: "2024-01-14 16:45",
-      status: 'checked-out',
-      staff: "Nhân viên C",
-      notes: "Đã bảo dưỡng xong"
+      status: 'checked-out'
+    },
+    {
+      id: "5",
+      bookingId: "BK-2024-005",
+      customerName: "Hoàng Văn E",
+      vehicle: "Honda CR-V - 51E-11111",
+      groupName: "Nhóm Đồng Sở Hữu E",
+      checkInTime: "2024-01-17 07:45",
+      status: 'checked-in'
+    },
+    {
+      id: "6",
+      bookingId: "BK-2024-006",
+      customerName: "Vũ Thị F",
+      vehicle: "Ford Ranger - 51F-22222",
+      groupName: "Nhóm Đồng Sở Hữu F",
+      checkInTime: "2024-01-18 08:00",
+      checkOutTime: "2024-01-18 17:30",
+      status: 'checked-out'
+    },
+    {
+      id: "7",
+      bookingId: "BK-2024-007",
+      customerName: "Đặng Văn G",
+      vehicle: "Hyundai Tucson - 51G-33333",
+      groupName: "Nhóm Đồng Sở Hữu G",
+      checkInTime: "2024-01-19 09:15",
+      status: 'checked-in'
+    },
+    {
+      id: "8",
+      bookingId: "BK-2024-008",
+      customerName: "Bùi Thị H",
+      vehicle: "Kia Sorento - 51H-44444",
+      groupName: "Nhóm Đồng Sở Hữu H",
+      checkInTime: "2024-01-20 07:30",
+      checkOutTime: "2024-01-20 16:45",
+      status: 'checked-out'
+    },
+    {
+      id: "9",
+      bookingId: "BK-2024-009",
+      customerName: "Lý Văn I",
+      vehicle: "Mazda CX-5 - 51I-55555",
+      groupName: "Nhóm Đồng Sở Hữu I",
+      checkInTime: "2024-01-21 08:45",
+      status: 'checked-in'
+    },
+    {
+      id: "10",
+      bookingId: "BK-2024-010",
+      customerName: "Trịnh Thị K",
+      vehicle: "VinFast VF8 - 51K-66666",
+      groupName: "Nhóm Đồng Sở Hữu K",
+      checkInTime: "2024-01-22 10:00",
+      checkOutTime: "2024-01-22 18:15",
+      status: 'checked-out'
+    },
+    {
+      id: "11",
+      bookingId: "BK-2024-011",
+      customerName: "Cao Văn L",
+      vehicle: "Chevrolet Colorado - 51L-77777",
+      groupName: "Nhóm Đồng Sở Hữu L",
+      checkInTime: "2024-01-23 07:15",
+      status: 'checked-in'
     }
   ]);
 
-  const [qrData, setQrData] = useState("");
-  const [showScanner, setShowScanner] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
+  // Tính toán dữ liệu cho trang hiện tại
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentRecords = records.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(records.length / itemsPerPage);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'checked-in':
-        return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300';
+        return 'bg-blue-100 text-blue-800 border border-blue-200';
       case 'checked-out':
-        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
+        return 'bg-green-100 text-green-800 border border-green-200';
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300';
+        return 'bg-yellow-100 text-yellow-800 border border-yellow-200';
       default:
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300';
+        return 'bg-gray-100 text-gray-800 border border-gray-200';
     }
   };
 
@@ -85,210 +155,277 @@ const QLCheckInVaOutPage: React.FC = () => {
     }
   };
 
-  const handleCheckIn = (recordId: string) => {
-    setRecords(prev => prev.map(record =>
-      record.id === recordId
-        ? {
-            ...record,
-            status: 'checked-in',
-            checkInTime: new Date().toLocaleString('vi-VN'),
-            staff: "Nhân viên hiện tại"
-          }
-        : record
-    ));
-  };
-
-  const handleCheckOut = (recordId: string) => {
-    setRecords(prev => prev.map(record =>
-      record.id === recordId
-        ? {
-            ...record,
-            status: 'checked-out',
-            checkOutTime: new Date().toLocaleString('vi-VN')
-          }
-        : record
-    ));
-  };
-
-  const handleScanQR = () => {
-    if (qrData) {
-      // Giả lập xử lý QR code
-      const newRecord: CheckInOut = {
-        id: Date.now().toString(),
-        bookingId: `BK-${Date.now()}`,
-        customerName: "Khách hàng từ QR",
-        vehicle: qrData,
-        status: 'pending',
-        staff: "-"
-      };
-      setRecords(prev => [newRecord, ...prev]);
-      setQrData("");
-      setShowScanner(false);
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'checked-in':
+        return (
+          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+          </svg>
+        );
+      case 'checked-out':
+        return (
+          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+          </svg>
+        );
+      case 'pending':
+        return (
+          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+          </svg>
+        );
+      default:
+        return null;
     }
+  };
+
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  // Tạo mảng số trang để hiển thị
+  const getPageNumbers = () => {
+    const pageNumbers = [];
+    const maxVisiblePages = 5;
+
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+    // Điều chỉnh nếu không đủ maxVisiblePages
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pageNumbers.push(i);
+    }
+
+    return pageNumbers;
   };
 
   return (
     <div className="p-6">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Quản lý Check-in/Check-out
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+          Lịch sử Check-in/Check-out
         </h1>
         <p className="text-gray-600 dark:text-gray-400">
-          Quét QR code và quản lý nhận/trả xe
+          Theo dõi lịch sử nhận và trả xe
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* QR Scanner */}
-        <div className="col-span-1">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-              Quét QR Code
-            </h2>
-
-            {showScanner ? (
-              <div className="space-y-4">
-                <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center">
-                  <div className="w-32 h-32 bg-gray-200 dark:bg-gray-700 mx-auto mb-4 flex items-center justify-center">
-                    <span className="text-gray-500 dark:text-gray-400">Camera View</span>
-                  </div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Đưa camera vào QR code để quét
-                  </p>
-                </div>
-
-                <div className="space-y-3">
-                  <input
-                    type="text"
-                    value={qrData}
-                    onChange={(e) => setQrData(e.target.value)}
-                    placeholder="Hoặc nhập mã QR thủ công"
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white"
-                  />
-                  <button
-                    onClick={handleScanQR}
-                    className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
-                  >
-                    Xác nhận QR
-                  </button>
-                  <button
-                    onClick={() => setShowScanner(false)}
-                    className="w-full bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors"
-                  >
-                    Hủy
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <button
-                onClick={() => setShowScanner(true)}
-                className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
-                </svg>
-                Mở máy quét QR
-              </button>
-            )}
-
-            {/* Ký số */}
-            <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-              <h3 className="text-md font-semibold text-gray-900 dark:text-white mb-3">
-                Ký số điện tử
-              </h3>
-              <button className="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors">
-                Ký số biên bản
-              </button>
+      {/* Thống kê tổng quan */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center">
+            <div className="p-3 bg-blue-100 rounded-lg">
+              <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">Đã check-in</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {records.filter(r => r.status === 'checked-in').length}
+              </p>
             </div>
           </div>
         </div>
 
-        {/* Danh sách check-in/out */}
-        <div className="col-span-3">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
-            <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Lịch sử Check-in/Check-out
-              </h2>
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center">
+            <div className="p-3 bg-green-100 rounded-lg">
+              <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
             </div>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="bg-gray-50 dark:bg-gray-700">
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
-                      Booking ID
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
-                      Khách hàng & Xe
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
-                      Check-in
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
-                      Check-out
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
-                      Trạng thái
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
-                      Thao tác
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                  {records.map((record) => (
-                    <tr key={record.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
-                      <td className="px-4 py-3">
-                        <div className="text-sm font-medium text-gray-900 dark:text-white">
-                          {record.bookingId}
-                        </div>
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="text-sm font-medium text-gray-900 dark:text-white">
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">Đã check-out</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {records.filter(r => r.status === 'checked-out').length}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center">
+            <div className="p-3 bg-yellow-100 rounded-lg">
+              <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">Đang chờ</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {records.filter(r => r.status === 'pending').length}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center">
+            <div className="p-3 bg-purple-100 rounded-lg">
+              <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+            </div>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">Tổng số</p>
+              <p className="text-2xl font-bold text-gray-900">{records.length}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Danh sách lịch sử */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+        <div className="p-6 border-b border-gray-200">
+          <div className="flex justify-between items-center">
+            <h2 className="text-lg font-semibold text-gray-900">
+              Lịch sử giao dịch
+            </h2>
+            <div className="text-sm text-gray-500">
+              Trang {currentPage} / {totalPages}
+            </div>
+          </div>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="bg-gray-50 border-b border-gray-200">
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  Mã đặt xe
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  Thông tin
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  Thời gian nhận xe
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  Thời gian trả xe
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  Trạng thái
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {currentRecords.map((record) => (
+                <tr key={record.id} className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4">
+                    <div className="text-sm font-semibold text-gray-900 font-mono">
+                      {record.bookingId}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-start space-x-3">
+                      <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                        <span className="text-white font-semibold text-sm">🚗</span>
+                      </div>
+                      <div>
+                        <div className="text-sm font-semibold text-gray-900">
                           {record.customerName}
                         </div>
-                        <div className="text-sm text-gray-500 dark:text-gray-400">
+                        <div className="text-sm text-gray-600 mt-1">
                           {record.vehicle}
                         </div>
-                      </td>
-                      <td className="px-4 py-3 text-sm text-gray-900 dark:text-white">
-                        {record.checkInTime || "-"}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-gray-900 dark:text-white">
-                        {record.checkOutTime || "-"}
-                      </td>
-                      <td className="px-4 py-3">
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusBadge(record.status)}`}>
-                          {getStatusText(record.status)}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-2">
-                          {record.status === 'pending' && (
-                            <button
-                              onClick={() => handleCheckIn(record.id)}
-                              className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 transition-colors"
-                            >
-                              Check-in
-                            </button>
-                          )}
-                          {record.status === 'checked-in' && (
-                            <button
-                              onClick={() => handleCheckOut(record.id)}
-                              className="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700 transition-colors"
-                            >
-                              Check-out
-                            </button>
-                          )}
-                          <button className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300 text-sm">
-                            Chi tiết
-                          </button>
+                        <div className="text-xs text-gray-500 mt-1">
+                          {record.groupName}
                         </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="text-sm text-gray-900">
+                      {record.checkInTime || (
+                        <span className="text-gray-400">Chưa nhận xe</span>
+                      )}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="text-sm text-gray-900">
+                      {record.checkOutTime || (
+                        <span className="text-gray-400">Chưa trả xe</span>
+                      )}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center">
+                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getStatusBadge(record.status)}`}>
+                        <span className="mr-1.5">
+                          {getStatusIcon(record.status)}
+                        </span>
+                        {getStatusText(record.status)}
+                      </span>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Footer với phân trang */}
+        <div className="px-6 py-4 border-t border-gray-200 bg-gray-50">
+          <div className="flex items-center justify-between">
+            <div className="text-sm text-gray-500">
+              Hiển thị {currentRecords.length} trong tổng số {records.length} kết quả
+            </div>
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={handlePrevPage}
+                disabled={currentPage === 1}
+                className={`px-3 py-1 text-sm rounded ${
+                  currentPage === 1
+                    ? 'text-gray-400 cursor-not-allowed'
+                    : 'text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                Trước
+              </button>
+
+              {getPageNumbers().map((pageNumber) => (
+                <button
+                  key={pageNumber}
+                  onClick={() => handlePageChange(pageNumber)}
+                  className={`px-3 py-1 text-sm rounded ${
+                    currentPage === pageNumber
+                      ? 'bg-blue-600 text-white'
+                      : 'text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  {pageNumber}
+                </button>
+              ))}
+
+              <button
+                onClick={handleNextPage}
+                disabled={currentPage === totalPages}
+                className={`px-3 py-1 text-sm rounded ${
+                  currentPage === totalPages
+                    ? 'text-gray-400 cursor-not-allowed'
+                    : 'text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                Sau
+              </button>
             </div>
           </div>
         </div>

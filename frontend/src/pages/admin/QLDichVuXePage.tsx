@@ -91,7 +91,7 @@ const QLDichVuXePage: React.FC = () => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300';
+return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300';
       case 'in-progress':
         return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300';
       case 'completed':
@@ -168,8 +168,7 @@ const QLDichVuXePage: React.FC = () => {
               </div>
             </div>
           </div>
-
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow">
+<div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow">
             <div className="flex items-center">
               <div className="p-2 bg-green-100 rounded-lg dark:bg-green-900">
                 <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -221,7 +220,7 @@ const QLDichVuXePage: React.FC = () => {
             <div className="flex items-center">
               <div className="p-2 bg-red-100 rounded-lg dark:bg-red-900">
                 <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </div>
               <div className="ml-4">
@@ -288,7 +287,7 @@ const QLDichVuXePage: React.FC = () => {
             <div className="p-4 border-b border-gray-200 dark:border-gray-700">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
                 Danh sách dịch vụ
-              </h2>
+</h2>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">
@@ -343,7 +342,7 @@ const QLDichVuXePage: React.FC = () => {
                         </td>
                         <td className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-white">
                           {formatCurrency(service.cost)}
-                        </td>
+</td>
                         <td className="px-4 py-3">
                           <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusBadge(service.status)}`}>
                             {getStatusText(service.status)}
@@ -404,7 +403,7 @@ const QLDichVuXePage: React.FC = () => {
         {/* Chi tiết dịch vụ */}
         <div className="col-span-1">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow sticky top-6">
-            <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+<div className="p-4 border-b border-gray-200 dark:border-gray-700">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
                 Chi tiết dịch vụ
               </h2>
@@ -468,7 +467,7 @@ const QLDichVuXePage: React.FC = () => {
                       Thời gian
                     </label>
                     <p className="text-sm text-gray-900 dark:text-white">
-                      Bắt đầu: {selectedService.startDate}
+Bắt đầu: {selectedService.startDate}
                     </p>
                     {selectedService.endDate && (
                       <p className="text-sm text-gray-900 dark:text-white">

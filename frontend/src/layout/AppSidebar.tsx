@@ -78,29 +78,32 @@ const navItems: NavItem[] = [
       { name: "Tài chính & báo cáo", path: "/dich-vu/tai-chinh", pro: false },
     ],
   },
+{
+    name: "admin",
+    path:"/admin/*",},
     {
         name: "Quản lý hợp đồng pháp lý điện tử",
-        path: "admin/hop-dong-phap-ly",
+        path: "/admin/hop-dong-phap-ly",
       },
       {
         name: "Quản lý Check-in/Check-out",
-        path: "admin/ql-check",
+        path: "/admin/ql-check",
       },
       {
         name: "Quản lý dịch vụ xe",
-        path: "admin/ql-dv",
+        path: "/admin/ql-dv",
       },
       {
         name: "Theo dõi và giám sát tranh chấp",
-        path: "admin/theo-doi",
+        path: "/admin/theo-doi",
       },
       {
         name: "Báo cáo tài chính",
-        path: "admin/bao-cao",
+        path: "/admin/bao-cao",
       },
       {
           name: "Quản lý nhóm đồng sở hữu",
-          path:"admin",},
+          path:"/admin",},
 ];
 
 const othersItems: NavItem[] = [

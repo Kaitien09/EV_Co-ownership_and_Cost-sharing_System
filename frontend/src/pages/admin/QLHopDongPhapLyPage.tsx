@@ -145,7 +145,7 @@ const QLHopDongPhapLyPage: React.FC = () => {
     return <span className={`px-2 py-1 text-xs rounded-full ${status.class}`}>{status.text}</span>;
   };
 
-  const handleViewDetail = (hopDongId: number) => navigate(`/admin/hop-dong-phap-ly/${hopDongId}`);
+  const handleViewDetail = (hopDongId: number) => navigate(`/admin/ql-hd/${hopDongId}`);
 
   return (
     <div className="p-6">
