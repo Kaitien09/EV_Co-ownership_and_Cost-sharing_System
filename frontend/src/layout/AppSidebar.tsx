@@ -36,11 +36,7 @@ const navItems: NavItem[] = [
     name: "Hồ sơ",
     path: "/profile",
   },
-{
-    icon: <UserCircleIcon />,
-    name: "Hợp đồng",
-    path: "/hop-dong",
-  },
+
   {
     icon: <CalenderIcon />,
     name: "Đặt lịch",
@@ -87,27 +83,27 @@ const navItems: NavItem[] = [
   },
     {
         name: "Quản lý hợp đồng pháp lý điện tử",
-        path: "/ql-hd",
+        path: "admin/ql-hd",
       },
       {
         name: "Quản lý Check-in/Check-out",
-        path: "/ql-check",
+        path: "admin/ql-check",
       },
       {
         name: "Quản lý dịch vụ xe",
-        path: "/ql-dv",
+        path: "admin/ql-dv",
       },
       {
         name: "Theo dõi và giám sát tranh chấp",
-        path: "/theo-doi",
+        path: "admin/theo-doi",
       },
       {
         name: "Báo cáo tài chính",
-        path: "/bao-cao",
+        path: "admin/bao-cao",
       },
       {
           name: "Quản lý nhóm đồng sở hữu",
-          path:"/quan-ly/nhom-xe",},
+          path:"admin",},
 ];
 
 const othersItems: NavItem[] = [

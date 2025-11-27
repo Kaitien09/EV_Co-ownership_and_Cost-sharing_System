@@ -89,13 +89,13 @@ export default function App() {
           <Route path="/chi-tiet-thanh-toan/:chiPhiId" element={<ChiTietThanhToanPage />} />
           <Route path="/tao-chi-phi" element={<TaoChiPhiPage />} />
           //
-          <Route path="/ql-check" element={<QLCheckInVaOutPage />} />
-          <Route path="/ql-dv" element={<QLDichVuXePage />} />
-          <Route path="/ql-hd" element={<QLHopDongPhapLyPage />} />
-          <Route path="/theo-doi" element={<TheoDoiVaGiamSatPage />} />
-          <Route path="/bao-cao" element={<BaoCaoPage />} />
-          <Route path="quan-ly/nhom-xe" element={<QLNhomXeDongSoHuuPage />} />
-          <Route path="quan-ly/nhom-xe/:id" element={<ChiTietNhomPage />} />
+          <Route path="admin/ql-check" element={<QLCheckInVaOutPage />} />
+          <Route path="admin/ql-dv" element={<QLDichVuXePage />} />
+          <Route path="admin/ql-hd" element={<QLHopDongPhapLyPage />} />
+          <Route path="admin/theo-doi" element={<TheoDoiVaGiamSatPage />} />
+          <Route path="admin/bao-cao" element={<BaoCaoPage />} />
+          <Route path="admin" element={<QLNhomXeDongSoHuuPage />} />
+          <Route path="/admin/:id" element={<ChiTietNhomPage />} />
           {/* Forms */}
           <Route path="/form-elements" element={<FormElements />} />
 

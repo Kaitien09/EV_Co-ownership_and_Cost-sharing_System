@@ -254,7 +254,7 @@ const QLNhomXeDongSoHuuPage: React.FC = () => {
                   </td>
                   <td className="px-4 py-3">
                     <Link
-                      to={`/quan-ly/nhom-xe/${nhom.nhomId}`}
+                      to={`/admin/${nhom.nhomId}`}
                       className="inline-flex items-center justify-center bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700 transition-colors"
                     >
                       <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
