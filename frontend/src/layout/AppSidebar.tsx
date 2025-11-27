@@ -63,12 +63,26 @@ const navItems: NavItem[] = [
     icon: <PageIcon />,
     path: "/History",
   },
+  {
+      name: "Lịch hẹn dịch vụ",
+      icon: <PageIcon />,
+      path: "/lich-hen-dich-vu",
+    },
+   {
+        name: "Quản lý hồ sơ & chi phí",
+
+        path: "/ho-so-chi-phi",
+      },
 {
     name: "Trung tâm dịch vụ",
     icon: <PageIcon />,
     subItems: [
-      { name: "Đặt lịch dịch vụ", path: "/blank", pro: false },
-      { name: "Lịch sử bảo dưỡng", path: "/blank", pro: false },
+      { name: "Khách hàng & xe", path: "/dich-vu", pro: false },
+      { name: "Lịch hẹn & Dịch vụ", path: "/dich-vu/lich-hen", pro: false },
+      { name: "Quy trình bảo dưỡng", path: "/dich-vu/bao-duong", pro: false },
+      { name: "Phụ tùng", path: "/dich-vu/phu-tung", pro: false },
+      { name: "Nhân sự", path: "/dich-vu/nhan-su", pro: false },
+      { name: "Tài chính & báo cáo", path: "/dich-vu/tai-chinh", pro: false },
     ],
   },
     {
