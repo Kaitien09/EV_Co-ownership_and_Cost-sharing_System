@@ -12,6 +12,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebSecurity
@@ -20,19 +22,19 @@ public class SecurityConfig {
 
     private final CustomUserDetailsService customUserDetailsService;
 
-    // ❗ PASSWORD ENCODER
+    // Password encoder
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // ❗ AuthenticationManager (quan trọng trong Spring 6)
+    // AuthenticationManager
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
         return authConfig.getAuthenticationManager();
     }
 
-    // ❗ Khi chưa login mà gọi API protected → trả JSON 401
+    // Trả JSON 401 khi chưa đăng nhập
     @Bean
     public AuthenticationEntryPoint authenticationEntryPoint() {
         return (request, response, authException) -> {
@@ -42,33 +44,40 @@ public class SecurityConfig {
         };
     }
 
+    // CORS config
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedOrigins("http://localhost:5173")
+                        .allowedMethods("GET","POST","PUT","DELETE","OPTIONS")
+                        .allowedHeaders("*")
+                        .allowCredentials(true);
+            }
+        };
+    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
         http
                 .csrf(csrf -> csrf.disable())
                 .userDetailsService(customUserDetailsService)
-
                 .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint(authenticationEntryPoint()) // ❗ Thay cho httpBasic()
+                        .authenticationEntryPoint(authenticationEntryPoint())
                 )
-
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/upload/gplx").permitAll()
-
-                        .requestMatchers("/api/admin/**")
-                        .hasRole("ADMIN")
-
-                        .requestMatchers("/api/nhan-vien/**")
-                        .hasAnyRole("ADMIN", "NHAN_VIEN")
-
-                        .requestMatchers("/api/chu-xe/**")
-                        .hasRole("KHACH_HANG")
-
+                        .requestMatchers("/uploads/**").permitAll()
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/nguoi-dung/**").hasRole("ADMIN")
+                        .requestMatchers("/api/chu-xe/**").hasAnyRole("KHACH_HANG","ADMIN")
                         .anyRequest().authenticated()
                 );
 
+        // Không cần gọi http.cors() nữa, WebMvcConfigurer đã xử lý CORS
         return http.build();
     }
 }
