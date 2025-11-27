@@ -22,6 +22,17 @@ public class AuthService {
     private final ChuXeRepository chuXeRepository;
     private final PasswordEncoder passwordEncoder;
 
+    // ===== Helper để thêm thông tin ChuXe vào map trả về =====
+    private void addChuXeInfoToResult(ChuXe chuXe, Map<String, Object> result) {
+        result.put("chuXeId", chuXe.getChuXeId());
+        result.put("hoTen", chuXe.getHoTen());
+        result.put("cccd", chuXe.getCccd());
+        result.put("sdt", chuXe.getSdt());
+        result.put("gplx", chuXe.getGplx());
+        result.put("gplxAnh", chuXe.getGplxAnh());
+        result.put("diaChi", chuXe.getDiaChi());
+    }
+
     @Transactional
     public Map<String, Object> dangKy(NguoiDung nguoiDung, ChuXe chuXe) {
         if (nguoiDungRepository.existsByTenDangNhap(nguoiDung.getTenDangNhap())) {
@@ -44,12 +55,11 @@ public class AuthService {
         result.put("tenDangNhap", savedNguoiDung.getTenDangNhap());
         result.put("email", savedNguoiDung.getEmail());
 
-        // Chỉ tạo ChuXe nếu user là KHACH_HANG
+        // Chỉ tạo và trả thông tin ChuXe nếu user là KHACH_HANG
         if (nguoiDung.getLoaiNguoiDung() == LoaiNguoiDung.KHACH_HANG) {
             chuXe.setNguoiDung(savedNguoiDung);
             ChuXe savedChuXe = chuXeRepository.save(chuXe);
-            result.put("chuXeId", savedChuXe.getChuXeId());
-            result.put("hoTen", savedChuXe.getHoTen());
+            addChuXeInfoToResult(savedChuXe, result);
         }
 
         return result;
@@ -78,8 +88,7 @@ public class AuthService {
         if (nguoiDung.getLoaiNguoiDung() == LoaiNguoiDung.KHACH_HANG) {
             ChuXe chuXe = chuXeRepository.findByNguoiDungId(nguoiDung.getNguoiDungId())
                     .orElseThrow(() -> new RuntimeException("Không tìm thấy thông tin chủ xe"));
-            result.put("chuXeId", chuXe.getChuXeId());
-            result.put("hoTen", chuXe.getHoTen());
+            addChuXeInfoToResult(chuXe, result);
         }
 
         return result;
