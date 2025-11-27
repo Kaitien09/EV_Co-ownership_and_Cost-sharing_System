@@ -35,7 +35,9 @@ export const authService = {
 export const chuXeService = {
   // Lấy danh sách chủ xe
   getAllChuXe: async () => {
-    const response = await fetch(`${API_BASE}/chu-xe`);
+    const response = await fetch(`${API_BASE}/chu-xe`,{
+        credentials: "include",
+    });
 
     if (!response.ok) {
       throw new Error('Không thể lấy danh sách chủ xe');
@@ -46,7 +48,9 @@ export const chuXeService = {
 
   // Lấy thông tin chủ xe cụ thể
   getChuXeById: async (chuXeId: number) => {
-    const response = await fetch(`${API_BASE}/chu-xe/${chuXeId}`);
+    const response = await fetch(`${API_BASE}/chu-xe/${chuXeId}`,{
+        credentials: "include",
+    });
 
     if (!response.ok) {
       throw new Error('Không thể lấy thông tin chủ xe');
@@ -55,9 +59,23 @@ export const chuXeService = {
     return response.json();
   },
 
+  // Lấy thông tin chủ xe theo ID người dùng
+  getChuXeByNguoiDungId: async (nguoiDungId: number) => {
+    const response = await fetch(`${API_BASE}/chu-xe/${nguoiDungId}`,{
+        credentials: "include",
+        });
+
+    if (!response.ok) {
+      throw new Error('Không thể lấy thông tin chủ xe theo người dùng');
+    }
+
+    return response.json();
+  },
+
   // Cập nhật thông tin chủ xe
   updateChuXe: async (chuXeId: number, data: any) => {
     const response = await fetch(`${API_BASE}/chu-xe/${chuXeId}`, {
+      credentials: "include",
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
