@@ -72,16 +72,11 @@ const DichVuLayout = () => {
               to="/"
               className="flex items-center gap-2 text-blue-600 hover:text-blue-700 transition-colors"
             >
-              <span>←</span>
-              <span className="text-sm font-medium">Về trang chủ</span>
             </Link>
           </div>
           <h1 className="text-xl font-bold text-gray-800 dark:text-white">
-            🛠️ Trung tâm Dịch vụ
+             Trung tâm Dịch vụ
           </h1>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-            Quản lý dịch vụ & bảo dưỡng
-          </p>
         </div>
 
         <nav className="p-4">

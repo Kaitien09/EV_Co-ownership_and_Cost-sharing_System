@@ -80,7 +80,7 @@ const AdminLayout = () => {
           </h1>
         </div>
 
-        <nav className="p-4">git
+        <nav className="p-4">
           <ul className="space-y-2">
             {menuItems.map((item) => {
               const isActive = location.pathname === item.path || activeMenu === item.id;

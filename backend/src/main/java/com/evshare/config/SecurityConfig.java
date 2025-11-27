@@ -73,6 +73,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/upload/gplx").permitAll()
                         .requestMatchers("/uploads/**").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/dich-vu/**").hasRole("NHAN_VIEN")
                         .requestMatchers("/api/nguoi-dung/**").hasRole("ADMIN")
                         .requestMatchers("/api/chu-xe/**").hasAnyRole("KHACH_HANG","ADMIN")
                         .requestMatchers("/api/dat-lich/**").permitAll()

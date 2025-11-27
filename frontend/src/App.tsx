@@ -35,7 +35,6 @@ import TaoChiPhiPage from './pages/ChiPhi/TaoChiPhiPage';
 import RequireAuth from "./components/auth/RequireAuth";
 import DichVuLayout from "./pages/TrungTamDichVu/DichVuLayout";
 import LichHenDichVu from "./pages/LichHenDichVu";
-import QuanLyHoSoChiPhi from "./pages/QuanLyHoSoChiPhi";
 import AdminLayout from "./pages/admin/AdminLayout";
 
 export default function App() {
@@ -91,8 +90,6 @@ export default function App() {
            {/* Lịch hẹn dịch vụ*/}
            <Route path="/lich-hen-dich-vu" element={<LichHenDichVu/>} />
 
-           {/* Quản lý hồ sơ & chi phí*/}
-           <Route path="/ho-so-chi-phi" element={<QuanLyHoSoChiPhi/>} />
 
 
           {/* Ui Elements */}

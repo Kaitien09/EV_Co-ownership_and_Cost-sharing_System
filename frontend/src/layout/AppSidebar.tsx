@@ -28,82 +28,41 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   {
-    icon: <GridIcon />,
-    name: "Trang chủ", path: "/",
+    icon: "🏠",
+    name: "Trang chủ",
+    path: "/",
   },
   {
+      icon: "📄",
       name: "Hợp đồng",
       path:"/hop-dong",},
   {
-    icon: <CalenderIcon />,
+    icon: "📅",
     name: "Đặt lịch",
     path: "/calendar",
   },
 
   {
-    icon: <CalenderIcon />,
+    icon: "💸",
     name: "Thanh toán chi phí",
     path: "/thanh-toan",
   },
 
   {
+    icon: "📊",
     name: "Nhóm đồng sở hữu",
-    icon: <TableIcon />,
     path:"/nhom",
   },
   {
+    icon: "📖",
     name: "Lịch sử và phân tích",
-    icon: <PageIcon />,
     path: "/History",
   },
   {
+      icon: "🔑",
       name: "Lịch hẹn dịch vụ",
-      icon: <PageIcon />,
       path: "/lich-hen-dich-vu",
     },
-   {
-        name: "Quản lý hồ sơ & chi phí",
-
-        path: "/ho-so-chi-phi",
-      },
-{
-    name: "Trung tâm dịch vụ",
-    icon: <PageIcon />,
-    subItems: [
-      { name: "Khách hàng & xe", path: "/dich-vu", pro: false },
-      { name: "Lịch hẹn & Dịch vụ", path: "/dich-vu/lich-hen", pro: false },
-      { name: "Quy trình bảo dưỡng", path: "/dich-vu/bao-duong", pro: false },
-      { name: "Phụ tùng", path: "/dich-vu/phu-tung", pro: false },
-      { name: "Nhân sự", path: "/dich-vu/nhan-su", pro: false },
-      { name: "Tài chính & báo cáo", path: "/dich-vu/tai-chinh", pro: false },
-    ],
-  },
-{
-    name: "admin",
-    path:"/admin/*",},
-    {
-        name: "Quản lý hợp đồng pháp lý điện tử",
-        path: "/admin/hop-dong-phap-ly",
-      },
-      {
-        name: "Quản lý Check-in/Check-out",
-        path: "/admin/ql-check",
-      },
-      {
-        name: "Quản lý dịch vụ xe",
-        path: "/admin/ql-dv",
-      },
-      {
-        name: "Theo dõi và giám sát tranh chấp",
-        path: "/admin/theo-doi",
-      },
-      {
-        name: "Báo cáo tài chính",
-        path: "/admin/bao-cao",
-      },
-      {
-          name: "Quản lý nhóm đồng sở hữu",
-          path:"/admin",},
 ];
 
 const othersItems: NavItem[] = [

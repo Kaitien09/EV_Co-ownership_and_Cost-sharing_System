@@ -28,8 +28,8 @@ export default function SignInForm() {
         window.location.href = "/";
       } else if (role === "ADMIN") {
         window.location.href = "/admin";
-      } else if (role === "NHAN_VIÊN") {
-        window.location.href = "/nhanvien";
+      } else if (role === "NHAN_VIEN") {
+        window.location.href = "/dich-vu";
       } else {
         window.location.href = "/";
       }
