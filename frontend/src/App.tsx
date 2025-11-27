@@ -33,6 +33,13 @@ import ThanhToanPage from './pages/ChiPhi/ThanhToanPage';
 import ChiTietThanhToanPage from './pages/ChiPhi/ChiTietThanhToanPage';
 import TaoChiPhiPage from './pages/ChiPhi/TaoChiPhiPage';
 import RequireAuth from "./components/auth/RequireAuth";
+import QLHopDongPhapLyPage from './pages/QLHopDongPhapLyPage';
+import QLCheckInVaOutPage from './pages/QLCheckInVaOutPage';
+import QLDichVuXePage from './pages/QLDichVuXePage';
+import TheoDoiVaGiamSatPage from './pages/TheoDoiVaGiamSatPage';
+import BaoCaoPage from './pages/BaoCaoPage';
+import QLNhomXeDongSoHuuPage from './pages/QLNhomXeDongSoHuuPage';
+import ChiTietNhomPage from './pages/ChiTietNhomPage';
 
 export default function App() {
   return (
@@ -77,7 +84,14 @@ export default function App() {
           <Route path="/thanh-toan" element={<ThanhToanPage />} />
           <Route path="/chi-tiet-thanh-toan/:chiPhiId" element={<ChiTietThanhToanPage />} />
           <Route path="/tao-chi-phi" element={<TaoChiPhiPage />} />
-
+          //
+          <Route path="/ql-check" element={<QLCheckInVaOutPage />} />
+          <Route path="/ql-dv" element={<QLDichVuXePage />} />
+          <Route path="/ql-hd" element={<QLHopDongPhapLyPage />} />
+          <Route path="/theo-doi" element={<TheoDoiVaGiamSatPage />} />
+          <Route path="/bao-cao" element={<BaoCaoPage />} />
+          <Route path="quan-ly/nhom-xe" element={<QLNhomXeDongSoHuuPage />} />
+          <Route path="quan-ly/nhom-xe/:id" element={<ChiTietNhomPage />} />
           {/* Forms */}
           <Route path="/form-elements" element={<FormElements />} />
 
