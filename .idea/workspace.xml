@@ -4,7 +4,32 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e0d4d9a7-cdb3-422c-8542-433a020811c8" name="Changes" comment="" />
+    <list default="true" id="e0d4d9a7-cdb3-422c-8542-433a020811c8" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/evshare/config/WebConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/uploads/avatar.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/evshare/config/CorsConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/evshare/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/evshare/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/evshare/nguoidung/controller/ChuXeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/evshare/nguoidung/controller/ChuXeController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/evshare/nguoidung/entity/ChuXe.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/evshare/nguoidung/entity/ChuXe.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/evshare/nguoidung/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/evshare/nguoidung/service/AuthService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/UserProfile/UserAccountCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/UserProfile/UserAccountCard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/UserProfile/UserAddressCard.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/UserProfile/UserInfoCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/UserProfile/UserInfoCard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/UserProfile/UserMetaCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/UserProfile/UserMetaCard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/auth/SignInForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/auth/SignInForm.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/auth/SignUpForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/auth/SignUpForm.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/header/UserDropdown.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/header/UserDropdown.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/AuthPages/AuthPageLayout.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/AuthPages/SignIn.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/AuthPages/SignIn.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/AuthPages/SignUp.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/AuthPages/SignUp.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/UserProfiles.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/UserProfiles.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/services/api.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/services/api.ts" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -51,27 +76,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/car-sharing/backend/src/main/java/com/evshare/entity&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "junie.onboarding.icon.badge.shown": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "D:/car-sharing/backend/uploads",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings",
+    "to.speed.mode.migration.done": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\car-sharing\backend\uploads" />
       <recent name="D:\car-sharing\backend\src\main\java\com\evshare\entity" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
@@ -79,6 +105,13 @@
       <recent name="D:\car-sharing\frontend\src\components" />
       <recent name="D:\car-sharing\frontend\src\pages" />
     </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.26199.169" />
+      </set>
+    </attachedChunks>
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -89,5 +122,10 @@
       <updated>1762937225884</updated>
     </task>
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <ignored-roots>
+      <path value="$PROJECT_DIR$/frontend" />
+    </ignored-roots>
   </component>
 </project>
