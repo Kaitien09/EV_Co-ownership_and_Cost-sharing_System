@@ -12,8 +12,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.AuthenticationEntryPoint;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -22,19 +25,16 @@ public class SecurityConfig {
 
     private final CustomUserDetailsService customUserDetailsService;
 
-    // Password encoder
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // AuthenticationManager
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
         return authConfig.getAuthenticationManager();
     }
 
-    // Trả JSON 401 khi chưa đăng nhập
     @Bean
     public AuthenticationEntryPoint authenticationEntryPoint() {
         return (request, response, authException) -> {
@@ -44,24 +44,25 @@ public class SecurityConfig {
         };
     }
 
-    // CORS config
+    // CORS configuration for Spring Security
     @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:5173")
-                        .allowedMethods("GET","POST","PUT","DELETE","OPTIONS")
-                        .allowedHeaders("*")
-                        .allowCredentials(true);
-            }
-        };
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L); // Cache preflight response for 1 hour
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Enable CORS
                 .csrf(csrf -> csrf.disable())
                 .userDetailsService(customUserDetailsService)
                 .exceptionHandling(ex -> ex
@@ -74,10 +75,12 @@ public class SecurityConfig {
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/nguoi-dung/**").hasRole("ADMIN")
                         .requestMatchers("/api/chu-xe/**").hasAnyRole("KHACH_HANG","ADMIN")
+                        .requestMatchers("/api/dat-lich/**").permitAll()
+                        .requestMatchers("/api/xe-dien/**").permitAll()
+                        .requestMatchers("/api/lich-su-su-dung/**").permitAll()
                         .anyRequest().authenticated()
                 );
 
-        // Không cần gọi http.cors() nữa, WebMvcConfigurer đã xử lý CORS
         return http.build();
     }
 }

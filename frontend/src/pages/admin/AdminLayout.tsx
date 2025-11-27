@@ -73,19 +73,14 @@ const AdminLayout = () => {
               to="/"
               className="flex items-center gap-2 text-blue-600 hover:text-blue-700 transition-colors"
             >
-              <span>←</span>
-              <span className="text-sm font-medium">Về trang chủ</span>
             </Link>
           </div>
           <h1 className="text-xl font-bold text-gray-800 dark:text-white">
              Admin Dashboard
           </h1>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-            Quản lý hệ thống
-          </p>
         </div>
 
-        <nav className="p-4">
+        <nav className="p-4">git
           <ul className="space-y-2">
             {menuItems.map((item) => {
               const isActive = location.pathname === item.path || activeMenu === item.id;
