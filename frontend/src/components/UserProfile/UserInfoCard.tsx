@@ -35,7 +35,7 @@ export default function UserInfoCard() {
 
   return (
     <div className="p-6 border border-gray-200 rounded-2xl dark:border-gray-800 bg-white shadow-sm w-full mx-auto space-y-6">
-
+      <h2 className="text-xl font-semibold mb-6">Thông tin cá nhân</h2>
       <div className="space-y-4">
         <div>
           <p className="mb-1 text-xs text-gray-500">CCCD</p>
