@@ -63,23 +63,26 @@ const AdminLayout = () => {
     navigate(path);
   };
 
+  const handleLogout = () => {
+    if (confirm("Bạn có chắc chắn muốn đăng xuất?")) {
+      localStorage.removeItem("token"); // hoặc sessionStorage tùy bạn dùng
+      navigate("/signin");
+    }
+  };
+
   return (
     <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
       {/* Sidebar */}
       <div className="w-64 bg-white dark:bg-gray-800 shadow-lg relative">
+
+        {/* Header */}
         <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-          <div className="flex items-center justify-between mb-4">
-            <Link
-              to="/"
-              className="flex items-center gap-2 text-blue-600 hover:text-blue-700 transition-colors"
-            >
-            </Link>
-          </div>
           <h1 className="text-xl font-bold text-gray-800 dark:text-white">
-             Admin Dashboard
+            Admin Dashboard
           </h1>
         </div>
 
+        {/* Menu */}
         <nav className="p-4">
           <ul className="space-y-2">
             {menuItems.map((item) => {
@@ -88,7 +91,7 @@ const AdminLayout = () => {
                 <li key={item.id}>
                   <button
                     onClick={() => handleMenuClick(item.id, item.path)}
-className={`w-full flex items-center px-4 py-3 text-left rounded-lg transition-all duration-200 ${
+                    className={`w-full flex items-center px-4 py-3 text-left rounded-lg transition-all duration-200 ${
                       isActive
                         ? "bg-blue-50 text-blue-600 border-r-2 border-blue-600 dark:bg-blue-900/20 dark:text-blue-400"
                         : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
@@ -103,13 +106,11 @@ className={`w-full flex items-center px-4 py-3 text-left rounded-lg transition-a
           </ul>
         </nav>
 
-        {/* User info */}
+        {/* User Info + Logout */}
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-                <span className="text-white text-sm font-medium">A</span>
-              </div>
+          <div className="flex items-center mb-3">
+            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+              <span className="text-white text-sm font-medium">A</span>
             </div>
             <div className="ml-3">
               <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -120,6 +121,13 @@ className={`w-full flex items-center px-4 py-3 text-left rounded-lg transition-a
               </p>
             </div>
           </div>
+
+          <button
+            onClick={handleLogout}
+            className="w-full mt-2 bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 transition-all"
+          >
+            Đăng xuất
+          </button>
         </div>
       </div>
 
@@ -133,9 +141,7 @@ className={`w-full flex items-center px-4 py-3 text-left rounded-lg transition-a
               element={item.component}
             />
           ))}
-          {/* Route cho chi tiết nhóm */}
           <Route path="/:id" element={<ChiTietNhomPage />} />
-          {/* Route mặc định */}
           <Route path="" element={<QLNhomXeDongSoHuuPage />} />
         </Routes>
       </div>
