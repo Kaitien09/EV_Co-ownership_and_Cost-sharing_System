@@ -88,6 +88,15 @@ public class SecurityConfig {
                         .requestMatchers("/api/chia-chi-phi/**").permitAll()
                         .requestMatchers("/api/lich-su-quy/**").permitAll()
                         .requestMatchers("/api/quy-chung/**").permitAll()
+                        .requestMatchers("/api/nhom/**").permitAll()
+                        .requestMatchers("/api/thanh-toan/**").permitAll()
+                        .requestMatchers("/api/chi-tiet-su-dung-phu-tung/**").permitAll()
+                        .requestMatchers("/api/hoa-don/**").permitAll()
+                        .requestMatchers("/api/ky-thuat-vien/**").permitAll()
+                        .requestMatchers("/api/lich-hen-dich-vu/**").permitAll()
+                        .requestMatchers("/api/phieu-dich-vu/**").permitAll()
+                        .requestMatchers("/api/phu-tung/**").permitAll()
+                        .requestMatchers("/api/trung-tam-dich-vu/**").permitAll()
                         .anyRequest().authenticated()
                 );
 
