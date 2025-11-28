@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import { hopDongService } from "../../services/hopDongService";
+import { nhomService } from "../../services/nhomService";
+import { thanhVienService } from "../../services/thanhVienService";
 
 interface ThanhVien {
   id: number;
@@ -13,10 +16,7 @@ const TaoHopDongPage: React.FC = () => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    maHopDong: "",
     tenNhom: "",
-    // Ngày bắt đầu tự động là ngày hiện tại
-    ngayBatDau: new Date().toISOString().split('T')[0],
   });
 
   const [xeData, setXeData] = useState({
@@ -36,6 +36,8 @@ const TaoHopDongPage: React.FC = () => {
     { id: 1, tenThanhVien: "", tyLeSoHuu: 0, email: "", soDienThoai: "" },
     { id: 2, tenThanhVien: "", tyLeSoHuu: 0, email: "", soDienThoai: "" }
   ]);
+
+  const [loading, setLoading] = useState(false);
 
   const handleXeInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -76,30 +78,57 @@ const TaoHopDongPage: React.FC = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
 
     const totalTyLe = thanhVienList.reduce((sum, tv) => sum + tv.tyLeSoHuu, 0);
     if (totalTyLe !== 100) {
       alert("Tổng tỷ lệ sở hữu phải bằng 100%");
+      setLoading(false);
       return;
     }
 
-    // Tạo hợp đồng với ngày hiện tại
-    const hopDongMoi = {
-      ...formData,
-      ngayBatDau: new Date().toISOString(), // Sử dụng thời gian thực
-      xe: xeData,
-      thanhVien: thanhVienList.map((tv, index) => ({
-        ...tv,
-        thanhVienId: index + 1,
-        isCurrentUser: index === 0 // Giả sử người tạo là thành viên đầu tiên
-      }))
-    };
+    try {
+      // 1. Tạo nhóm mới
+      const nhomMoi = await nhomService.createNhom({
+        tenNhom: formData.tenNhom
+      });
 
-    console.log("Tạo hợp đồng:", hopDongMoi);
-    alert("Tạo hợp đồng thành công!");
-    navigate("/hop-dong");
+      // 2. Tạo hợp đồng
+      const hopDongMoi = await hopDongService.create({
+        nhomId: nhomMoi.nhomId,
+        xeId: 1, // TODO: Cần API tạo xe trước
+        ngayBatDau: new Date().toISOString(),
+        fileHopDong: "",
+        ghiChu: ""
+      });
+
+      // 3. THÊM THÀNH VIÊN VÀO BACKEND
+      for (const [index, tv] of thanhVienList.entries()) {
+        try {
+          await thanhVienService.addThanhVien({
+            nhomId: nhomMoi.nhomId,
+            chuXeId: index + 1, // Tạm thời dùng index + 1 làm chuXeId
+            xeId: 1, // TODO: Cần xeId thực tế
+            tyLeSoHuu: tv.tyLeSoHuu,
+            vaiTro: index === 0 ? 'TRUONG_NHOM' : 'THANH_VIEN'
+          });
+          console.log(`Đã thêm thành viên: ${tv.tenThanhVien}`);
+        } catch (err) {
+          console.error(`Lỗi khi thêm thành viên ${tv.tenThanhVien}:`, err);
+        }
+      }
+
+      console.log("Tạo hợp đồng thành công:", { nhomMoi, hopDongMoi });
+      alert("Tạo hợp đồng thành công!");
+      navigate("/hop-dong");
+    } catch (err) {
+      console.error('Lỗi khi tạo hợp đồng:', err);
+      alert('Tạo hợp đồng thất bại: ' + (err instanceof Error ? err.message : 'Unknown error'));
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleCancel = () => {
@@ -126,19 +155,6 @@ const TaoHopDongPage: React.FC = () => {
 
           <div className="grid grid-cols-2 gap-4 mb-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Mã hợp đồng *</label>
-              <input
-                type="text"
-                name="maHopDong"
-                value={formData.maHopDong}
-                onChange={handleFormChange}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                placeholder="HD001"
-                required
-              />
-            </div>
-
-            <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Tên nhóm *</label>
               <input
                 type="text"
@@ -154,10 +170,8 @@ const TaoHopDongPage: React.FC = () => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Ngày bắt đầu *</label>
               <input
-                type="date"
-                name="ngayBatDau"
-                value={formData.ngayBatDau}
-                onChange={handleFormChange}
+                type="text"
+                value={new Date().toLocaleDateString('vi-VN')}
                 className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm bg-gray-50"
                 readOnly
               />
@@ -403,10 +417,10 @@ const TaoHopDongPage: React.FC = () => {
           <div className="flex gap-3 pt-6 mt-6 border-t">
             <button
               type="submit"
-              disabled={calculateTotalTyLe() !== 100}
+              disabled={calculateTotalTyLe() !== 100 || loading}
               className="bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white px-6 py-2 rounded-lg text-sm font-medium"
             >
-              Tạo hợp đồng
+              {loading ? 'Đang tạo...' : 'Tạo hợp đồng'}
             </button>
             <button
               type="button"

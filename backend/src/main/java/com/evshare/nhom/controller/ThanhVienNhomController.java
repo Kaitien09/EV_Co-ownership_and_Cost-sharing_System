@@ -49,4 +49,16 @@ public class ThanhVienNhomController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @PutMapping("/{thanhVienId}/ty-le-so-huu")
+    public ResponseEntity<ThanhVienNhom> updateTyLeSoHuu(
+            @PathVariable Integer thanhVienId,
+            @RequestParam Double tyLeSoHuu) {
+        try {
+            ThanhVienNhom updated = thanhVienService.updateTyLeSoHuu(thanhVienId, tyLeSoHuu);
+            return ResponseEntity.ok(updated);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }

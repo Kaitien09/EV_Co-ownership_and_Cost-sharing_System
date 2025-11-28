@@ -14,6 +14,22 @@ public class HopDongDongSoHuuController {
 
     private final HopDongDongSoHuuService hopDongService;
 
+    // THÊM METHOD LẤY TẤT CẢ HỢP ĐỒNG
+    @GetMapping
+    public List<HopDongDongSoHuu> getAllHopDong() {
+        return hopDongService.getAllHopDong();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<HopDongDongSoHuu> getHopDongById(@PathVariable Integer id) {
+        try {
+            HopDongDongSoHuu hopDong = hopDongService.getHopDongById(id);
+            return ResponseEntity.ok(hopDong);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @GetMapping("/nhom/{nhomId}")
     public List<HopDongDongSoHuu> getHopDongByNhom(@PathVariable Integer nhomId) {
         return hopDongService.getHopDongByNhom(nhomId);

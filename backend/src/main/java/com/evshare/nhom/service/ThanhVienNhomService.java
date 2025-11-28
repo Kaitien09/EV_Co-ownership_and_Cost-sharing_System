@@ -39,4 +39,12 @@ public class ThanhVienNhomService {
         thanhVien.setVaiTro(vaiTro);
         return thanhVienRepository.save(thanhVien);
     }
+
+    public ThanhVienNhom updateTyLeSoHuu(Integer thanhVienId, Double tyLeSoHuu) {
+        ThanhVienNhom thanhVien = thanhVienRepository.findById(thanhVienId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy thành viên"));
+
+        thanhVien.setTyLeSoHuu(tyLeSoHuu);
+        return thanhVienRepository.save(thanhVien);
+    }
 }

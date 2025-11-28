@@ -13,6 +13,16 @@ public class HopDongDongSoHuuService {
 
     private final HopDongDongSoHuuRepository hopDongRepository;
 
+    // THÊM METHOD LẤY TẤT CẢ HỢP ĐỒNG
+    public List<HopDongDongSoHuu> getAllHopDong() {
+        return hopDongRepository.findAll();
+    }
+
+    public HopDongDongSoHuu getHopDongById(Integer hopDongId) {
+        return hopDongRepository.findById(hopDongId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy hợp đồng với ID: " + hopDongId));
+    }
+
     public List<HopDongDongSoHuu> getHopDongByNhom(Integer nhomId) {
         return hopDongRepository.findByNhom_NhomId(nhomId);
     }

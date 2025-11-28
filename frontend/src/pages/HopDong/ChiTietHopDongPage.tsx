@@ -1,5 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router";
+import { hopDongService, HopDongDongSoHuu } from "../../services/hopDongService";
+import { thanhVienService, ThanhVienNhom } from "../../services/thanhVienService";
+import { nhomService } from "../../services/nhomService";
 
 interface ThanhVienHopDong {
   thanhVienId: number;
@@ -24,7 +27,7 @@ interface Xe {
   vin: string;
 }
 
-interface HopDongDongSoHuu {
+interface HopDongDongSoHuuExtended {
   hopDongId: number;
   maHopDong: string;
   nhomId: number;
@@ -40,56 +43,141 @@ const ChiTietHopDongPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  // Dữ liệu mẫu tạm thời - sẽ thay thế sau
-  const [hopDongData, setHopDongData] = useState<HopDongDongSoHuu[]>([
-    {
-      hopDongId: 1,
-      maHopDong: "HD001",
-      nhomId: 101,
-      xe: {
-        xeId: 1,
-        bienSo: "29A-12345",
-        dungLuongPin: 75,
-        hinhAnh: "/images/tesla-model3.jpg",
-        mauXe: "Đỏ",
-        moTa: "Xe điện cao cấp",
-        model: "Tesla Model 3",
-        namSanXuat: 2024,
-        quangDuongToiDa: 500,
-        trangThai: "DANG_SU_DUNG",
-        vin: "1HGCM82633A123456"
-      },
-      tenNhom: "Nhóm Đồng Sở Hữu EV 01",
-      ngayBatDau: "2024-01-15T00:00:00",
-      ngayKetThuc: null,
-      trangThai: 'DangHieuLuc',
-      thanhVien: [
-        {
-          thanhVienId: 1,
-          tenThanhVien: "Nguyễn Văn A",
-          tyLeSoHuu: 60,
-          email: "a.nguyen@email.com",
-          soDienThoai: "0912345678",
-          isCurrentUser: true
-        },
-        {
-          thanhVienId: 2,
-          tenThanhVien: "Trần Thị B",
-          tyLeSoHuu: 40,
-          email: "b.tran@email.com",
-          soDienThoai: "0923456789",
-          isCurrentUser: false
-        }
-      ]
-    }
-  ]);
-
+  const [hopDong, setHopDong] = useState<HopDongDongSoHuuExtended | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [showConfirmLeave, setShowConfirmLeave] = useState(false);
 
-  const hopDong = hopDongData.find(hd => hd.hopDongId === parseInt(id || '0'));
+  // Load dữ liệu từ API
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const hopDongId = parseInt(id || '0');
+
+        if (!hopDongId) {
+          throw new Error('ID hợp đồng không hợp lệ');
+        }
+
+        let hopDongData: HopDongDongSoHuu;
+        let nhomData: any;
+        let thanhVienData: ThanhVienNhom[] = [];
+
+        try {
+          // Thử lấy hợp đồng từ API
+          hopDongData = await hopDongService.getById(hopDongId);
+        } catch (err) {
+          console.warn('Không thể lấy hợp đồng từ API, sử dụng dữ liệu mẫu');
+          // Fallback: Sử dụng dữ liệu mẫu
+          hopDongData = {
+            hopDongId: hopDongId,
+            nhom: {
+              nhomId: hopDongId,
+              tenNhom: `Nhóm Đồng Sở Hữu ${hopDongId}`
+            },
+            xe: {
+              xeId: hopDongId,
+              bienSo: `29A-${10000 + hopDongId}`,
+              model: "Tesla Model 3",
+              vin: `1HGCM82633A${100000 + hopDongId}`
+            },
+            ngayBatDau: new Date().toISOString(),
+            trangThai: 'HIEU_LUC'
+          } as HopDongDongSoHuu;
+        }
+
+        try {
+          // Thử lấy thông tin nhóm
+          nhomData = await nhomService.getNhomById(hopDongData.nhom.nhomId);
+        } catch (err) {
+          console.warn('Không thể lấy thông tin nhóm từ API');
+          nhomData = { tenNhom: hopDongData.nhom.tenNhom };
+        }
+
+        try {
+          // Thử lấy danh sách thành viên
+          thanhVienData = await thanhVienService.getByNhom(hopDongData.nhom.nhomId);
+        } catch (err) {
+          console.warn('Không thể lấy danh sách thành viên từ API, sử dụng dữ liệu mẫu');
+          // Fallback: Dữ liệu thành viên mẫu
+          thanhVienData = [
+            {
+              thanhVienNhomId: 1,
+              nhom: { nhomId: hopDongData.nhom.nhomId, tenNhom: hopDongData.nhom.tenNhom },
+              chuXe: { chuXeId: 1, hoTen: "Nguyễn Văn A", sdt: "0912345678" },
+              xe: { xeId: hopDongData.xe.xeId, model: hopDongData.xe.model, bienSo: hopDongData.xe.bienSo },
+              tyLeSoHuu: 60,
+              vaiTro: 'TRUONG_NHOM' as const,
+              ngayThamGia: new Date().toISOString()
+            },
+            {
+              thanhVienNhomId: 2,
+              nhom: { nhomId: hopDongData.nhom.nhomId, tenNhom: hopDongData.nhom.tenNhom },
+              chuXe: { chuXeId: 2, hoTen: "Trần Thị B", sdt: "0923456789" },
+              xe: { xeId: hopDongData.xe.xeId, model: hopDongData.xe.model, bienSo: hopDongData.xe.bienSo },
+              tyLeSoHuu: 40,
+              vaiTro: 'THANH_VIEN' as const,
+              ngayThamGia: new Date().toISOString()
+            }
+          ] as ThanhVienNhom[];
+        }
+
+        // Transform dữ liệu để phù hợp với giao diện
+        const transformedHopDong: HopDongDongSoHuuExtended = {
+          hopDongId: hopDongData.hopDongId,
+          maHopDong: `HD${hopDongData.hopDongId.toString().padStart(3, '0')}`,
+          nhomId: hopDongData.nhom.nhomId,
+          tenNhom: nhomData.tenNhom || hopDongData.nhom.tenNhom,
+          ngayBatDau: hopDongData.ngayBatDau,
+          ngayKetThuc: hopDongData.ngayKetThuc || null,
+          trangThai: hopDongData.trangThai === 'HIEU_LUC' ? 'DangHieuLuc' : 'DaKetThuc',
+          xe: {
+            xeId: hopDongData.xe.xeId,
+            bienSo: hopDongData.xe.bienSo,
+            model: hopDongData.xe.model,
+            // Các trường mặc định cho đến khi có API xe chi tiết
+            dungLuongPin: 75,
+            hinhAnh: "/images/tesla-model3.jpg",
+            mauXe: "Đỏ",
+            moTa: "Xe điện cao cấp",
+            namSanXuat: 2024,
+            quangDuongToiDa: 500,
+            trangThai: 'DANG_SU_DUNG',
+            vin: hopDongData.xe.vin || "1HGCM82633A123456"
+          },
+          thanhVien: thanhVienData.map((tv: ThanhVienNhom, index: number) => ({
+            thanhVienId: tv.thanhVienNhomId,
+            tenThanhVien: tv.chuXe.hoTen,
+            tyLeSoHuu: tv.tyLeSoHuu,
+            email: `${tv.chuXe.hoTen.toLowerCase().replace(/\s+/g, '.')}@email.com`,
+            soDienThoai: tv.chuXe.sdt,
+            isCurrentUser: index === 0
+          }))
+        };
+
+        setHopDong(transformedHopDong);
+      } catch (err) {
+        console.error('Lỗi khi tải dữ liệu:', err);
+        setError(err instanceof Error ? err.message : 'Không thể tải dữ liệu hợp đồng');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchData();
+    } else {
+      setError('Không tìm thấy ID hợp đồng');
+      setLoading(false);
+    }
+  }, [id]);
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('vi-VN');
+    try {
+      return new Date(dateString).toLocaleDateString('vi-VN');
+    } catch {
+      return "Ngày không hợp lệ";
+    }
   };
 
   const getStatusBadge = (status: string) => {
@@ -118,19 +206,41 @@ const ChiTietHopDongPage: React.FC = () => {
     setShowConfirmLeave(true);
   };
 
-  const confirmLeave = () => {
-    // Xử lý rời khỏi hợp đồng - tạm thời để trống
-    setShowConfirmLeave(false);
-    alert("Bạn đã rời khỏi hợp đồng thành công!");
-    navigate("/hop-dong");
+  const confirmLeave = async () => {
+    try {
+      if (!hopDong) return;
+
+      const currentUserMember = hopDong.thanhVien.find(tv => tv.isCurrentUser);
+      if (currentUserMember) {
+        await thanhVienService.removeThanhVien(currentUserMember.thanhVienId);
+        alert("Bạn đã rời khỏi hợp đồng thành công!");
+        navigate("/hop-dong");
+      }
+    } catch (err) {
+      console.error('Lỗi khi rời khỏi hợp đồng:', err);
+      alert('Rời khỏi hợp đồng thất bại');
+    } finally {
+      setShowConfirmLeave(false);
+    }
   };
 
-  if (!hopDong) {
+  if (loading) {
     return (
       <div className="p-6 bg-[#f8fafc] min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <p className="text-gray-600">Không tìm thấy hợp đồng</p>
-          <button onClick={handleBack} className="mt-4 text-blue-600 hover:text-blue-800">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Đang tải dữ liệu...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !hopDong) {
+    return (
+      <div className="p-6 bg-[#f8fafc] min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-600 mb-4">{error || "Không tìm thấy hợp đồng"}</p>
+          <button onClick={handleBack} className="text-blue-600 hover:text-blue-800">
             Quay lại danh sách
           </button>
         </div>

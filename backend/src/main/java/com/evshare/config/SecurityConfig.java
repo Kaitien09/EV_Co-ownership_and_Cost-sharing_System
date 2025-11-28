@@ -74,7 +74,7 @@ public class SecurityConfig {
                         .requestMatchers("/uploads/**").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/dich-vu/**").hasRole("NHAN_VIEN")
-                        .requestMatchers("/api/nguoi-dung/**").hasRole("ADMIN")
+                        .requestMatchers("/api/nguoi-dung/**").permitAll()
                         .requestMatchers("/api/chu-xe/**").hasAnyRole("KHACH_HANG","ADMIN")
                         .requestMatchers("/api/dat-lich/**").permitAll()
                         .requestMatchers("/api/xe-dien/**").permitAll()

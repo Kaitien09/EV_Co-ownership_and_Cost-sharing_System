@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router";
+import { hopDongService, HopDongDongSoHuu } from "../../services/hopDongService";
+import { thanhVienService, ThanhVienNhom } from "../../services/thanhVienService";
+import { nhomService, NhomDongSoHuu } from "../../services/nhomService";
 
 interface ThanhVienHopDong {
   thanhVienId: number;
@@ -24,7 +27,7 @@ interface Xe {
   vin: string;
 }
 
-interface HopDongDongSoHuu {
+interface HopDongDongSoHuuExtended {
   hopDongId: number;
   maHopDong: string;
   nhomId: number;
@@ -40,51 +43,9 @@ const ChinhSuaHopDongPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  // Dữ liệu mẫu - giả lập API call
-  const mockHopDongData: HopDongDongSoHuu[] = [
-    {
-      hopDongId: 1,
-      maHopDong: "HD001",
-      nhomId: 101,
-      xe: {
-        xeId: 1,
-        bienSo: "29A-12345",
-        dungLuongPin: 75,
-        hinhAnh: "/images/tesla-model3.jpg",
-        mauXe: "Đỏ",
-        moTa: "Xe điện cao cấp",
-        model: "Tesla Model 3",
-        namSanXuat: 2024,
-        quangDuongToiDa: 500,
-        trangThai: "DANG_SU_DUNG",
-        vin: "1HGCM82633A123456"
-      },
-      tenNhom: "Nhóm Đồng Sở Hữu EV 01",
-      ngayBatDau: "2024-01-15T00:00:00",
-      ngayKetThuc: null,
-      trangThai: 'DangHieuLuc',
-      thanhVien: [
-        {
-          thanhVienId: 1,
-          tenThanhVien: "Nguyễn Văn A",
-          tyLeSoHuu: 60,
-          email: "a.nguyen@email.com",
-          soDienThoai: "0912345678",
-          isCurrentUser: true
-        },
-        {
-          thanhVienId: 2,
-          tenThanhVien: "Trần Thị B",
-          tyLeSoHuu: 40,
-          email: "b.tran@email.com",
-          soDienThoai: "0923456789",
-          isCurrentUser: false
-        }
-      ]
-    }
-  ];
-
-  const [hopDong, setHopDong] = useState<HopDongDongSoHuu | null>(null);
+  const [hopDong, setHopDong] = useState<HopDongDongSoHuuExtended | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [newThanhVien, setNewThanhVien] = useState({
     tenThanhVien: "",
     tyLeSoHuu: 0,
@@ -92,12 +53,137 @@ const ChinhSuaHopDongPage: React.FC = () => {
     soDienThoai: ""
   });
   const [showAddMember, setShowAddMember] = useState(false);
+  const [totalTyLe, setTotalTyLe] = useState(0);
 
-  // Load dữ liệu khi component mount
+  // Tính toán tổng tỷ lệ khi hopDong thay đổi
   useEffect(() => {
-    const foundHopDong = mockHopDongData.find(hd => hd.hopDongId === parseInt(id || '0'));
-    if (foundHopDong) {
-      setHopDong(foundHopDong);
+    if (hopDong) {
+      const total = hopDong.thanhVien.reduce((sum, tv) => sum + tv.tyLeSoHuu, 0);
+      setTotalTyLe(total);
+    }
+  }, [hopDong]);
+
+  // Load dữ liệu từ API
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const hopDongId = parseInt(id || '0');
+
+        if (!hopDongId) {
+          throw new Error('ID hợp đồng không hợp lệ');
+        }
+
+        let hopDongData: HopDongDongSoHuu;
+        let nhomData: any;
+        let thanhVienData: ThanhVienNhom[] = [];
+
+        try {
+          // Thử lấy hợp đồng từ API
+          hopDongData = await hopDongService.getById(hopDongId);
+        } catch (err) {
+          console.warn('Không thể lấy hợp đồng từ API, sử dụng dữ liệu mẫu');
+          // Fallback: Sử dụng dữ liệu mẫu
+          hopDongData = {
+            hopDongId: hopDongId,
+            nhom: {
+              nhomId: hopDongId,
+              tenNhom: `Nhóm Đồng Sở Hữu ${hopDongId}`
+            },
+            xe: {
+              xeId: hopDongId,
+              bienSo: `29A-${10000 + hopDongId}`,
+              model: "Tesla Model 3",
+              vin: `1HGCM82633A${100000 + hopDongId}`
+            },
+            ngayBatDau: new Date().toISOString(),
+            trangThai: 'HIEU_LUC'
+          } as HopDongDongSoHuu;
+        }
+
+        try {
+          // Thử lấy thông tin nhóm
+          nhomData = await nhomService.getNhomById(hopDongData.nhom.nhomId);
+        } catch (err) {
+          console.warn('Không thể lấy thông tin nhóm từ API');
+          nhomData = { tenNhom: hopDongData.nhom.tenNhom };
+        }
+
+        try {
+          // Thử lấy danh sách thành viên
+          thanhVienData = await thanhVienService.getByNhom(hopDongData.nhom.nhomId);
+        } catch (err) {
+          console.warn('Không thể lấy danh sách thành viên từ API, sử dụng dữ liệu mẫu');
+          // Fallback: Dữ liệu thành viên mẫu
+          thanhVienData = [
+            {
+              thanhVienNhomId: 1,
+              nhom: { nhomId: hopDongData.nhom.nhomId, tenNhom: hopDongData.nhom.tenNhom },
+              chuXe: { chuXeId: 1, hoTen: "Nguyễn Văn A", sdt: "0912345678" },
+              xe: { xeId: hopDongData.xe.xeId, model: hopDongData.xe.model, bienSo: hopDongData.xe.bienSo },
+              tyLeSoHuu: 60,
+              vaiTro: 'TRUONG_NHOM' as const,
+              ngayThamGia: new Date().toISOString()
+            },
+            {
+              thanhVienNhomId: 2,
+              nhom: { nhomId: hopDongData.nhom.nhomId, tenNhom: hopDongData.nhom.tenNhom },
+              chuXe: { chuXeId: 2, hoTen: "Trần Thị B", sdt: "0923456789" },
+              xe: { xeId: hopDongData.xe.xeId, model: hopDongData.xe.model, bienSo: hopDongData.xe.bienSo },
+              tyLeSoHuu: 40,
+              vaiTro: 'THANH_VIEN' as const,
+              ngayThamGia: new Date().toISOString()
+            }
+          ] as ThanhVienNhom[];
+        }
+
+        // Transform dữ liệu để phù hợp với giao diện
+        const transformedHopDong: HopDongDongSoHuuExtended = {
+          hopDongId: hopDongData.hopDongId,
+          maHopDong: `HD${hopDongData.hopDongId.toString().padStart(3, '0')}`,
+          nhomId: hopDongData.nhom.nhomId,
+          tenNhom: nhomData.tenNhom || hopDongData.nhom.tenNhom,
+          ngayBatDau: hopDongData.ngayBatDau,
+          ngayKetThuc: hopDongData.ngayKetThuc || null,
+          trangThai: hopDongData.trangThai === 'HIEU_LUC' ? 'DangHieuLuc' : 'DaKetThuc',
+          xe: {
+            xeId: hopDongData.xe.xeId,
+            bienSo: hopDongData.xe.bienSo,
+            model: hopDongData.xe.model,
+            // Các trường mặc định cho đến khi có API xe chi tiết
+            dungLuongPin: 75,
+            hinhAnh: "/images/tesla-model3.jpg",
+            mauXe: "Đỏ",
+            moTa: "Xe điện cao cấp",
+            namSanXuat: 2024,
+            quangDuongToiDa: 500,
+            trangThai: 'DANG_SU_DUNG',
+            vin: hopDongData.xe.vin || "1HGCM82633A123456"
+          },
+          thanhVien: thanhVienData.map((tv: ThanhVienNhom, index: number) => ({
+            thanhVienId: tv.thanhVienNhomId,
+            tenThanhVien: tv.chuXe.hoTen,
+            tyLeSoHuu: tv.tyLeSoHuu,
+            email: `${tv.chuXe.hoTen.toLowerCase().replace(/\s+/g, '.')}@email.com`,
+            soDienThoai: tv.chuXe.sdt,
+            isCurrentUser: index === 0
+          }))
+        };
+
+        setHopDong(transformedHopDong);
+      } catch (err) {
+        console.error('Lỗi khi tải dữ liệu:', err);
+        setError(err instanceof Error ? err.message : 'Không thể tải dữ liệu hợp đồng');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchData();
+    } else {
+      setError('Không tìm thấy ID hợp đồng');
+      setLoading(false);
     }
   }, [id]);
 
@@ -112,14 +198,13 @@ const ChinhSuaHopDongPage: React.FC = () => {
       setHopDong(prev => {
         if (!prev) return prev;
 
+        const newValue = field === 'tyLeSoHuu' ? parseInt(value) || 0 : value;
+
         return {
           ...prev,
           thanhVien: prev.thanhVien.map(tv =>
             tv.thanhVienId === thanhVienId
-              ? {
-                  ...tv,
-                  [field]: field === 'tyLeSoHuu' ? parseInt(value) || 0 : value
-                }
+              ? { ...tv, [field]: newValue }
               : tv
           )
         };
@@ -134,7 +219,7 @@ const ChinhSuaHopDongPage: React.FC = () => {
     }));
   };
 
-  const addThanhVien = () => {
+  const addThanhVien = async () => {
     if (!hopDong) return;
 
     if (!newThanhVien.tenThanhVien || !newThanhVien.email || !newThanhVien.soDienThoai) {
@@ -142,28 +227,34 @@ const ChinhSuaHopDongPage: React.FC = () => {
       return;
     }
 
-    const newMember: ThanhVienHopDong = {
-      thanhVienId: Math.max(...hopDong.thanhVien.map(tv => tv.thanhVienId)) + 1,
-      tenThanhVien: newThanhVien.tenThanhVien,
-      tyLeSoHuu: newThanhVien.tyLeSoHuu,
-      email: newThanhVien.email,
-      soDienThoai: newThanhVien.soDienThoai,
-      isCurrentUser: false
-    };
-
-    setHopDong(prev => {
-      if (!prev) return prev;
-      return {
-        ...prev,
-        thanhVien: [...prev.thanhVien, newMember]
+    try {
+      const newMember: ThanhVienHopDong = {
+        thanhVienId: Math.max(...hopDong.thanhVien.map(tv => tv.thanhVienId)) + 1,
+        tenThanhVien: newThanhVien.tenThanhVien,
+        tyLeSoHuu: newThanhVien.tyLeSoHuu,
+        email: newThanhVien.email,
+        soDienThoai: newThanhVien.soDienThoai,
+        isCurrentUser: false
       };
-    });
 
-    setNewThanhVien({ tenThanhVien: "", tyLeSoHuu: 0, email: "", soDienThoai: "" });
-    setShowAddMember(false);
+      setHopDong(prev => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          thanhVien: [...prev.thanhVien, newMember]
+        };
+      });
+
+      setNewThanhVien({ tenThanhVien: "", tyLeSoHuu: 0, email: "", soDienThoai: "" });
+      setShowAddMember(false);
+
+    } catch (err) {
+      console.error('Lỗi khi thêm thành viên:', err);
+      alert('Thêm thành viên thất bại');
+    }
   };
 
-  const removeThanhVien = (thanhVienId: number) => {
+  const removeThanhVien = async (thanhVienId: number) => {
     if (!hopDong) return;
 
     if (hopDong.thanhVien.length <= 2) {
@@ -177,34 +268,53 @@ const ChinhSuaHopDongPage: React.FC = () => {
       return;
     }
 
-    setHopDong(prev => {
-      if (!prev) return prev;
-      return {
-        ...prev,
-        thanhVien: prev.thanhVien.filter(tv => tv.thanhVienId !== thanhVienId)
-      };
-    });
+    try {
+      // Gọi API xóa thành viên
+      await thanhVienService.removeThanhVien(thanhVienId);
+
+      setHopDong(prev => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          thanhVien: prev.thanhVien.filter(tv => tv.thanhVienId !== thanhVienId)
+        };
+      });
+
+    } catch (err) {
+      console.error('Lỗi khi xóa thành viên:', err);
+      alert('Xóa thành viên thất bại');
+    }
   };
 
-  const calculateTotalTyLe = () => {
-    if (!hopDong) return 0;
-    return hopDong.thanhVien.reduce((sum, tv) => sum + tv.tyLeSoHuu, 0);
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!hopDong) return;
 
-    if (calculateTotalTyLe() !== 100) {
+    if (totalTyLe !== 100) {
       alert("Tổng tỷ lệ sở hữu phải bằng 100%");
       return;
     }
 
-    // Mock update
-    console.log("Cập nhật hợp đồng:", hopDong);
-    alert("Cập nhật hợp đồng thành công!");
-    navigate(`/hop-dong/${id}`);
+    try {
+      // 1. Cập nhật thông tin nhóm
+      await nhomService.updateNhom(hopDong.nhomId, {
+        tenNhom: hopDong.tenNhom
+      });
+
+      // 2. Cập nhật tỷ lệ sở hữu cho từng thành viên
+      const updatePromises = hopDong.thanhVien.map(tv =>
+        thanhVienService.updateTyLeSoHuu(tv.thanhVienId, tv.tyLeSoHuu)
+      );
+
+      await Promise.all(updatePromises);
+
+
+      navigate(`/hop-dong/${id}`);
+    } catch (err) {
+      console.error('Lỗi khi cập nhật hợp đồng:', err);
+      alert('Cập nhật hợp đồng thất bại');
+    }
   };
 
   const handleCancel = () => {
@@ -224,12 +334,23 @@ const ChinhSuaHopDongPage: React.FC = () => {
     return <span className={`px-2 py-1 text-xs rounded-full ${status.class}`}>{status.text}</span>;
   };
 
-  if (!hopDong) {
+  if (loading) {
     return (
       <div className="p-6 bg-[#f8fafc] min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <p className="text-gray-600">Không tìm thấy hợp đồng</p>
-          <button onClick={handleCancel} className="mt-4 text-blue-600 hover:text-blue-800">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Đang tải dữ liệu...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !hopDong) {
+    return (
+      <div className="p-6 bg-[#f8fafc] min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-600 mb-4">{error || "Không tìm thấy hợp đồng"}</p>
+          <button onClick={handleCancel} className="text-blue-600 hover:text-blue-800">
             Quay lại danh sách
           </button>
         </div>
@@ -346,8 +467,8 @@ const ChinhSuaHopDongPage: React.FC = () => {
             <h3 className="text-lg font-semibold text-gray-800">Thành viên hợp đồng</h3>
             <div className="flex items-center gap-4">
               <span className="text-sm text-gray-600">
-                Tổng tỷ lệ: <span className={`font-medium ${calculateTotalTyLe() !== 100 ? 'text-red-600' : 'text-green-600'}`}>
-                  {calculateTotalTyLe()}%
+                Tổng tỷ lệ: <span className={`font-medium ${totalTyLe !== 100 ? 'text-red-600' : 'text-green-600'}`}>
+                  {totalTyLe}%
                 </span>
               </span>
               <button
@@ -503,16 +624,16 @@ const ChinhSuaHopDongPage: React.FC = () => {
             </div>
           )}
 
-          {calculateTotalTyLe() !== 100 && (
+          {totalTyLe !== 100 && (
             <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-red-700 text-sm">⚠️ Tổng tỷ lệ sở hữu phải bằng 100%. Hiện tại: {calculateTotalTyLe()}%</p>
+              <p className="text-red-700 text-sm">⚠️ Tổng tỷ lệ sở hữu phải bằng 100%. Hiện tại: {totalTyLe}%</p>
             </div>
           )}
 
           <div className="flex gap-3 pt-6 mt-6 border-t">
             <button
               type="submit"
-              disabled={calculateTotalTyLe() !== 100}
+              disabled={totalTyLe !== 100}
               className="bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white px-6 py-2 rounded-lg text-sm font-medium"
             >
               Cập nhật hợp đồng

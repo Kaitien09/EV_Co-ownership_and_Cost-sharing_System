@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
+import { hopDongService, HopDongDongSoHuu } from "../../services/hopDongService";
+import { thanhVienService, ThanhVienNhom } from "../../services/thanhVienService";
 
 interface ThanhVienHopDong {
   thanhVienId: number;
@@ -24,7 +26,7 @@ interface Xe {
   vin: string;
 }
 
-interface HopDongDongSoHuu {
+interface HopDongDongSoHuuExtended {
   hopDongId: number;
   maHopDong: string;
   nhomId: number;
@@ -39,89 +41,155 @@ interface HopDongDongSoHuu {
 const HopDongPage: React.FC = () => {
   const navigate = useNavigate();
 
-  // Dữ liệu mẫu với schema mới
-  const [hopDongList, setHopDongList] = useState<HopDongDongSoHuu[]>([
-    {
-      hopDongId: 1,
-      maHopDong: "HD001",
-      nhomId: 101,
-      xe: {
-        xeId: 1,
-        bienSo: "29A-12345",
-        dungLuongPin: 75,
-        hinhAnh: "/images/tesla-model3.jpg",
-        mauXe: "Đỏ",
-        moTa: "Xe điện cao cấp",
-        model: "Tesla Model 3",
-        namSanXuat: 2024,
-        quangDuongToiDa: 500,
-        trangThai: "DANG_SU_DUNG",
-        vin: "1HGCM82633A123456"
-      },
-      tenNhom: "Nhóm Đồng Sở Hữu EV 01",
-      ngayBatDau: "2024-01-15T00:00:00",
-      ngayKetThuc: null,
-      trangThai: 'DangHieuLuc',
-      thanhVien: [
-        {
-          thanhVienId: 1,
-          tenThanhVien: "Nguyễn Văn A",
-          tyLeSoHuu: 60,
-          email: "a.nguyen@email.com",
-          soDienThoai: "0912345678",
-          isCurrentUser: true
-        },
-        {
-          thanhVienId: 2,
-          tenThanhVien: "Trần Thị B",
-          tyLeSoHuu: 40,
-          email: "b.tran@email.com",
-          soDienThoai: "0923456789",
-          isCurrentUser: false
+  const [hopDongList, setHopDongList] = useState<HopDongDongSoHuuExtended[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  // Load dữ liệu từ API
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        console.log('Đang tải danh sách hợp đồng...');
+
+        const allHopDong: HopDongDongSoHuuExtended[] = [];
+
+        try {
+          // SỬA: Sử dụng API getAll để lấy tất cả hợp đồng
+          const hopDongData = await hopDongService.getAll();
+          console.log('Dữ liệu hợp đồng từ API:', hopDongData);
+
+          // Với mỗi hợp đồng, lấy thông tin thành viên
+          for (const hd of hopDongData) {
+            try {
+              const thanhVienData = await thanhVienService.getByNhom(hd.nhom.nhomId);
+
+              const transformedHopDong: HopDongDongSoHuuExtended = {
+                hopDongId: hd.hopDongId,
+                maHopDong: `HD${hd.hopDongId.toString().padStart(3, '0')}`,
+                nhomId: hd.nhom.nhomId,
+                tenNhom: hd.nhom.tenNhom,
+                ngayBatDau: hd.ngayBatDau,
+                ngayKetThuc: hd.ngayKetThuc || null,
+                trangThai: hd.trangThai === 'HIEU_LUC' ? 'DangHieuLuc' : 'DaKetThuc',
+                xe: {
+                  xeId: hd.xe.xeId,
+                  bienSo: hd.xe.bienSo,
+                  model: hd.xe.model,
+                  // Các trường mặc định cho đến khi có API xe chi tiết
+                  dungLuongPin: 75,
+                  hinhAnh: "/images/tesla-model3.jpg",
+                  mauXe: "Đỏ",
+                  moTa: "Xe điện cao cấp",
+                  namSanXuat: 2024,
+                  quangDuongToiDa: 500,
+                  trangThai: 'DANG_SU_DUNG',
+                  vin: hd.xe.vin || "1HGCM82633A123456"
+                },
+                thanhVien: thanhVienData.map((tv: ThanhVienNhom, index: number) => ({
+                  thanhVienId: tv.thanhVienNhomId,
+                  tenThanhVien: tv.chuXe.hoTen,
+                  tyLeSoHuu: tv.tyLeSoHuu,
+                  email: `${tv.chuXe.hoTen.toLowerCase().replace(/\s+/g, '.')}@email.com`,
+                  soDienThoai: tv.chuXe.sdt,
+                  isCurrentUser: index === 0
+                }))
+              };
+              allHopDong.push(transformedHopDong);
+            } catch (err) {
+              console.error(`Lỗi khi tải thành viên cho hợp đồng ${hd.hopDongId}:`, err);
+              // Vẫn thêm hợp đồng dù không có thành viên
+              const transformedHopDong: HopDongDongSoHuuExtended = {
+                hopDongId: hd.hopDongId,
+                maHopDong: `HD${hd.hopDongId.toString().padStart(3, '0')}`,
+                nhomId: hd.nhom.nhomId,
+                tenNhom: hd.nhom.tenNhom,
+                ngayBatDau: hd.ngayBatDau,
+                ngayKetThuc: hd.ngayKetThuc || null,
+                trangThai: hd.trangThai === 'HIEU_LUC' ? 'DangHieuLuc' : 'DaKetThuc',
+                xe: {
+                  xeId: hd.xe.xeId,
+                  bienSo: hd.xe.bienSo,
+                  model: hd.xe.model,
+                  dungLuongPin: 75,
+                  hinhAnh: "/images/tesla-model3.jpg",
+                  mauXe: "Đỏ",
+                  moTa: "Xe điện cao cấp",
+                  namSanXuat: 2024,
+                  quangDuongToiDa: 500,
+                  trangThai: 'DANG_SU_DUNG',
+                  vin: hd.xe.vin || "1HGCM82633A123456"
+                },
+                thanhVien: [] // Thành viên rỗng nếu có lỗi
+              };
+              allHopDong.push(transformedHopDong);
+            }
+          }
+        } catch (err) {
+          console.error('Lỗi khi gọi API getAll, thử dùng getByNhom:', err);
+          // Fallback: dùng cách cũ nếu API getAll chưa có
+          const nhomIds = [1, 2];
+          for (const nhomId of nhomIds) {
+            try {
+              const hopDongData = await hopDongService.getByNhom(nhomId);
+              const thanhVienData = await thanhVienService.getByNhom(nhomId);
+
+              for (const hd of hopDongData) {
+                const transformedHopDong: HopDongDongSoHuuExtended = {
+                  hopDongId: hd.hopDongId,
+                  maHopDong: `HD${hd.hopDongId.toString().padStart(3, '0')}`,
+                  nhomId: hd.nhom.nhomId,
+                  tenNhom: hd.nhom.tenNhom,
+                  ngayBatDau: hd.ngayBatDau,
+                  ngayKetThuc: hd.ngayKetThuc || null,
+                  trangThai: hd.trangThai === 'HIEU_LUC' ? 'DangHieuLuc' : 'DaKetThuc',
+                  xe: {
+                    xeId: hd.xe.xeId,
+                    bienSo: hd.xe.bienSo,
+                    model: hd.xe.model,
+                    dungLuongPin: 75,
+                    hinhAnh: "/images/tesla-model3.jpg",
+                    mauXe: "Đỏ",
+                    moTa: "Xe điện cao cấp",
+                    namSanXuat: 2024,
+                    quangDuongToiDa: 500,
+                    trangThai: 'DANG_SU_DUNG',
+                    vin: hd.xe.vin || "1HGCM82633A123456"
+                  },
+                  thanhVien: thanhVienData.map((tv: ThanhVienNhom, index: number) => ({
+                    thanhVienId: tv.thanhVienNhomId,
+                    tenThanhVien: tv.chuXe.hoTen,
+                    tyLeSoHuu: tv.tyLeSoHuu,
+                    email: `${tv.chuXe.hoTen.toLowerCase().replace(/\s+/g, '.')}@email.com`,
+                    soDienThoai: tv.chuXe.sdt,
+                    isCurrentUser: index === 0
+                  }))
+                };
+                allHopDong.push(transformedHopDong);
+              }
+            } catch (err) {
+              console.error(`Lỗi khi tải dữ liệu nhóm ${nhomId}:`, err);
+            }
+          }
         }
-      ]
-    },
-    {
-      hopDongId: 2,
-      maHopDong: "HD002",
-      nhomId: 102,
-      xe: {
-        xeId: 2,
-        bienSo: "29A-67890",
-        dungLuongPin: 64,
-        hinhAnh: "/images/vinfast-vfe34.jpg",
-        mauXe: "Trắng",
-        moTa: "Xe điện Việt Nam",
-        model: "VinFast VF e34",
-        namSanXuat: 2024,
-        quangDuongToiDa: 300,
-        trangThai: "SAN_SANG",
-        vin: "2FMGK5BC1ABA123456"
-      },
-      tenNhom: "Nhóm EV Sài Gòn",
-      ngayBatDau: "2024-02-01T00:00:00",
-      ngayKetThuc: null,
-      trangThai: 'DangHieuLuc',
-      thanhVien: [
-        {
-          thanhVienId: 3,
-          tenThanhVien: "Lê Văn C",
-          tyLeSoHuu: 50,
-          email: "c.le@email.com",
-          soDienThoai: "0934567890",
-          isCurrentUser: false
-        },
-        {
-          thanhVienId: 4,
-          tenThanhVien: "Phạm Thị D",
-          tyLeSoHuu: 50,
-          email: "d.pham@email.com",
-          soDienThoai: "0945678901",
-          isCurrentUser: false
-        }
-      ]
-    }
-  ]);
+
+        console.log('Dữ liệu hợp đồng đã tải:', allHopDong);
+        setHopDongList(allHopDong);
+      } catch (err) {
+        console.error('Lỗi khi tải dữ liệu:', err);
+        setError('Không thể tải danh sách hợp đồng');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [refreshTrigger]); // Thêm refreshTrigger để có thể reload
+
+  const refreshData = () => {
+    setRefreshTrigger(prev => prev + 1);
+  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('vi-VN');
@@ -149,66 +217,113 @@ const HopDongPage: React.FC = () => {
   const handleAddNew = () => navigate("/hop-dong/tao-moi");
   const handleViewDetail = (hopDongId: number) => navigate(`/hop-dong/${hopDongId}`);
 
+  if (loading) {
+    return (
+      <div className="p-6 bg-[#f8fafc] min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Đang tải dữ liệu...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-6 bg-[#f8fafc] min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-600 mb-4">{error}</p>
+          <div className="flex gap-2 justify-center">
+            <button onClick={() => window.location.reload()} className="text-blue-600 hover:text-blue-800">
+              Thử lại
+            </button>
+            <button onClick={refreshData} className="text-green-600 hover:text-green-800">
+              Làm mới
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="p-6 bg-[#f8fafc] min-h-screen">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-800 mb-2">Quản lý Hợp đồng Đồng Sở Hữu</h1>
       </div>
 
-      <div className="mb-6">
+      <div className="mb-6 flex gap-3">
         <button
           onClick={handleAddNew}
           className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm"
         >
           + Thêm hợp đồng mới
         </button>
+        <button
+          onClick={refreshData}
+          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm"
+        >
+          Làm mới
+        </button>
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Mã hợp đồng</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Biển số xe</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Model</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tên nhóm</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Trạng thái xe</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ngày bắt đầu</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Trạng thái HĐ</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Thao tác</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {hopDongList.map((hopDong) => (
-                <tr key={hopDong.hopDongId} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <button
-                      onClick={() => handleViewDetail(hopDong.hopDongId)}
-                      className="text-blue-600 hover:text-blue-800 font-medium text-sm underline"
-                    >
-                      {hopDong.maHopDong}
-                    </button>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{hopDong.xe.bienSo}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{hopDong.xe.model}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{hopDong.tenNhom}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{getTrangThaiXeBadge(hopDong.xe.trangThai)}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{formatDate(hopDong.ngayBatDau)}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{getStatusBadge(hopDong.trangThai)}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button
-                      onClick={() => handleViewDetail(hopDong.hopDongId)}
-                      className="text-blue-600 hover:text-blue-900"
-                    >
-                      Xem chi tiết
-                    </button>
-                  </td>
+        {hopDongList.length === 0 ? (
+          <div className="p-8 text-center">
+            <p className="text-gray-500">Chưa có hợp đồng nào</p>
+            <button
+              onClick={handleAddNew}
+              className="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium"
+            >
+              Tạo hợp đồng đầu tiên
+            </button>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Mã hợp đồng</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Biển số xe</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Model</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tên nhóm</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Trạng thái xe</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ngày bắt đầu</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Trạng thái HĐ</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Thao tác</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {hopDongList.map((hopDong) => (
+                  <tr key={hopDong.hopDongId} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <button
+                        onClick={() => handleViewDetail(hopDong.hopDongId)}
+                        className="text-blue-600 hover:text-blue-800 font-medium text-sm underline"
+                      >
+                        {hopDong.maHopDong}
+                      </button>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{hopDong.xe.bienSo}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{hopDong.xe.model}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{hopDong.tenNhom}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">{getTrangThaiXeBadge(hopDong.xe.trangThai)}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{formatDate(hopDong.ngayBatDau)}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">{getStatusBadge(hopDong.trangThai)}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <button
+                        onClick={() => handleViewDetail(hopDong.hopDongId)}
+                        className="text-blue-600 hover:text-blue-900"
+                      >
+                        Xem chi tiết
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );
