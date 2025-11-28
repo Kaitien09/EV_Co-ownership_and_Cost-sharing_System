@@ -88,6 +88,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/chia-chi-phi/**").permitAll()
                         .requestMatchers("/api/lich-su-quy/**").permitAll()
                         .requestMatchers("/api/quy-chung/**").permitAll()
+                        .requestMatchers("/api/nhom/**").permitAll()
                         .anyRequest().authenticated()
                 );
 
