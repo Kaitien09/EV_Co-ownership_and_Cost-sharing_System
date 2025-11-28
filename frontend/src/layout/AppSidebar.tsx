@@ -6,18 +6,18 @@ import {
   BoxCubeIcon,
   CalenderIcon,
   ChevronDownIcon,
-  GridIcon,
   HorizontaLDots,
+  GridIcon,
   ListIcon,
   PageIcon,
   PieChartIcon,
   PlugInIcon,
   TableIcon,
   UserCircleIcon,
-  Home
+  GroupIcon,
+  DollarLineIcon,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
-import SidebarWidget from "./SidebarWidget";
 
 type NavItem = {
   name: string;
@@ -28,72 +28,44 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   {
-    icon: "🏠",
+    icon: <GridIcon />,
     name: "Trang chủ",
     path: "/",
   },
   {
-      icon: "📄",
+      icon: <UserCircleIcon />,
       name: "Hợp đồng",
       path:"/hop-dong",},
   {
-    icon: "📅",
+    icon: <CalenderIcon />,
     name: "Đặt lịch",
     path: "/calendar",
   },
 
   {
-    icon: "💸",
+    icon: <DollarLineIcon/>,
     name: "Thanh toán chi phí",
     path: "/thanh-toan",
   },
 
   {
-    icon: "📊",
+    icon: <GroupIcon/>,
     name: "Nhóm đồng sở hữu",
     path:"/nhom",
   },
   {
-    icon: "📖",
+    icon: <PieChartIcon />,
     name: "Lịch sử và phân tích",
     path: "/History",
   },
   {
-      icon: "🔑",
+      icon: <PlugInIcon />,
       name: "Lịch hẹn dịch vụ",
       path: "/lich-hen-dich-vu",
     },
 ];
 
 const othersItems: NavItem[] = [
-  {
-    icon: <PieChartIcon />,
-    name: "Charts",
-    subItems: [
-      { name: "Line Chart", path: "/line-chart", pro: false },
-      { name: "Bar Chart", path: "/bar-chart", pro: false },
-    ],
-  },
-  {
-    icon: <BoxCubeIcon />,
-    name: "UI Elements",
-    subItems: [
-      { name: "Alerts", path: "/alerts", pro: false },
-      { name: "Avatar", path: "/avatars", pro: false },
-      { name: "Badge", path: "/badge", pro: false },
-      { name: "Buttons", path: "/buttons", pro: false },
-      { name: "Images", path: "/images", pro: false },
-      { name: "Videos", path: "/videos", pro: false },
-    ],
-  },
-  {
-    icon: <PlugInIcon />,
-    name: "Authentication",
-    subItems: [
-      { name: "Sign In", path: "/signin", pro: false },
-      { name: "Sign Up", path: "/signup", pro: false },
-    ],
-  },
 ];
 
 const AppSidebar: React.FC = () => {
@@ -354,25 +326,8 @@ const AppSidebar: React.FC = () => {
               </h2>
               {renderMenuItems(navItems, "main")}
             </div>
-            <div className="">
-              <h2
-                className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${
-                  !isExpanded && !isHovered
-                    ? "lg:justify-center"
-                    : "justify-start"
-                }`}
-              >
-                {isExpanded || isHovered || isMobileOpen ? (
-                  "Others"
-                ) : (
-                  <HorizontaLDots />
-                )}
-              </h2>
-              {renderMenuItems(othersItems, "others")}
-            </div>
           </div>
         </nav>
-        {isExpanded || isHovered || isMobileOpen ? <SidebarWidget /> : null}
       </div>
     </aside>
   );
