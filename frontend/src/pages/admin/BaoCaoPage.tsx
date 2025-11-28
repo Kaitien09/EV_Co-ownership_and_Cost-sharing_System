@@ -84,12 +84,12 @@ const BaoCaoPage: React.FC = () => {
   ]);
 
   const [selectedReport, setSelectedReport] = useState<FinancialReport | null>(null);
-  const [selectedPeriod, setSelectedPeriod] = useState('2024-11');
+  const [selectedPeriod, setSelectedPeriod] = useState('2025-08');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [newReport, setNewReport] = useState<Partial<FinancialReport>>({
-    period: "Tháng 12/2024",
+    period: "Tháng 05/2025",
     group: "Nhóm Đồng Sở Hữu A",
     totalRevenue: 0,
     totalCost: 0,
