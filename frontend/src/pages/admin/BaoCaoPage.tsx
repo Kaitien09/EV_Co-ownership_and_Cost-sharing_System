@@ -16,6 +16,7 @@ interface FinancialReport {
 
 const BaoCaoPage: React.FC = () => {
   const [reports, setReports] = useState<FinancialReport[]>([
+
     {
       id: "1",
       reportCode: "BC-TC-2024-01",
@@ -323,7 +324,7 @@ const BaoCaoPage: React.FC = () => {
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Tổng doanh thu</p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {formatCurrency(430000000)}
+                  {formatCurrency(totalRevenue)}
                 </p>
               </div>
             </div>
@@ -339,7 +340,7 @@ const BaoCaoPage: React.FC = () => {
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Tổng chi phí</p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {formatCurrency(270000000)}
+                  {formatCurrency(totalCost)}
                 </p>
               </div>
             </div>
@@ -355,7 +356,7 @@ const BaoCaoPage: React.FC = () => {
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Lợi nhuận</p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {formatCurrency(160000000)}
+                  {formatCurrency(totalProfit)}
                 </p>
               </div>
             </div>
