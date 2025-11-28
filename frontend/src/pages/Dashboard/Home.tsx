@@ -1,94 +1,177 @@
 import { useState, useEffect } from "react";
 import PageMeta from "../../components/common/PageMeta";
 
-// Mock data - Thay thế bằng API thực tế của bạn
-const mockUserBookings = [
-  { id: 1, licensePlate: "29A-12345", startDate: "2024-01-15T08:00:00", endDate: "2024-01-15T17:00:00", distance: 120 },
-  { id: 2, licensePlate: "29A-67890", startDate: "2024-01-18T09:00:00", endDate: "2024-01-18T16:00:00", distance: 85 },
-  { id: 3, licensePlate: "29A-12345", startDate: "2024-01-22T07:00:00", endDate: "2024-01-22T18:00:00", distance: 150 },
-  { id: 4, licensePlate: "29A-98765", startDate: "2024-01-25T10:00:00", endDate: "2024-01-25T15:00:00", distance: 60 },
-  { id: 5, licensePlate: "29A-67890", startDate: "2024-01-28T08:30:00", endDate: "2024-01-28T17:30:00", distance: 110 },
+// Interface dựa trên database
+interface UserBooking {
+  id: number;
+  licensePlate: string;
+  startDate: string;
+  endDate: string;
+  distance: number;
+  energyConsumed: number;
+  startLocation: string;
+  endLocation: string;
+  status: string;
+}
+
+interface VehicleDistanceData {
+  vehicle: string;
+  userDistance: number;
+  totalDistance: number;
+  ownership: number;
+  model: string;
+  maxRange: number;
+}
+
+interface DailyUsageData {
+  day: string;
+  vehicles: {
+    licensePlate: string;
+    hours: number;
+    distance: number;
+    energyConsumed: number;
+  }[];
+}
+
+// Mock data dựa trên database thực tế
+const mockUserBookings: UserBooking[] = [
+  {
+    id: 1,
+    licensePlate: "30A-11111",
+    startDate: "2025-11-26T08:00:00",
+    endDate: "2025-11-26T12:00:00",
+    distance: 50,
+    energyConsumed: 20,
+    startLocation: "Diem xuat phat A",
+    endLocation: "Tram A",
+    status: "DA_XAC_NHAN"
+  },
+  {
+    id: 2,
+    licensePlate: "30A-11111",
+    startDate: "2025-11-27T09:00:00",
+    endDate: "2025-11-27T13:00:00",
+    distance: 60,
+    energyConsumed: 25,
+    startLocation: "Diem xuat phat B",
+    endLocation: "Tram B",
+    status: "CHO_XAC_NHAN"
+  },
+  {
+    id: 3,
+    licensePlate: "30A-22222",
+    startDate: "2025-11-28T10:00:00",
+    endDate: "2025-11-28T14:00:00",
+    distance: 70,
+    energyConsumed: 30,
+    startLocation: "Diem xuat phat C",
+    endLocation: "Tram C",
+    status: "DA_XAC_NHAN"
+  },
 ];
 
-// Dữ liệu quãng đường theo xe
-const mockDistanceData = [
-  { vehicle: "29A-12345", userDistance: 270, totalDistance: 800, ownership: 30 },
-  { vehicle: "29A-67890", userDistance: 195, totalDistance: 600, ownership: 25 },
-  { vehicle: "29A-98765", userDistance: 60, totalDistance: 400, ownership: 15 },
+// Dữ liệu quãng đường theo xe từ database
+const mockDistanceData: VehicleDistanceData[] = [
+  {
+    vehicle: "30A-11111",
+    userDistance: 110,
+    totalDistance: 300,
+    ownership: 50,
+    model: "Model X1",
+    maxRange: 300
+  },
+  {
+    vehicle: "30A-22222",
+    userDistance: 70,
+    totalDistance: 350,
+    ownership: 70,
+    model: "Model X2",
+    maxRange: 350
+  },
+  {
+    vehicle: "30A-33333",
+    userDistance: 0,
+    totalDistance: 320,
+    ownership: 60,
+    model: "Model X3",
+    maxRange: 320
+  },
 ];
 
 // Dữ liệu thời gian sử dụng theo ngày trong tuần cho từng xe
-const mockUsageData = [
+const mockUsageData: DailyUsageData[] = [
   {
     day: "Thứ 2",
     vehicles: [
-      { licensePlate: "29A-12345", hours: 4 },
-      { licensePlate: "29A-67890", hours: 2 },
-      { licensePlate: "29A-98765", hours: 0 }
+      { licensePlate: "30A-11111", hours: 4, distance: 45, energyConsumed: 18 },
+      { licensePlate: "30A-22222", hours: 2, distance: 25, energyConsumed: 10 },
+      { licensePlate: "30A-33333", hours: 0, distance: 0, energyConsumed: 0 }
     ]
   },
   {
     day: "Thứ 3",
     vehicles: [
-      { licensePlate: "29A-12345", hours: 3 },
-      { licensePlate: "29A-67890", hours: 6 },
-      { licensePlate: "29A-98765", hours: 1 }
+      { licensePlate: "30A-11111", hours: 3, distance: 35, energyConsumed: 14 },
+      { licensePlate: "30A-22222", hours: 6, distance: 65, energyConsumed: 26 },
+      { licensePlate: "30A-33333", hours: 1, distance: 15, energyConsumed: 6 }
     ]
   },
   {
     day: "Thứ 4",
     vehicles: [
-      { licensePlate: "29A-12345", hours: 8 },
-      { licensePlate: "29A-67890", hours: 0 },
-      { licensePlate: "29A-98765", hours: 2 }
+      { licensePlate: "30A-11111", hours: 8, distance: 90, energyConsumed: 36 },
+      { licensePlate: "30A-22222", hours: 0, distance: 0, energyConsumed: 0 },
+      { licensePlate: "30A-33333", hours: 2, distance: 25, energyConsumed: 10 }
     ]
   },
   {
     day: "Thứ 5",
     vehicles: [
-      { licensePlate: "29A-12345", hours: 2 },
-      { licensePlate: "29A-67890", hours: 5 },
-      { licensePlate: "29A-98765", hours: 3 }
+      { licensePlate: "30A-11111", hours: 2, distance: 20, energyConsumed: 8 },
+      { licensePlate: "30A-22222", hours: 5, distance: 55, energyConsumed: 22 },
+      { licensePlate: "30A-33333", hours: 3, distance: 35, energyConsumed: 14 }
     ]
   },
   {
     day: "Thứ 6",
     vehicles: [
-      { licensePlate: "29A-12345", hours: 7 },
-      { licensePlate: "29A-67890", hours: 4 },
-      { licensePlate: "29A-98765", hours: 1 }
+      { licensePlate: "30A-11111", hours: 7, distance: 80, energyConsumed: 32 },
+      { licensePlate: "30A-22222", hours: 4, distance: 45, energyConsumed: 18 },
+      { licensePlate: "30A-33333", hours: 1, distance: 15, energyConsumed: 6 }
     ]
   },
   {
     day: "Thứ 7",
     vehicles: [
-      { licensePlate: "29A-12345", hours: 9 },
-      { licensePlate: "29A-67890", hours: 3 },
-      { licensePlate: "29A-98765", hours: 0 }
+      { licensePlate: "30A-11111", hours: 9, distance: 100, energyConsumed: 40 },
+      { licensePlate: "30A-22222", hours: 3, distance: 35, energyConsumed: 14 },
+      { licensePlate: "30A-33333", hours: 0, distance: 0, energyConsumed: 0 }
     ]
   },
   {
     day: "CN",
     vehicles: [
-      { licensePlate: "29A-12345", hours: 1 },
-      { licensePlate: "29A-67890", hours: 2 },
-      { licensePlate: "29A-98765", hours: 3 }
+      { licensePlate: "30A-11111", hours: 1, distance: 10, energyConsumed: 4 },
+      { licensePlate: "30A-22222", hours: 2, distance: 25, energyConsumed: 10 },
+      { licensePlate: "30A-33333", hours: 3, distance: 35, energyConsumed: 14 }
     ]
   },
 ];
 
-// Màu sắc cho từng xe
+// Màu sắc cho từng xe dựa trên database
 const vehicleColors: { [key: string]: string } = {
-  "29A-12345": "#FF6B6B", // Đỏ cam
-  "29A-67890": "#4ECDC4", // Xanh ngọc
-  "29A-98765": "#FFD93D", // Vàng
+  "30A-11111": "#FF6B6B", // Đỏ cam - Model X1
+  "30A-22222": "#4ECDC4", // Xanh ngọc - Model X2
+  "30A-33333": "#FFD93D", // Vàng - Model X3
+  "30A-44444": "#6BCF7F", // Xanh lá - Model X4
+  "30A-55555": "#FF8B94", // Hồng - Model X5
 };
 
 export default function Home() {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [bookings, setBookings] = useState(mockUserBookings);
-  const [distanceData, setDistanceData] = useState(mockDistanceData);
-  const [usageData, setUsageData] = useState(mockUsageData);
+  const [bookings, setBookings] = useState<UserBooking[]>(mockUserBookings);
+  const [distanceData, setDistanceData] = useState<VehicleDistanceData[]>(mockDistanceData);
+  const [usageData, setUsageData] = useState<DailyUsageData[]>(mockUsageData);
 
   // Lấy ngày có lịch trong tháng
   const getBookedDates = () => {
@@ -184,6 +267,25 @@ export default function Home() {
     }, 0);
   };
 
+  // Lấy tổng quãng đường của một xe trong tuần
+  const getTotalDistanceByVehicle = (vehiclePlate: string) => {
+    return usageData.reduce((total, day) => {
+      const vehicle = day.vehicles.find(v => v.licensePlate === vehiclePlate);
+      return total + (vehicle?.distance || 0);
+    }, 0);
+  };
+
+  // Lấy thông tin xe từ distanceData
+  const getVehicleInfo = (licensePlate: string) => {
+    return distanceData.find(vehicle => vehicle.vehicle === licensePlate);
+  };
+
+  // Tính hiệu suất sử dụng (km/kWh)
+  const calculateEfficiency = (distance: number, energy: number) => {
+    if (energy === 0) return 0;
+    return distance / energy;
+  };
+
   return (
     <>
       <PageMeta
@@ -254,6 +356,7 @@ export default function Home() {
                 const start = formatDateTime(booking.startDate);
                 const end = formatDateTime(booking.endDate);
                 const usageHours = calculateUsageHours(booking.startDate, booking.endDate);
+                const vehicleInfo = getVehicleInfo(booking.licensePlate);
 
                 return (
                   <div key={booking.id} className="flex items-center justify-between p-3 border border-gray-100 rounded-lg hover:bg-gray-50">
@@ -277,13 +380,20 @@ export default function Home() {
                           {booking.licensePlate}
                         </div>
                         <div className="text-sm text-gray-500">
-                          {start.date} • {start.time} - {end.time}
+                          {vehicleInfo?.model} • {start.date} • {start.time} - {end.time}
+                        </div>
+                        <div className="text-xs text-gray-400">
+                          {booking.startLocation} → {booking.endLocation}
                         </div>
                       </div>
                     </div>
                     <div className="text-right">
                       <div className="font-medium text-gray-800">{usageHours}h</div>
                       <div className="text-sm text-gray-500">{booking.distance}km</div>
+                      <div className="text-xs text-blue-500">{booking.energyConsumed}kWh</div>
+                      <div className={`text-xs ${booking.status === 'DA_XAC_NHAN' ? 'text-green-600' : 'text-yellow-600'}`}>
+                        {booking.status === 'DA_XAC_NHAN' ? 'Đã xác nhận' : 'Chờ xác nhận'}
+                      </div>
                     </div>
                   </div>
                 );
@@ -303,12 +413,15 @@ export default function Home() {
               {distanceData.map((item, index) => (
                 <div key={index} className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span
-                      className="font-medium"
-                      style={{ color: vehicleColors[item.vehicle] }}
-                    >
-                      {item.vehicle}
-                    </span>
+                    <div>
+                      <span
+                        className="font-medium"
+                        style={{ color: vehicleColors[item.vehicle] }}
+                      >
+                        {item.vehicle}
+                      </span>
+                      <span className="text-gray-500 ml-2">({item.model})</span>
+                    </div>
                     <span className="text-gray-500">
                       {item.userDistance}km / {item.totalDistance}km ({item.ownership}% sở hữu)
                     </span>
@@ -317,14 +430,14 @@ export default function Home() {
                     <div
                       className="h-3 rounded-full"
                       style={{
-                        width: `${(item.userDistance / item.totalDistance) * 100}%`,
+                        width: `${(item.userDistance / item.maxRange) * 100}%`,
                         backgroundColor: vehicleColors[item.vehicle]
                       }}
                     ></div>
                   </div>
                   <div className="flex justify-between text-xs text-gray-500">
-                    <span>Tỷ lệ sử dụng: {Math.round((item.userDistance / item.totalDistance) * 100)}%</span>
-                    <span>Còn lại: {item.totalDistance - item.userDistance}km</span>
+                    <span>Tỷ lệ sử dụng: {Math.round((item.userDistance / item.maxRange) * 100)}%</span>
+                    <span>Còn lại: {item.maxRange - item.userDistance}km</span>
                   </div>
                 </div>
               ))}
@@ -374,7 +487,7 @@ export default function Home() {
                     key={vehicle.vehicle}
                     fill="none"
                     stroke={vehicleColors[vehicle.vehicle]}
-                    strokeWidth="1.5" // Nét mảnh hơn
+                    strokeWidth="1.5"
                     points={calculateLinePoints(vehicle.vehicle)}
                   />
                 ))}
@@ -399,7 +512,7 @@ export default function Home() {
                         key={`${vehicle.vehicle}-${index}`}
                         cx={x}
                         cy={y}
-                        r="1.5" // Điểm nhỏ hơn
+                        r="1.5"
                         fill={vehicleColors[vehicle.vehicle]}
                         className="hover:r-2 transition-all"
                       />
@@ -430,17 +543,27 @@ export default function Home() {
 
             {/* Chú thích màu xe */}
             <div className="mt-4 flex items-center justify-center gap-4 text-xs flex-wrap">
-              {distanceData.map(vehicle => (
-                <div key={vehicle.vehicle} className="flex items-center gap-2">
-                  <div
-                    className="w-3 h-1.5 rounded-full"
-                    style={{ backgroundColor: vehicleColors[vehicle.vehicle] }}
-                  ></div>
-                  <span className="text-gray-600">
-                    {vehicle.vehicle} ({getTotalHoursByVehicle(vehicle.vehicle)}h/tuần)
-                  </span>
-                </div>
-              ))}
+              {distanceData.map(vehicle => {
+                const totalHours = getTotalHoursByVehicle(vehicle.vehicle);
+                const totalDistance = getTotalDistanceByVehicle(vehicle.vehicle);
+                const totalEnergy = usageData.reduce((sum, day) => {
+                  const vehicleData = day.vehicles.find(v => v.licensePlate === vehicle.vehicle);
+                  return sum + (vehicleData?.energyConsumed || 0);
+                }, 0);
+                const efficiency = calculateEfficiency(totalDistance, totalEnergy);
+
+                return (
+                  <div key={vehicle.vehicle} className="flex items-center gap-2">
+                    <div
+                      className="w-3 h-1.5 rounded-full"
+                      style={{ backgroundColor: vehicleColors[vehicle.vehicle] }}
+                    ></div>
+                    <span className="text-gray-600">
+                      {vehicle.vehicle} ({totalHours}h, {totalDistance}km, {efficiency.toFixed(1)}km/kWh)
+                    </span>
+                  </div>
+                );
+              })}
             </div>
 
             {/* Thống kê chi tiết */}
@@ -456,6 +579,8 @@ export default function Home() {
                         style={{ color: vehicleColors[vehicle.licensePlate] }}
                       >
                         {vehicle.hours}h
+                        <br />
+                        <span className="text-gray-400">{vehicle.distance}km</span>
                       </div>
                     )
                   ))}
