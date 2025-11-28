@@ -1,13 +1,13 @@
 import { useState } from "react";
 
-interface FinancialReport {
+interface QuyReport {
   id: string;
   reportCode: string;
   period: string;
   group: string;
-  totalRevenue: number;
-  totalCost: number;
-  profit: number;
+  thuQuy: number;
+  chiQuy: number;
+  soDu: number;
   status: 'draft' | 'published' | 'archived';
   createdDate: string;
   createdBy: string;
@@ -15,84 +15,72 @@ interface FinancialReport {
 }
 
 const BaoCaoPage: React.FC = () => {
-  const [reports, setReports] = useState<FinancialReport[]>([
+  const [reports, setReports] = useState<QuyReport[]>([
     {
       id: "1",
-      reportCode: "BC-TC-2025-08",
-      period: "Tháng 08/2025",
+      reportCode: "BC-Q-2024-01",
+      period: "Tháng 1/2024",
       group: "Nhóm Đồng Sở Hữu A",
-      totalRevenue: 1650000,
-      totalCost: 7000000,
-      profit: -550000,
+      thuQuy: 3500000,
+      chiQuy: 2500000,
+      soDu: 10000000,
       status: 'published',
-      createdDate: "2025-08-30",
+      createdDate: "2024-01-31",
       createdBy: "Admin A",
-      description: "Báo cáo dịch vụ và chi phí tháng 11"
+      description: "Báo cáo thu chi quỹ tháng 1 - Chi phí bảo dưỡng và bảo hiểm"
     },
     {
       id: "2",
-      reportCode: "BC-TC-2025-08",
-      period: "Tháng 08/2025",
+      reportCode: "BC-Q-2024-02",
+      period: "Tháng 1/2024",
       group: "Nhóm Đồng Sở Hữu B",
-      totalRevenue: 1870000,
-      totalCost: 8500000,
-      profit: -6630000,
+      thuQuy: 7000000,
+      chiQuy: 4900000,
+      soDu: 8000000,
       status: 'published',
-      createdDate: "2025-08-30",
+      createdDate: "2024-01-31",
       createdBy: "Admin B",
-      description: "Báo cáo dịch vụ và sửa chữa tháng 11"
+      description: "Báo cáo thu chi quỹ tháng 1 - Chi phí sửa chữa và phí đường"
     },
     {
       id: "3",
-      reportCode: "BC-TC-2025-08",
-      period: "Tháng 08/2025",
+      reportCode: "BC-Q-2023-12",
+      period: "Tháng 12/2023",
       group: "Nhóm Đồng Sở Hữu C",
-      totalRevenue: 1210000,
-      totalCost: 4000000,
-      profit: -2790000,
-      status: 'published',
-      createdDate: "2025-08-30",
+      thuQuy: 2200000,
+      chiQuy: 1800000,
+      soDu: 5000000,
+      status: 'archived',
+      createdDate: "2023-12-31",
       createdBy: "Admin A",
-      description: "Báo cáo dịch vụ và nhiên liệu tháng 08"
+      description: "Báo cáo thu chi quỹ tháng 12 - Chi phí nhiên liệu"
     },
     {
       id: "4",
-      reportCode: "BC-TC-20245-05",
-      period: "Tháng 05/2025",
+      reportCode: "BC-Q-2024-03",
+      period: "Tháng 2/2024",
       group: "Nhóm Đồng Sở Hữu A",
-      totalRevenue: 0,
-      totalCost: 0,
-      profit: 0,
+      thuQuy: 0,
+      chiQuy: 0,
+      soDu: 10000000,
       status: 'draft',
-      createdDate: "2025-05-01",
+      createdDate: "2024-02-01",
       createdBy: "Admin A",
-      description: "Báo cáo dự kiến tháng 5"
-    },
-    {
-      id: "5",
-      reportCode: "BC-TC-2025-10",
-      period: "Tháng 10/2025",
-      group: "Nhóm Đồng Sở Hữu A",
-      totalRevenue: 1200000,
-      totalCost: 4500000,
-      profit: -300000,
-      status: 'archived',
-      createdDate: "2025-10-31",
-      createdBy: "Admin A",
-      description: "Báo cáo đã lưu trữ tháng 10"
+      description: "Báo cáo dự kiến cho tháng 2"
     }
   ]);
 
-  const [selectedReport, setSelectedReport] = useState<FinancialReport | null>(null);
-  const [selectedPeriod, setSelectedPeriod] = useState('2025-08');
+  const [selectedReport, setSelectedReport] = useState<QuyReport | null>(null);
+  const [selectedPeriod, setSelectedPeriod] = useState('2024-01');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [newReport, setNewReport] = useState<Partial<FinancialReport>>({
-    period: "Tháng 05/2025",
+  const [newReport, setNewReport] = useState<Partial<QuyReport>>({
+    period: "Tháng 2/2024",
     group: "Nhóm Đồng Sở Hữu A",
-    totalRevenue: 0,
-    totalCost: 0,
+    thuQuy: 0,
+    chiQuy: 0,
+    soDu: 0,
     description: ""
   });
 
@@ -129,29 +117,26 @@ const BaoCaoPage: React.FC = () => {
     }
   };
 
-  // Chức năng xuất PDF - Phiên bản cải tiến
-  const handleExportPDF = async (report: FinancialReport) => {
+  // Chức năng xuất PDF
+  const handleExportPDF = async (report: QuyReport) => {
     try {
       console.log('Bắt đầu xuất PDF cho:', report.reportCode);
-
-      // Hiển thị thông báo
       alert(`Đang xuất PDF cho báo cáo: ${report.reportCode}\nTệp sẽ được tải xuống trong giây lát...`);
 
-      // Tạo nội dung PDF đơn giản (có thể thay thế bằng thư viện chuyên dụng)
       const pdfContent = `
-        BÁO CÁO TÀI CHÍNH
-        =================
+        BÁO CÁO THU CHI QUỸ NHÓM ĐỒNG SỞ HỮU
+        ===================================
 
         Mã báo cáo: ${report.reportCode}
         Kỳ báo cáo: ${report.period}
         Nhóm: ${report.group}
 
-        DOANH THU CHI PHÍ LỢI NHUẬN
-        --------------------------
-        Doanh thu: ${formatCurrency(report.totalRevenue)}
-        Chi phí: ${formatCurrency(report.totalCost)}
-        Lợi nhuận: ${formatCurrency(report.profit)}
-        ${report.totalRevenue > 0 ? `Tỷ lệ lợi nhuận: ${((report.profit / report.totalRevenue) * 100).toFixed(1)}%` : 'Chưa có doanh thu'}
+        TÌNH HÌNH THU CHI QUỸ
+        --------------------
+        Thu quỹ: ${formatCurrency(report.thuQuy)}
+        Chi quỹ: ${formatCurrency(report.chiQuy)}
+        Số dư quỹ: ${formatCurrency(report.soDu)}
+        Chênh lệch thu chi: ${formatCurrency(report.thuQuy - report.chiQuy)}
 
         Thông tin khác:
         - Người tạo: ${report.createdBy}
@@ -160,7 +145,6 @@ const BaoCaoPage: React.FC = () => {
         ${report.description ? `- Ghi chú: ${report.description}` : ''}
       `;
 
-      // Tạo Blob và tải xuống
       const blob = new Blob([pdfContent], { type: 'application/pdf' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -180,19 +164,20 @@ const BaoCaoPage: React.FC = () => {
   };
 
   // Chức năng xem chi tiết
-  const handleViewReport = (report: FinancialReport) => {
+  const handleViewReport = (report: QuyReport) => {
     setSelectedReport(report);
     setShowViewModal(true);
   };
 
   // Chức năng chỉnh sửa
-  const handleEditReport = (report: FinancialReport) => {
+  const handleEditReport = (report: QuyReport) => {
     setSelectedReport(report);
     setNewReport({
       period: report.period,
       group: report.group,
-      totalRevenue: report.totalRevenue,
-      totalCost: report.totalCost,
+      thuQuy: report.thuQuy,
+      chiQuy: report.chiQuy,
+      soDu: report.soDu,
       description: report.description || ""
     });
     setShowEditModal(true);
@@ -201,14 +186,14 @@ const BaoCaoPage: React.FC = () => {
   // Chức năng tạo báo cáo mới
   const handleCreateReport = () => {
     const reportId = (reports.length + 1).toString();
-    const newReportData: FinancialReport = {
+    const newReportData: QuyReport = {
       id: reportId,
-      reportCode: `BC-TC-${new Date().getFullYear()}-${String(reports.length + 1).padStart(2, '0')}`,
-      period: newReport.period || "Tháng 12/2024",
+      reportCode: `BC-Q-${new Date().getFullYear()}-${String(reports.length + 1).padStart(2, '0')}`,
+      period: newReport.period || "Tháng 2/2024",
       group: newReport.group || "Nhóm Đồng Sở Hữu A",
-      totalRevenue: newReport.totalRevenue || 0,
-      totalCost: newReport.totalCost || 0,
-      profit: (newReport.totalRevenue || 0) - (newReport.totalCost || 0),
+      thuQuy: newReport.thuQuy || 0,
+      chiQuy: newReport.chiQuy || 0,
+      soDu: newReport.soDu || 0,
       status: 'draft',
       createdDate: new Date().toISOString().split('T')[0],
       createdBy: "Admin A",
@@ -218,10 +203,11 @@ const BaoCaoPage: React.FC = () => {
     setReports(prev => [newReportData, ...prev]);
     setShowCreateModal(false);
     setNewReport({
-      period: "Tháng 12/2024",
+      period: "Tháng 2/2024",
       group: "Nhóm Đồng Sở Hữu A",
-      totalRevenue: 0,
-      totalCost: 0,
+      thuQuy: 0,
+      chiQuy: 0,
+      soDu: 0,
       description: ""
     });
     alert("Đã tạo báo cáo mới thành công!");
@@ -231,13 +217,13 @@ const BaoCaoPage: React.FC = () => {
   const handleUpdateReport = () => {
     if (!selectedReport) return;
 
-    const updatedReport: FinancialReport = {
+    const updatedReport: QuyReport = {
       ...selectedReport,
       period: newReport.period || selectedReport.period,
       group: newReport.group || selectedReport.group,
-      totalRevenue: newReport.totalRevenue || selectedReport.totalRevenue,
-      totalCost: newReport.totalCost || selectedReport.totalCost,
-      profit: (newReport.totalRevenue || selectedReport.totalRevenue) - (newReport.totalCost || selectedReport.totalCost),
+      thuQuy: newReport.thuQuy || selectedReport.thuQuy,
+      chiQuy: newReport.chiQuy || selectedReport.chiQuy,
+      soDu: newReport.soDu || selectedReport.soDu,
       description: newReport.description || selectedReport.description
     };
 
@@ -249,7 +235,7 @@ const BaoCaoPage: React.FC = () => {
     alert("Đã cập nhật báo cáo thành công!");
   };
 
-  // Chức năng xuất báo cáo
+  // Chức năng xuất bản báo cáo
   const handlePublishReport = (reportId: string) => {
     setReports(prev => prev.map(report =>
       report.id === reportId ? { ...report, status: 'published' as const } : report
@@ -265,26 +251,27 @@ const BaoCaoPage: React.FC = () => {
     alert("Đã lưu trữ báo cáo!");
   };
 
-  // Tính toán thống kê từ dữ liệu thực tế
-  const totalRevenue = reports.reduce((sum, report) => sum + report.totalRevenue, 0);
-  const totalCost = reports.reduce((sum, report) => sum + report.totalCost, 0);
-  const totalProfit = reports.reduce((sum, report) => sum + report.profit, 0);
-
   // Dữ liệu biểu đồ dựa trên database
   const chartData = {
     labels: ['Nhóm Đồng Sở Hữu A', 'Nhóm Đồng Sở Hữu B', 'Nhóm Đồng Sở Hữu C'],
-    revenue: [1650000, 1870000, 1210000],
-    cost: [7000000, 8500000, 4000000]
+    thuQuy: [3500000, 7000000, 2200000],
+    chiQuy: [2500000, 4900000, 1800000],
+    soDu: [10000000, 8000000, 5000000]
   };
+
+  // Tính toán tổng quan từ dữ liệu thực tế
+  const totalThuQuy = reports.reduce((sum, report) => sum + report.thuQuy, 0);
+  const totalChiQuy = reports.reduce((sum, report) => sum + report.chiQuy, 0);
+  const totalSoDu = reports.reduce((sum, report) => sum + report.soDu, 0) / reports.length;
 
   return (
     <div className="p-6">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Báo cáo tài chính
+          Báo cáo thu chi quỹ nhóm đồng sở hữu
         </h1>
         <p className="text-gray-600 dark:text-gray-400">
-          Xuất báo cáo tài chính minh bạch cho từng nhóm đồng sở hữu
+          Theo dõi và báo cáo tình hình thu chi quỹ của các nhóm đồng sở hữu xe điện
         </p>
       </div>
 
@@ -299,9 +286,9 @@ const BaoCaoPage: React.FC = () => {
                 </svg>
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Tổng doanh thu</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Tổng thu quỹ</p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {formatCurrency(totalRevenue)}
+                  {formatCurrency(totalThuQuy)}
                 </p>
               </div>
             </div>
@@ -315,9 +302,9 @@ const BaoCaoPage: React.FC = () => {
                 </svg>
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Tổng chi phí</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Tổng chi quỹ</p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {formatCurrency(totalCost)}
+                  {formatCurrency(totalChiQuy)}
                 </p>
               </div>
             </div>
@@ -331,9 +318,9 @@ const BaoCaoPage: React.FC = () => {
                 </svg>
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Lợi nhuận</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Số dư trung bình</p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {formatCurrency(totalProfit)}
+                  {formatCurrency(totalSoDu)}
                 </p>
               </div>
             </div>
@@ -361,16 +348,16 @@ const BaoCaoPage: React.FC = () => {
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Phân tích doanh thu & chi phí
+                Phân tích thu chi quỹ theo nhóm
               </h2>
               <select
                 value={selectedPeriod}
                 onChange={(e) => setSelectedPeriod(e.target.value)}
                 className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white text-sm"
               >
-                <option value="2024-11">Tháng 11/2024</option>
-                <option value="2024-10">Tháng 10/2024</option>
-                <option value="2024-09">Tháng 9/2024</option>
+                <option value="2024-01">Tháng 1/2024</option>
+                <option value="2023-12">Tháng 12/2023</option>
+                <option value="2023-11">Tháng 11/2023</option>
               </select>
             </div>
 
@@ -381,18 +368,18 @@ const BaoCaoPage: React.FC = () => {
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-700 dark:text-gray-300">{label}</span>
                     <span className="font-medium text-gray-900 dark:text-white">
-                      {formatCurrency(chartData.revenue[index])}
+                      Thu: {formatCurrency(chartData.thuQuy[index])}
                     </span>
                   </div>
                   <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                     <div
                       className="bg-green-600 h-2 rounded-full"
-                      style={{ width: `${(chartData.revenue[index] / Math.max(...chartData.revenue)) * 100}%` }}
+                      style={{ width: `${(chartData.thuQuy[index] / Math.max(...chartData.thuQuy)) * 100}%` }}
                     ></div>
                   </div>
                   <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400">
-                    <span>Chi phí: {formatCurrency(chartData.cost[index])}</span>
-                    <span>LN: {formatCurrency(chartData.revenue[index] - chartData.cost[index])}</span>
+                    <span>Chi: {formatCurrency(chartData.chiQuy[index])}</span>
+                    <span>Số dư: {formatCurrency(chartData.soDu[index])}</span>
                   </div>
                 </div>
               ))}
@@ -404,7 +391,7 @@ const BaoCaoPage: React.FC = () => {
         <div className="col-span-2">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
-              Tổng quan theo nhóm
+              Tổng quan số dư quỹ
             </h2>
 
             <div className="space-y-4">
@@ -412,12 +399,12 @@ const BaoCaoPage: React.FC = () => {
                 <div>
                   <p className="text-sm font-medium text-green-800 dark:text-green-300">Nhóm Đồng Sở Hữu A</p>
                   <p className="text-2xl font-bold text-green-900 dark:text-green-200">
-                    {formatCurrency(1650000)}
+                    {formatCurrency(10000000)}
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm text-green-600 dark:text-green-400">Doanh thu</p>
-                  <p className="text-sm text-green-700 dark:text-green-300">Chi phí: {formatCurrency(7000000)}</p>
+                  <p className="text-sm text-green-600 dark:text-green-400">Số dư quỹ</p>
+                  <p className="text-sm text-green-700 dark:text-green-300">Thu: 3.5M - Chi: 2.5M</p>
                 </div>
               </div>
 
@@ -425,12 +412,12 @@ const BaoCaoPage: React.FC = () => {
                 <div>
                   <p className="text-sm font-medium text-blue-800 dark:text-blue-300">Nhóm Đồng Sở Hữu B</p>
                   <p className="text-2xl font-bold text-blue-900 dark:text-blue-200">
-                    {formatCurrency(1870000)}
+                    {formatCurrency(8000000)}
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm text-blue-600 dark:text-blue-400">Doanh thu</p>
-                  <p className="text-sm text-blue-700 dark:text-blue-300">Chi phí: {formatCurrency(8500000)}</p>
+                  <p className="text-sm text-blue-600 dark:text-blue-400">Số dư quỹ</p>
+                  <p className="text-sm text-blue-700 dark:text-blue-300">Thu: 7M - Chi: 4.9M</p>
                 </div>
               </div>
 
@@ -438,12 +425,12 @@ const BaoCaoPage: React.FC = () => {
                 <div>
                   <p className="text-sm font-medium text-purple-800 dark:text-purple-300">Nhóm Đồng Sở Hữu C</p>
                   <p className="text-2xl font-bold text-purple-900 dark:text-purple-200">
-                    {formatCurrency(1210000)}
+                    {formatCurrency(5000000)}
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm text-purple-600 dark:text-purple-400">Doanh thu</p>
-                  <p className="text-sm text-purple-700 dark:text-purple-300">Chi phí: {formatCurrency(4000000)}</p>
+                  <p className="text-sm text-purple-600 dark:text-purple-400">Số dư quỹ</p>
+                  <p className="text-sm text-purple-700 dark:text-purple-300">Thu: 2.2M - Chi: 1.8M</p>
                 </div>
               </div>
             </div>
@@ -455,7 +442,7 @@ const BaoCaoPage: React.FC = () => {
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
             <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Danh sách báo cáo
+                Danh sách báo cáo thu chi quỹ
               </h2>
               <button
                 onClick={() => setShowCreateModal(true)}
@@ -478,13 +465,13 @@ const BaoCaoPage: React.FC = () => {
                       Kỳ báo cáo & Nhóm
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
-                      Doanh thu
+                      Thu quỹ
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
-                      Chi phí
+                      Chi quỹ
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
-                      Lợi nhuận
+                      Số dư
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
                       Trạng thái
@@ -517,13 +504,13 @@ const BaoCaoPage: React.FC = () => {
                         </div>
                       </td>
                       <td className="px-4 py-3 text-sm font-medium text-green-600 dark:text-green-400">
-                        {formatCurrency(report.totalRevenue)}
+                        {formatCurrency(report.thuQuy)}
                       </td>
                       <td className="px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400">
-                        {formatCurrency(report.totalCost)}
+                        {formatCurrency(report.chiQuy)}
                       </td>
                       <td className="px-4 py-3 text-sm font-medium text-blue-600 dark:text-blue-400">
-                        {formatCurrency(report.profit)}
+                        {formatCurrency(report.soDu)}
                       </td>
                       <td className="px-4 py-3">
                         <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusBadge(report.status)}`}>
@@ -585,7 +572,7 @@ const BaoCaoPage: React.FC = () => {
           <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-2xl">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Tạo báo cáo mới
+                Tạo báo cáo thu chi quỹ mới
               </h3>
               <button
                 onClick={() => setShowCreateModal(false)}
@@ -605,15 +592,17 @@ const BaoCaoPage: React.FC = () => {
                   onChange={(e) => setNewReport({...newReport, period: e.target.value})}
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 >
-                  <option value="Tháng 12/2024">Tháng 12/2024</option>
-                  <option value="Tháng 11/2024">Tháng 11/2024</option>
-                  <option value="Tháng 10/2024">Tháng 10/2024</option>
+                  <option value="Tháng 1/2024">Tháng 1/2024</option>
+                  <option value="Tháng 2/2024">Tháng 2/2024</option>
+                  <option value="Tháng 3/2024">Tháng 3/2024</option>
+                  <option value="Quý 1/2024">Quý 1/2024</option>
+                  <option value="Quý 2/2024">Quý 2/2024</option>
                 </select>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Nhóm
+                  Nhóm đồng sở hữu
                 </label>
                 <select
                   value={newReport.group}
@@ -626,26 +615,37 @@ const BaoCaoPage: React.FC = () => {
                 </select>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Doanh thu (VNĐ)
+                    Thu quỹ (VNĐ)
                   </label>
                   <input
                     type="number"
-                    value={newReport.totalRevenue}
-                    onChange={(e) => setNewReport({...newReport, totalRevenue: Number(e.target.value)})}
+                    value={newReport.thuQuy}
+                    onChange={(e) => setNewReport({...newReport, thuQuy: Number(e.target.value)})}
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Chi phí (VNĐ)
+                    Chi quỹ (VNĐ)
                   </label>
                   <input
                     type="number"
-                    value={newReport.totalCost}
-                    onChange={(e) => setNewReport({...newReport, totalCost: Number(e.target.value)})}
+                    value={newReport.chiQuy}
+                    onChange={(e) => setNewReport({...newReport, chiQuy: Number(e.target.value)})}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Số dư (VNĐ)
+                  </label>
+                  <input
+                    type="number"
+                    value={newReport.soDu}
+                    onChange={(e) => setNewReport({...newReport, soDu: Number(e.target.value)})}
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   />
                 </div>
@@ -660,7 +660,7 @@ const BaoCaoPage: React.FC = () => {
                   onChange={(e) => setNewReport({...newReport, description: e.target.value})}
                   rows={3}
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                  placeholder="Mô tả thêm về báo cáo..."
+                  placeholder="Mô tả chi tiết về các khoản thu chi..."
                 />
               </div>
             </div>
@@ -706,32 +706,27 @@ const BaoCaoPage: React.FC = () => {
 
             <div className="grid grid-cols-2 gap-6 mb-6">
               <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
-                <p className="text-sm font-medium text-green-800 dark:text-green-300">Doanh thu</p>
+                <p className="text-sm font-medium text-green-800 dark:text-green-300">Thu quỹ</p>
                 <p className="text-2xl font-bold text-green-900 dark:text-green-200">
-                  {formatCurrency(selectedReport.totalRevenue)}
+                  {formatCurrency(selectedReport.thuQuy)}
                 </p>
               </div>
               <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg">
-                <p className="text-sm font-medium text-red-800 dark:text-red-300">Chi phí</p>
+                <p className="text-sm font-medium text-red-800 dark:text-red-300">Chi quỹ</p>
                 <p className="text-2xl font-bold text-red-900 dark:text-red-200">
-                  {formatCurrency(selectedReport.totalCost)}
+                  {formatCurrency(selectedReport.chiQuy)}
                 </p>
               </div>
               <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
-                <p className="text-sm font-medium text-blue-800 dark:text-blue-300">Lợi nhuận</p>
+                <p className="text-sm font-medium text-blue-800 dark:text-blue-300">Số dư quỹ</p>
                 <p className="text-2xl font-bold text-blue-900 dark:text-blue-200">
-                  {formatCurrency(selectedReport.profit)}
+                  {formatCurrency(selectedReport.soDu)}
                 </p>
               </div>
               <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
-                <p className="text-sm font-medium text-purple-800 dark:text-purple-300">
-                  {selectedReport.totalRevenue > 0 ? 'Tỷ lệ lợi nhuận' : 'Trạng thái'}
-                </p>
+                <p className="text-sm font-medium text-purple-800 dark:text-purple-300">Chênh lệch</p>
                 <p className="text-2xl font-bold text-purple-900 dark:text-purple-200">
-                  {selectedReport.totalRevenue > 0
-                    ? `${((selectedReport.profit / selectedReport.totalRevenue) * 100).toFixed(1)}%`
-                    : 'Chưa có doanh thu'
-                  }
+                  {formatCurrency(selectedReport.thuQuy - selectedReport.chiQuy)}
                 </p>
               </div>
             </div>
@@ -777,7 +772,7 @@ const BaoCaoPage: React.FC = () => {
           <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-2xl">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Chỉnh sửa báo cáo
+                Chỉnh sửa báo cáo thu chi quỹ
               </h3>
               <button
                 onClick={() => setShowEditModal(false)}
@@ -797,15 +792,15 @@ const BaoCaoPage: React.FC = () => {
                   onChange={(e) => setNewReport({...newReport, period: e.target.value})}
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 >
-                  <option value="Tháng 12/2024">Tháng 12/2024</option>
-                  <option value="Tháng 11/2024">Tháng 11/2024</option>
-                  <option value="Tháng 10/2024">Tháng 10/2024</option>
+                  <option value="Tháng 1/2024">Tháng 1/2024</option>
+                  <option value="Tháng 2/2024">Tháng 2/2024</option>
+                  <option value="Tháng 3/2024">Tháng 3/2024</option>
                 </select>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Nhóm
+                  Nhóm đồng sở hữu
                 </label>
                 <select
                   value={newReport.group}
@@ -818,26 +813,37 @@ const BaoCaoPage: React.FC = () => {
                 </select>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Doanh thu (VNĐ)
+                    Thu quỹ (VNĐ)
                   </label>
                   <input
                     type="number"
-                    value={newReport.totalRevenue}
-                    onChange={(e) => setNewReport({...newReport, totalRevenue: Number(e.target.value)})}
+                    value={newReport.thuQuy}
+                    onChange={(e) => setNewReport({...newReport, thuQuy: Number(e.target.value)})}
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Chi phí (VNĐ)
+                    Chi quỹ (VNĐ)
                   </label>
                   <input
                     type="number"
-                    value={newReport.totalCost}
-                    onChange={(e) => setNewReport({...newReport, totalCost: Number(e.target.value)})}
+                    value={newReport.chiQuy}
+                    onChange={(e) => setNewReport({...newReport, chiQuy: Number(e.target.value)})}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Số dư (VNĐ)
+                  </label>
+                  <input
+                    type="number"
+                    value={newReport.soDu}
+                    onChange={(e) => setNewReport({...newReport, soDu: Number(e.target.value)})}
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   />
                 </div>
@@ -852,7 +858,7 @@ const BaoCaoPage: React.FC = () => {
                   onChange={(e) => setNewReport({...newReport, description: e.target.value})}
                   rows={3}
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                  placeholder="Mô tả thêm về báo cáo..."
+                  placeholder="Mô tả chi tiết về các khoản thu chi..."
                 />
               </div>
             </div>
