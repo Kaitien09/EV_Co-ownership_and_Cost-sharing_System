@@ -72,7 +72,7 @@ const KhachHangXe = () => {
       ngayDangKy: "15/08/2024",
       namSanXuat: 2024,
       mauXe: "Trắng",
-      trangThai: "Đang hoạt động",
+      trangThai: "Đã xong",
       lichSuDichVu: [
         { ngay: "10/11/2024", dichVu: "Bảo dưỡng định kỳ", chiPhi: 1500000, trangThai: "Hoàn thành" },
         { ngay: "15/10/2024", dichVu: "Thay lốp", chiPhi: 2500000, trangThai: "Hoàn thành" }
@@ -89,7 +89,7 @@ const KhachHangXe = () => {
       mauXe: "Đen",
       trangThai: "Đang bảo trì",
       lichSuDichVu: [
-        { ngay: "12/11/2024", dichVu: "Sửa phanh", chiPhi: 1800000, trangThai: "Hoàn thành" }
+        { ngay: "12/11/2024", dichVu: "Sửa phanh", chiPhi: 1800000, trangThai: "Đang bảo trì" }
       ]
     },
     {
@@ -101,9 +101,9 @@ const KhachHangXe = () => {
       ngayDangKy: "10/07/2024",
       namSanXuat: 2024,
       mauXe: "Xám",
-      trangThai: "Đang hoạt động",
+      trangThai: "Đã xong",
       lichSuDichVu: [
-        { ngay: "20/11/2024", dichVu: "Bảo dưỡng tổng thể", chiPhi: 3200000, trangThai: "Hoàn thành" }
+        { ngay: "20/11/2024", dichVu: "Bảo dưỡng tổng thể", chiPhi: 3200000, trangThai: "Đang bảo trì" }
       ]
     },
     {
@@ -115,7 +115,7 @@ const KhachHangXe = () => {
 ngayDangKy: "05/11/2024",
       namSanXuat: 2024,
       mauXe: "Đỏ",
-      trangThai: "Đang hoạt động",
+      trangThai: "Đã xong",
       lichSuDichVu: [
         { ngay: "08/11/2024", dichVu: "Thay dầu máy", chiPhi: 800000, trangThai: "Hoàn thành" },
         { ngay: "25/10/2024", dichVu: "Vệ sinh điều hòa", chiPhi: 450000, trangThai: "Hoàn thành" }
@@ -130,7 +130,7 @@ ngayDangKy: "05/11/2024",
       ngayDangKy: "25/12/2024",
       namSanXuat: 2024,
       mauXe: "Xanh",
-      trangThai: "Đang hoạt động",
+      trangThai: "Đã xong",
       lichSuDichVu: [
         { ngay: "30/11/2024", dichVu: "Kiểm tra định kỳ", chiPhi: 600000, trangThai: "Hoàn thành" }
       ]
@@ -335,7 +335,7 @@ ngayDangKy: "05/11/2024",
                     </td>
                     <td className="px-6 py-4">
                       <span className={`inline-flex px-3 py-1 rounded-full text-xs font-medium ${
-xe.trangThai === 'Đang hoạt động'
+xe.trangThai === 'Đã xong'
                           ? 'bg-green-100 text-green-800'
                           : 'bg-yellow-100 text-yellow-800'
                       }`}>

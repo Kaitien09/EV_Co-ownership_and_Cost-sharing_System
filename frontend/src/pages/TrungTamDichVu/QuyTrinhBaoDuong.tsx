@@ -37,10 +37,6 @@ const QuyTrinhBaoDuong = () => {
     }
   ]);
 
-  const [showUpdateModal, setShowUpdateModal] = useState(false);
-  const [selectedXe, setSelectedXe] = useState<any>(null);
-  const [buocMoi, setBuocMoi] = useState("");
-
   // Chức năng bắt đầu xử lý xe
   const handleBatDauXuLy = (xeId: string) => {
     setXeDangXuLy(prev => prev.map(xe => {
@@ -56,31 +52,6 @@ const QuyTrinhBaoDuong = () => {
       }
       return xe;
     }));
-  };
-
-  // Chức năng mở modal cập nhật tiến độ
-  const handleOpenUpdateModal = (xe: any) => {
-    setSelectedXe(xe);
-    setBuocMoi(xe.buocHienTai);
-    setShowUpdateModal(true);
-  };
-
-  // Chức năng cập nhật tiến độ
-  const handleCapNhatTienDo = () => {
-    if (buocMoi.trim() === "") return;
-
-    setXeDangXuLy(prev => prev.map(xe => {
-      if (xe.id === selectedXe.id) {
-        return {
-          ...xe,
-          buocHienTai: buocMoi
-        };
-      }
-      return xe;
-    }));
-
-    setShowUpdateModal(false);
-    setBuocMoi("");
   };
 
   // Chức năng hoàn thành xe
@@ -107,7 +78,7 @@ const QuyTrinhBaoDuong = () => {
           tinhTrang: tinhTrang
         };
       }
-return xe;
+      return xe;
     }));
   };
 
@@ -150,40 +121,60 @@ return xe;
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Thống kê nhanh */}
-          <div className="lg:col-span-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-              <div className="flex items-center justify-between">
+          {/* Tiến độ tổng quan - ĐƯA LÊN TRÊN */}
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Tiến độ hôm nay
+              </h3>
+              <div className="space-y-4">
                 <div>
-                  <div className="text-2xl font-bold text-gray-900">{thongKe.cho}</div>
-                  <div className="text-sm text-gray-600">Đang chờ</div>
+                  <div className="flex justify-between text-sm mb-2">
+                    <span className="text-gray-600">Tổng số xe</span>
+                    <span className="font-medium text-gray-900">
+                      {xeDangXuLy.length} xe
+                    </span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div
+                      className="bg-green-500 h-2 rounded-full transition-all duration-300"
+                      style={{
+                        width: `${Math.round((thongKe.hoanThanh / xeDangXuLy.length) * 100)}%`
+                      }}
+                    ></div>
+                  </div>
                 </div>
-                <div className="w-3 h-3 bg-gray-400 rounded-full"></div>
-              </div>
-            </div>
-            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="text-2xl font-bold text-gray-900">{thongKe.dangXuLy}</div>
-                  <div className="text-sm text-gray-600">Đang xử lý</div>
+
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center">
+                      <div className="w-3 h-3 bg-gray-400 rounded-full mr-2"></div>
+                      <span className="text-gray-600">Chờ xử lý</span>
+                    </div>
+                    <span className="font-medium text-gray-900">{thongKe.cho}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center">
+                      <div className="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
+                      <span className="text-gray-600">Đang xử lý</span>
+                    </div>
+                    <span className="font-medium text-gray-900">{thongKe.dangXuLy}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center">
+                      <div className="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
+                      <span className="text-gray-600">Hoàn thành</span>
+                    </div>
+                    <span className="font-medium text-gray-900">{thongKe.hoanThanh}</span>
+                  </div>
                 </div>
-                <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-              </div>
-            </div>
-            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="text-2xl font-bold text-gray-900">{thongKe.hoanThanh}</div>
-                  <div className="text-sm text-gray-600">Hoàn thành</div>
-                </div>
-                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
               </div>
             </div>
           </div>
 
-          {/* Danh sách xe */}
+          {/* Danh sách xe - CHIẾM 3/4 CÒN LẠI */}
           <div className="lg:col-span-3">
-<div className="bg-white rounded-lg shadow-sm border border-gray-200">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200">
               <div className="px-6 py-4 border-b border-gray-200">
                 <h3 className="text-lg font-semibold text-gray-900">
                   Xe trong xưởng
@@ -245,26 +236,18 @@ return xe;
                       {xe.trangThai === "cho" && (
                         <button
                           onClick={() => handleBatDauXuLy(xe.id)}
-className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
                         >
                           Bắt đầu xử lý
                         </button>
                       )}
                       {xe.trangThai === "dang-lam" && (
-                        <>
-                          <button
-                            onClick={() => handleOpenUpdateModal(xe)}
-                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
-                          >
-                            Cập nhật tiến độ
-                          </button>
-                          <button
-                            onClick={() => handleHoanThanh(xe.id)}
-                            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
-                          >
-                            Hoàn thành
-                          </button>
-                        </>
+                        <button
+                          onClick={() => handleHoanThanh(xe.id)}
+                          className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
+                        >
+                          Hoàn thành
+                        </button>
                       )}
                       {xe.trangThai === "hoan-tat" && (
                         <span className="px-4 py-2 bg-green-50 text-green-700 rounded-lg border border-green-200 text-sm font-medium">
@@ -277,104 +260,7 @@ className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transit
               </div>
             </div>
           </div>
-
-          {/* Tiến độ tổng quan */}
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                Tiến độ hôm nay
-              </h3>
-              <div className="space-y-4">
-                <div>
-                  <div className="flex justify-between text-sm mb-2">
-                    <span className="text-gray-600">Tổng số xe</span>
-                    <span className="font-medium text-gray-900">
-                      {xeDangXuLy.length} xe
-                    </span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div
-                      className="bg-green-500 h-2 rounded-full transition-all duration-300"
-                      style={{
-                        width: `${Math.round((thongKe.hoanThanh / xeDangXuLy.length) * 100)}%`
-                      }}
-                    ></div>
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="flex items-center">
-                      <div className="w-3 h-3 bg-gray-400 rounded-full mr-2"></div>
-                      <span className="text-gray-600">Chờ xử lý</span>
-                    </div>
-<span className="font-medium text-gray-900">{thongKe.cho}</span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="flex items-center">
-                      <div className="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
-                      <span className="text-gray-600">Đang xử lý</span>
-                    </div>
-                    <span className="font-medium text-gray-900">{thongKe.dangXuLy}</span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="flex items-center">
-                      <div className="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
-                      <span className="text-gray-600">Hoàn thành</span>
-                    </div>
-                    <span className="font-medium text-gray-900">{thongKe.hoanThanh}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
-
-        {/* Modal cập nhật tiến độ */}
-        {showUpdateModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
-              <div className="px-6 py-4 border-b border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900">
-                  Cập nhật tiến độ
-                </h3>
-              </div>
-
-              <div className="p-6">
-                <div className="mb-4">
-                  <p className="text-sm text-gray-600 mb-3">
-                    Xe: <span className="font-medium text-gray-900">{selectedXe?.bienSo}</span>
-                  </p>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Bước hiện tại:
-                  </label>
-                  <textarea
-                    value={buocMoi}
-                    onChange={(e) => setBuocMoi(e.target.value)}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    rows={3}
-                    placeholder="Nhập bước hiện tại đang thực hiện..."
-                  />
-                </div>
-
-                <div className="flex gap-3">
-                  <button
-                    onClick={handleCapNhatTienDo}
-                    className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
-                  >
-                    Cập nhật
-                  </button>
-                  <button
-                    onClick={() => setShowUpdateModal(false)}
-                    className="flex-1 px-4 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium"
-                  >
-                    Hủy
-</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
