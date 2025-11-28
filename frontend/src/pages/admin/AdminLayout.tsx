@@ -17,42 +17,36 @@ const AdminLayout = () => {
     {
       id: "nhomxe",
       name: "Nhóm xe đồng sở hữu",
-      icon: "🚗",
       path: "/admin",
       component: <QLNhomXeDongSoHuuPage />
     },
     {
       id: "hopdong",
       name: "Hợp đồng pháp lý",
-      icon: "📄",
       path: "/admin/ql-hd",
       component: <QLHopDongPhapLyPage />
     },
     {
       id: "dichvu",
       name: "Dịch vụ xe",
-      icon: "⚙️",
       path: "/admin/ql-dv",
       component: <QLDichVuXePage />
     },
     {
       id: "checkinout",
       name: "Check-in/Check-out",
-      icon: "🔄",
       path: "/admin/ql-check",
       component: <QLCheckInVaOutPage />
     },
     {
       id: "theodoi",
       name: "Theo dõi & Giám sát",
-      icon: "📊",
       path: "/admin/theo-doi",
       component: <TheoDoiVaGiamSatPage />
     },
     {
       id: "baocao",
       name: "Báo cáo",
-      icon: "📋",
       path: "/admin/bao-cao",
       component: <BaoCaoPage />
     }

@@ -16,42 +16,36 @@ const DichVuLayout = () => {
     {
       id: "khachhangxe",
       name: "Khách hàng & Xe",
-      icon: "👥",
       path: "/dich-vu",
       component: <KhachHangXe />
     },
     {
       id: "lichhen",
       name: "Lịch hẹn & Dịch vụ",
-      icon: "📅",
       path: "/dich-vu/lich-hen",
       component: <QLLichHenDichVu />
     },
     {
       id: "baoduong",
       name: "Quy trình bảo dưỡng",
-      icon: "🔧",
       path: "/dich-vu/bao-duong",
       component: <QuyTrinhBaoDuong />
     },
     {
       id: "phutung",
       name: "Quản lý phụ tùng",
-      icon: "⚙️",
       path: "/dich-vu/phu-tung",
       component: <QuanLyPhuTung />
     },
     {
       id: "nhansu",
       name: "Quản lý nhân sự",
-      icon: "👨‍💼",
       path: "/dich-vu/nhan-su",
       component: <QuanLyNhanSu />
     },
     {
       id: "taichinh",
       name: "Tài chính & Báo cáo",
-      icon: "💰",
       path: "/dich-vu/tai-chinh",
       component: <TaiChinhBaoCao />
     }

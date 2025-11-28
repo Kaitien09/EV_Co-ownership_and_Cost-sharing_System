@@ -24,7 +24,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         return User.builder()
                 .username(user.getTenDangNhap())
                 .password(user.getMatKhau())
-                .roles(user.getLoaiNguoiDung().name()) // ADMIN -> ROLE_ADMIN
+                .roles(user.getLoaiNguoiDung().name())
                 .build();
     }
 }
