@@ -11,6 +11,7 @@ interface FinancialReport {
   status: 'draft' | 'published' | 'archived';
   createdDate: string;
   createdBy: string;
+  description?: string;
 }
 
 const BaoCaoPage: React.FC = () => {
@@ -67,6 +68,16 @@ const BaoCaoPage: React.FC = () => {
 
   const [selectedReport, setSelectedReport] = useState<FinancialReport | null>(null);
   const [selectedPeriod, setSelectedPeriod] = useState('2024-01');
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showViewModal, setShowViewModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [newReport, setNewReport] = useState<Partial<FinancialReport>>({
+    period: "Tháng 2/2024",
+    group: "Nhóm Dịch vụ Cao cấp",
+    totalRevenue: 0,
+    totalCost: 0,
+    description: ""
+  });
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('vi-VN', {
@@ -99,6 +110,186 @@ const BaoCaoPage: React.FC = () => {
       default:
         return 'Không xác định';
     }
+  };
+// Chức năng xuất PDF - Phiên bản cải tiến
+  const handleExportPDF = async (report: FinancialReport) => {
+    try {
+      console.log('Bắt đầu xuất PDF cho:', report.reportCode);
+
+      // Hiển thị thông báo
+      alert(`Đang xuất PDF cho báo cáo: ${report.reportCode}\nTệp sẽ được tải xuống trong giây lát...`);
+
+      // Tạo nội dung PDF đơn giản (có thể thay thế bằng thư viện chuyên dụng)
+      const pdfContent = `
+        BÁO CÁO TÀI CHÍNH
+        =================
+
+        Mã báo cáo: ${report.reportCode}
+        Kỳ báo cáo: ${report.period}
+        Nhóm: ${report.group}
+
+        DOANH THU CHI PHÍ LỢI NHUẬN
+        --------------------------
+        Doanh thu: ${formatCurrency(report.totalRevenue)}
+        Chi phí: ${formatCurrency(report.totalCost)}
+        Lợi nhuận: ${formatCurrency(report.profit)}
+        Tỷ lệ lợi nhuận: ${((report.profit / report.totalRevenue) * 100).toFixed(1)}%
+
+        Thông tin khác:
+        - Người tạo: ${report.createdBy}
+        - Ngày tạo: ${report.createdDate}
+        - Trạng thái: ${getStatusText(report.status)}
+        ${report.description ? `- Ghi chú: ${report.description}` : ''}
+      `;
+
+      // Tạo Blob và tải xuống
+      const blob = new Blob([pdfContent], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${report.reportCode}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      console.log('Xuất PDF thành công:', report.reportCode);
+
+    } catch (error) {
+      console.error('Lỗi khi xuất PDF:', error);
+      alert('Có lỗi xảy ra khi xuất PDF. Vui lòng thử lại.');
+    }
+  };
+
+  // Hoặc sử dụng thư viện chuyên nghiệp hơn (ví dụ với jsPDF)
+  const handleExportPDFProfessional = async (report: FinancialReport) => {
+    try {
+      // Kiểm tra xem jsPDF đã được cài đặt chưa
+      const { jsPDF } = await import('jspdf');
+
+      const doc = new jsPDF();
+
+      // Tiêu đề
+      doc.setFontSize(16);
+      doc.text('BÁO CÁO TÀI CHÍNH', 20, 20);
+      doc.setFontSize(12);
+      doc.text(`Mã báo cáo: ${report.reportCode}`, 20, 35);
+      doc.text(`Kỳ báo cáo: ${report.period}`, 20, 45);
+      doc.text(`Nhóm: ${report.group}`, 20, 55);
+
+      // Bảng số liệu
+      doc.text('DOANH THU CHI PHÍ LỢI NHUẬN', 20, 75);
+      doc.text(`Doanh thu: ${formatCurrency(report.totalRevenue)}`, 20, 85);
+      doc.text(`Chi phí: ${formatCurrency(report.totalCost)}`, 20, 95);
+      doc.text(`Lợi nhuận: ${formatCurrency(report.profit)}`, 20, 105);
+      doc.text(`Tỷ lệ lợi nhuận: ${((report.profit / report.totalRevenue) * 100).toFixed(1)}%`, 20, 115);
+
+      // Thông tin khác
+      doc.text('Thông tin khác:', 20, 135);
+      doc.text(`- Người tạo: ${report.createdBy}`, 20, 145);
+      doc.text(`- Ngày tạo: ${report.createdDate}`, 20, 155);
+      doc.text(`- Trạng thái: ${getStatusText(report.status)}`, 20, 165);
+
+      if (report.description) {
+        doc.text(`- Ghi chú: ${report.description}`, 20, 175);
+      }
+
+      // Lưu file
+      doc.save(`${report.reportCode}.pdf`);
+
+      console.log('Xuất PDF chuyên nghiệp thành công');
+
+    } catch (error) {
+      console.error('Lỗi khi xuất PDF chuyên nghiệp:', error);
+      // Fallback về phương pháp đơn giản
+      handleExportPDF(report);
+    }
+  };
+
+  // Chức năng xem chi tiết
+  const handleViewReport = (report: FinancialReport) => {
+    setSelectedReport(report);
+    setShowViewModal(true);
+  };
+
+  // Chức năng chỉnh sửa
+  const handleEditReport = (report: FinancialReport) => {
+    setSelectedReport(report);
+    setNewReport({
+      period: report.period,
+      group: report.group,
+      totalRevenue: report.totalRevenue,
+      totalCost: report.totalCost,
+      description: report.description || ""
+    });
+    setShowEditModal(true);
+  };
+
+  // Chức năng tạo báo cáo mới
+  const handleCreateReport = () => {
+    const reportId = (reports.length + 1).toString();
+    const newReportData: FinancialReport = {
+      id: reportId,
+      reportCode: `BC-TC-${new Date().getFullYear()}-${String(reports.length + 1).padStart(2, '0')}`,
+      period: newReport.period || "Tháng 2/2024",
+      group: newReport.group || "Nhóm Dịch vụ Cao cấp",
+      totalRevenue: newReport.totalRevenue || 0,
+      totalCost: newReport.totalCost || 0,
+      profit: (newReport.totalRevenue || 0) - (newReport.totalCost || 0),
+      status: 'draft',
+      createdDate: new Date().toISOString().split('T')[0],
+      createdBy: "Admin A",
+      description: newReport.description
+    };
+
+    setReports(prev => [newReportData, ...prev]);
+    setShowCreateModal(false);
+    setNewReport({
+      period: "Tháng 2/2024",
+      group: "Nhóm Dịch vụ Cao cấp",
+      totalRevenue: 0,
+      totalCost: 0,
+      description: ""
+    });
+    alert("Đã tạo báo cáo mới thành công!");
+  };
+
+  // Chức năng cập nhật báo cáo
+  const handleUpdateReport = () => {
+    if (!selectedReport) return;
+
+    const updatedReport: FinancialReport = {
+      ...selectedReport,
+      period: newReport.period || selectedReport.period,
+      group: newReport.group || selectedReport.group,
+      totalRevenue: newReport.totalRevenue || selectedReport.totalRevenue,
+      totalCost: newReport.totalCost || selectedReport.totalCost,
+      profit: (newReport.totalRevenue || selectedReport.totalRevenue) - (newReport.totalCost || selectedReport.totalCost),
+      description: newReport.description || selectedReport.description
+    };
+
+    setReports(prev => prev.map(report =>
+      report.id === selectedReport.id ? updatedReport : report
+    ));
+    setShowEditModal(false);
+    setSelectedReport(null);
+    alert("Đã cập nhật báo cáo thành công!");
+  };
+
+  // Chức năng xuất báo cáo
+  const handlePublishReport = (reportId: string) => {
+    setReports(prev => prev.map(report =>
+      report.id === reportId ? { ...report, status: 'published' as const } : report
+    ));
+    alert("Đã xuất bản báo cáo!");
+  };
+
+  // Chức năng lưu trữ báo cáo
+  const handleArchiveReport = (reportId: string) => {
+    setReports(prev => prev.map(report =>
+      report.id === reportId ? { ...report, status: 'archived' as const } : report
+    ));
+    alert("Đã lưu trữ báo cáo!");
   };
 
   // Dữ liệu biểu đồ
@@ -288,7 +479,10 @@ const BaoCaoPage: React.FC = () => {
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
                 Danh sách báo cáo
               </h2>
-              <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
+              <button
+                onClick={() => setShowCreateModal(true)}
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+              >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                 </svg>
@@ -326,8 +520,7 @@ const BaoCaoPage: React.FC = () => {
                   {reports.map((report) => (
                     <tr
                       key={report.id}
-                      className="hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
-                      onClick={() => setSelectedReport(report)}
+                      className="hover:bg-gray-50 dark:hover:bg-gray-700"
                     >
                       <td className="px-4 py-3">
                         <div className="text-sm font-medium text-gray-900 dark:text-white">
@@ -361,15 +554,40 @@ const BaoCaoPage: React.FC = () => {
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
-                          <button className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 text-sm">
+                          <button
+                            onClick={() => handleExportPDF(report)}
+                            className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 text-sm"
+                          >
                             Xuất PDF
                           </button>
-                          <button className="text-green-600 hover:text-green-900 dark:text-green-400 dark:hover:text-green-300 text-sm">
+                          <button
+                            onClick={() => handleViewReport(report)}
+                            className="text-green-600 hover:text-green-900 dark:text-green-400 dark:hover:text-green-300 text-sm"
+                          >
                             Xem
                           </button>
                           {report.status === 'draft' && (
-                            <button className="text-purple-600 hover:text-purple-900 dark:text-purple-400 dark:hover:text-purple-300 text-sm">
+                            <button
+                              onClick={() => handleEditReport(report)}
+                              className="text-purple-600 hover:text-purple-900 dark:text-purple-400 dark:hover:text-purple-300 text-sm"
+                            >
                               Chỉnh sửa
+                            </button>
+                          )}
+                          {report.status === 'draft' && (
+                            <button
+                              onClick={() => handlePublishReport(report.id)}
+                              className="text-green-600 hover:text-green-900 dark:text-green-400 dark:hover:text-green-300 text-sm"
+                            >
+                              Xuất bản
+                            </button>
+                          )}
+                          {report.status === 'published' && (
+                            <button
+                              onClick={() => handleArchiveReport(report.id)}
+                              className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300 text-sm"
+                            >
+                              Lưu trữ
                             </button>
                           )}
                         </div>
@@ -382,6 +600,297 @@ const BaoCaoPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Modal tạo báo cáo mới */}
+      {showCreateModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-2xl">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                Tạo báo cáo mới
+              </h3>
+              <button
+                onClick={() => setShowCreateModal(false)}
+                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Kỳ báo cáo
+                </label>
+                <select
+                  value={newReport.period}
+                  onChange={(e) => setNewReport({...newReport, period: e.target.value})}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                >
+                  <option value="Tháng 1/2024">Tháng 1/2024</option>
+                  <option value="Tháng 2/2024">Tháng 2/2024</option>
+                  <option value="Tháng 3/2024">Tháng 3/2024</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Nhóm
+                </label>
+                <select
+                  value={newReport.group}
+                  onChange={(e) => setNewReport({...newReport, group: e.target.value})}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                >
+                  <option value="Nhóm Dịch vụ Cao cấp">Nhóm Dịch vụ Cao cấp</option>
+                  <option value="Nhóm Dịch vụ Thường">Nhóm Dịch vụ Thường</option>
+                  <option value="Nhóm Phụ tùng">Nhóm Phụ tùng</option>
+                </select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Doanh thu (VNĐ)
+                  </label>
+                  <input
+                    type="number"
+                    value={newReport.totalRevenue}
+                    onChange={(e) => setNewReport({...newReport, totalRevenue: Number(e.target.value)})}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Chi phí (VNĐ)
+                  </label>
+                  <input
+                    type="number"
+                    value={newReport.totalCost}
+                    onChange={(e) => setNewReport({...newReport, totalCost: Number(e.target.value)})}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Ghi chú
+                </label>
+                <textarea
+                  value={newReport.description}
+                  onChange={(e) => setNewReport({...newReport, description: e.target.value})}
+                  rows={3}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  placeholder="Mô tả thêm về báo cáo..."
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-2 mt-6">
+              <button
+                onClick={() => setShowCreateModal(false)}
+                className="flex-1 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors"
+              >
+                Hủy
+              </button>
+              <button
+                onClick={handleCreateReport}
+                className="flex-1 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+              >
+                Tạo báo cáo
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal xem chi tiết */}
+      {showViewModal && selectedReport && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-2xl">
+            <div className="flex justify-between items-center mb-6">
+              <div>
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {selectedReport.reportCode}
+                </h3>
+                <p className="text-gray-600 dark:text-gray-400">
+                  {selectedReport.period} • {selectedReport.group}
+                </p>
+              </div>
+              <button
+                onClick={() => setShowViewModal(false)}
+                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-2xl"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 gap-6 mb-6">
+              <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
+                <p className="text-sm font-medium text-green-800 dark:text-green-300">Doanh thu</p>
+                <p className="text-2xl font-bold text-green-900 dark:text-green-200">
+                  {formatCurrency(selectedReport.totalRevenue)}
+                </p>
+              </div>
+              <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg">
+                <p className="text-sm font-medium text-red-800 dark:text-red-300">Chi phí</p>
+                <p className="text-2xl font-bold text-red-900 dark:text-red-200">
+                  {formatCurrency(selectedReport.totalCost)}
+                </p>
+              </div>
+              <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+                <p className="text-sm font-medium text-blue-800 dark:text-blue-300">Lợi nhuận</p>
+                <p className="text-2xl font-bold text-blue-900 dark:text-blue-200">
+                  {formatCurrency(selectedReport.profit)}
+                </p>
+              </div>
+              <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
+                <p className="text-sm font-medium text-purple-800 dark:text-purple-300">Tỷ lệ lợi nhuận</p>
+                <p className="text-2xl font-bold text-purple-900 dark:text-purple-200">
+                  {((selectedReport.profit / selectedReport.totalRevenue) * 100).toFixed(1)}%
+                </p>
+              </div>
+            </div>
+
+            {selectedReport.description && (
+              <div className="mb-6">
+                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Ghi chú</h4>
+                <p className="text-gray-600 dark:text-gray-400">{selectedReport.description}</p>
+              </div>
+            )}
+
+            <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400">
+              <div>
+                <p>Người tạo: {selectedReport.createdBy}</p>
+                <p>Ngày tạo: {selectedReport.createdDate}</p>
+              </div>
+              <div className="text-right">
+                <p>Trạng thái: {getStatusText(selectedReport.status)}</p>
+              </div>
+            </div>
+
+            <div className="flex gap-2 mt-6">
+              <button
+                onClick={() => setShowViewModal(false)}
+                className="flex-1 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors"
+              >
+                Đóng
+              </button>
+              <button
+                onClick={() => handleExportPDF(selectedReport)}
+                className="flex-1 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+              >
+                Xuất PDF
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal chỉnh sửa */}
+      {showEditModal && selectedReport && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-2xl">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                Chỉnh sửa báo cáo
+              </h3>
+              <button
+                onClick={() => setShowEditModal(false)}
+                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Kỳ báo cáo
+                </label>
+                <select
+                  value={newReport.period}
+                  onChange={(e) => setNewReport({...newReport, period: e.target.value})}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                >
+                  <option value="Tháng 1/2024">Tháng 1/2024</option>
+                  <option value="Tháng 2/2024">Tháng 2/2024</option>
+                  <option value="Tháng 3/2024">Tháng 3/2024</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Nhóm
+                </label>
+                <select
+                  value={newReport.group}
+                  onChange={(e) => setNewReport({...newReport, group: e.target.value})}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                >
+                  <option value="Nhóm Dịch vụ Cao cấp">Nhóm Dịch vụ Cao cấp</option>
+                  <option value="Nhóm Dịch vụ Thường">Nhóm Dịch vụ Thường</option>
+                  <option value="Nhóm Phụ tùng">Nhóm Phụ tùng</option>
+                </select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Doanh thu (VNĐ)
+                  </label>
+                  <input
+                    type="number"
+                    value={newReport.totalRevenue}
+                    onChange={(e) => setNewReport({...newReport, totalRevenue: Number(e.target.value)})}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Chi phí (VNĐ)
+                  </label>
+                  <input
+                    type="number"
+                    value={newReport.totalCost}
+                    onChange={(e) => setNewReport({...newReport, totalCost: Number(e.target.value)})}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Ghi chú
+                </label>
+                <textarea
+                  value={newReport.description}
+                  onChange={(e) => setNewReport({...newReport, description: e.target.value})}
+                  rows={3}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  placeholder="Mô tả thêm về báo cáo..."
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-2 mt-6">
+              <button
+                onClick={() => setShowEditModal(false)}
+                className="flex-1 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors"
+              >
+                Hủy
+              </button>
+              <button
+                onClick={handleUpdateReport}
+                className="flex-1 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+              >
+                Cập nhật
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
