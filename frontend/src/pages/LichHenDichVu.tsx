@@ -2,27 +2,32 @@ import { useState } from "react";
 
 const LichHenDichVu = () => {
   const [activeTab, setActiveTab] = useState<'dat-lich' | 'lich-su'>('dat-lich');
+
+  // Dữ liệu từ database
   const [trungTamDichVu, setTrungTamDichVu] = useState([
     {
       id: "1",
-      ten: "Trung tâm Dịch vụ Quận 1",
-      diaChi: "123 Nguyễn Huệ, Quận 1, TP.HCM",
-      thoiGianLamViec: "7:30 - 17:30 (Thứ 2 - Thứ 7)",
-      soDienThoai: "028 3823 4567"
+      ten: "Trung tam Dien 1",
+      diaChi: "123 Duong A, Ha Noi",
+      thoiGianLamViec: "8:00-17:00 (Thứ 2 - Thứ 7)",
+      soDienThoai: "0901000001",
+      email: "tt1@example.com"
     },
     {
       id: "2",
-      ten: "Trung tâm Dịch vụ Quận 7",
-      diaChi: "456 Nguyễn Lương Bằng, Quận 7, TP.HCM",
-      thoiGianLamViec: "7:30 - 17:30 (Thứ 2 - Thứ 7)",
-      soDienThoai: "028 5412 3789"
+      ten: "Trung tam Dien 2",
+      diaChi: "456 Duong B, Ho Chi Minh",
+      thoiGianLamViec: "8:00-17:00 (Thứ 2 - Thứ 7)",
+      soDienThoai: "0901000002",
+      email: "tt2@example.com"
     },
     {
       id: "3",
-      ten: "Trung tâm Dịch vụ Thủ Đức",
-      diaChi: "789 Võ Văn Ngân, Thủ Đức, TP.HCM",
-      thoiGianLamViec: "7:30 - 17:30 (Thứ 2 - Thứ 7)",
-      soDienThoai: "028 6234 1890"
+      ten: "Trung tam Dien 3",
+      diaChi: "789 Duong C, Da Nang",
+      thoiGianLamViec: "8:00-17:00 (Thứ 2 - Thứ 7)",
+      soDienThoai: "0901000003",
+      email: "tt3@example.com"
     }
   ]);
 
@@ -32,93 +37,139 @@ const LichHenDichVu = () => {
       ten: "Bảo dưỡng định kỳ",
       moTa: "Kiểm tra tổng quan, thay dầu, lọc gió, cân bằng hệ thống",
       thoiGianDuKien: "2-3 giờ",
-      chiPhiTu: "1.500.000 VNĐ"
+      chiPhiTu: "1.500.000 VNĐ",
+      loai: "BAO_DUONG"
     },
     {
       id: "2",
       ten: "Thay ắc quy Lithium",
       moTa: "Thay thế và cân bằng cell ắc quy, bảo dưỡng hệ thống làm mát",
       thoiGianDuKien: "4-6 giờ",
-      chiPhiTu: "15.000.000 VNĐ"
+      chiPhiTu: "15.000.000 VNĐ",
+      loai: "THAY_THE_PHU_TUNG"
     },
     {
       id: "3",
       ten: "Sửa chữa hệ thống phanh",
       moTa: "Kiểm tra và thay thế má phanh, đĩa phanh, bảo dưỡng phanh tái sinh",
       thoiGianDuKien: "3-4 giờ",
-      chiPhiTu: "2.500.000 VNĐ"
+      chiPhiTu: "2.500.000 VNĐ",
+      loai: "SUA_CHUA"
     },
     {
       id: "4",
-      ten: "Bảo dưỡng hệ thống sạc",
+      ten: "Kiểm tra hệ thống",
       moTa: "Kiểm tra cổng sạc, bộ sạc onboard, hệ thống sạc nhanh DC",
       thoiGianDuKien: "2-3 giờ",
-      chiPhiTu: "1.200.000 VNĐ"
+      chiPhiTu: "1.200.000 VNĐ",
+      loai: "KIEM_TRA"
     },
     {
       id: "5",
       ten: "Sửa chữa động cơ điện",
       moTa: "Bảo dưỡng động cơ, kiểm tra biến tần, cân bằng trục truyền động",
       thoiGianDuKien: "6-8 giờ",
-      chiPhiTu: "8.000.000 VNĐ"
+      chiPhiTu: "8.000.000 VNĐ",
+      loai: "SUA_CHUA"
     }
   ]);
 
+  // Dữ liệu xe từ database
   const [danhSachXe, setDanhSachXe] = useState([
     {
       id: "1",
-      bienSo: "29A-12345",
-      model: "VinFast VF e34",
-      chuXe: "Nguyễn Văn A",
+      bienSo: "30A-11111",
+      model: "Model X1",
+      chuXe: "Nguyen Van A",
       soKm: 14500,
-      ngayDangKiem: "15/03/2025"
+      ngayDangKiem: "15/03/2025",
+      vin: "VIN00000000000001"
     },
     {
       id: "2",
-      bienSo: "29A-67890",
-      model: "VinFast VF 8",
-      chuXe: "Trần Thị B",
+      bienSo: "30A-22222",
+      model: "Model X2",
+      chuXe: "Tran Thi B",
       soKm: 8900,
-      ngayDangKiem: "20/04/2025"
+      ngayDangKiem: "20/04/2025",
+      vin: "VIN00000000000002"
+    },
+    {
+      id: "3",
+      bienSo: "30A-33333",
+      model: "Model X3",
+      chuXe: "Le Van C",
+      soKm: 12000,
+      ngayDangKiem: "10/05/2025",
+      vin: "VIN00000000000003"
     }
   ]);
 
+  // Hàm lấy ngày hiện tại theo format YYYY-MM-DD
+  const getCurrentDate = () => {
+    return new Date().toISOString().split('T')[0];
+  };
+
+  // Hàm lấy thời gian hiện tại theo format HH:MM
+  const getCurrentTime = () => {
+    return new Date().toTimeString().slice(0, 5);
+  };
+
+  // Hàm format ngày giờ cho display
+  const formatDateTime = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('vi-VN') + ' ' + date.toLocaleTimeString('vi-VN', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  // Dữ liệu lịch hẹn từ database - cập nhật với ngày hiện tại
   const [lichHen, setLichHen] = useState([
     {
       id: "1",
       maLichHen: "LH-001",
-      xe: "29A-12345 - VinFast VF e34",
-      trungTam: "Trung tâm Dịch vụ Quận 1",
+      xe: "30A-11111 - Model X1",
+      trungTam: "Trung tam Dien 1",
       dichVu: "Bảo dưỡng định kỳ",
-      ngayGioHen: "22/11/2024 08:30",
+      ngayGioHen: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // Ngày mai
       trangThai: "cho-xac-nhan",
-      thoiGianTao: "19/11/2024 14:20",
+      thoiGianTao: new Date().toISOString(),
       ghiChu: "",
-      loaiKhachHang: "khach-quen"
+      loaiKhachHang: "khach-quen",
+      xeId: "1",
+      trungTamId: "1",
+      dichVuId: "1"
     },
     {
       id: "2",
       maLichHen: "LH-002",
-      xe: "29A-67890 - VinFast VF 8",
-      trungTam: "Trung tâm Dịch vụ Quận 7",
+      xe: "30A-22222 - Model X2",
+      trungTam: "Trung tam Dien 2",
       dichVu: "Thay ắc quy Lithium",
-      ngayGioHen: "23/11/2024 09:00",
+      ngayGioHen: new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString(), // 2 ngày tới
       trangThai: "da-xac-nhan",
-      thoiGianTao: "19/11/2024 15:45",
+      thoiGianTao: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 giờ trước
       ghiChu: "Khách hàng yêu cầu kiểm tra thêm hệ thống làm mát ắc quy",
-      loaiKhachHang: "khach-quen"
+      loaiKhachHang: "khach-quen",
+      xeId: "2",
+      trungTamId: "2",
+      dichVuId: "2"
     },
     {
       id: "3",
       maLichHen: "LH-003",
-      xe: "51B-12346 - VinFast VF 9",
-      trungTam: "Trung tâm Dịch vụ Thủ Đức",
+      xe: "30A-33333 - Model X3",
+      trungTam: "Trung tam Dien 3",
       dichVu: "Sửa chữa hệ thống phanh",
-      ngayGioHen: "20/11/2024 13:30",
+      ngayGioHen: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // Hôm qua
       trangThai: "hoan-tat",
-      thoiGianTao: "18/11/2024 10:15",
+      thoiGianTao: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 ngày trước
       ghiChu: "Khách hàng mới - đã thay má phanh trước",
-      loaiKhachHang: "khach-moi"
+      loaiKhachHang: "khach-moi",
+      xeId: "3",
+      trungTamId: "3",
+      dichVuId: "3"
     }
   ]);
 
@@ -156,22 +207,28 @@ const LichHenDichVu = () => {
     const trungTamSelected = trungTamDichVu.find(tt => tt.id === newLichHen.trungTamId);
     const dichVuSelected = loaiDichVu.find(dv => dv.id === newLichHen.dichVuId);
 
+    // Tạo datetime từ ngày và giờ đã chọn
+    const ngayGioHen = new Date(`${newLichHen.ngayHen}T${newLichHen.gioHen}`);
+
     const lichHenMoi = {
       id: (lichHen.length + 1).toString(),
       maLichHen: `LH-${String(lichHen.length + 1).padStart(3, '0')}`,
       xe: `${xeSelected?.bienSo} - ${xeSelected?.model}`,
       trungTam: trungTamSelected?.ten,
       dichVu: dichVuSelected?.ten,
-      ngayGioHen: `${newLichHen.ngayHen} ${newLichHen.gioHen}`,
+      ngayGioHen: ngayGioHen.toISOString(),
       trangThai: "cho-xac-nhan",
-      thoiGianTao: new Date().toLocaleDateString('vi-VN') + " " + new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
+      thoiGianTao: new Date().toISOString(),
       ghiChu: newLichHen.ghiChu,
       loaiKhachHang: "khach-quen",
       thongTinLienHe: {
         chuXe: xeSelected?.chuXe,
         soDienThoai: "Đã có trong hệ thống"
       },
-      soKm: xeSelected?.soKm || "Chưa cập nhật"
+      soKm: xeSelected?.soKm || "Chưa cập nhật",
+      xeId: newLichHen.xeId,
+      trungTamId: newLichHen.trungTamId,
+      dichVuId: newLichHen.dichVuId
     };
 
     setLichHen(prev => [lichHenMoi, ...prev]);
@@ -268,7 +325,7 @@ const LichHenDichVu = () => {
                 <div><strong>Xe:</strong> {selectedLichHen.xe}</div>
                 <div><strong>Trung tâm:</strong> {selectedLichHen.trungTam}</div>
                 <div><strong>Dịch vụ:</strong> {selectedLichHen.dichVu}</div>
-                <div><strong>Thời gian:</strong> {selectedLichHen.ngayGioHen}</div>
+                <div><strong>Thời gian:</strong> {formatDateTime(selectedLichHen.ngayGioHen)}</div>
               </div>
               <p className="text-xs text-green-600 border-t border-green-200 pt-2">
                 Chúng tôi sẽ xác nhận lịch hẹn qua SMS/Email trong vòng 2 giờ làm việc.
@@ -584,11 +641,15 @@ const LichHenDichVu = () => {
                       </div>
                       <div className="flex justify-between">
                         <span className="text-sm text-gray-600 dark:text-gray-400">Thời gian hẹn:</span>
-                        <span className="text-sm font-medium text-gray-800 dark:text-white">{lh.ngayGioHen}</span>
+                        <span className="text-sm font-medium text-gray-800 dark:text-white">
+                          {formatDateTime(lh.ngayGioHen)}
+                        </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-sm text-gray-600 dark:text-gray-400">Đặt lúc:</span>
-                        <span className="text-sm text-gray-600 dark:text-gray-400">{lh.thoiGianTao}</span>
+                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                          {formatDateTime(lh.thoiGianTao)}
+                        </span>
                       </div>
                     </div>
                     <div className="space-y-2">
