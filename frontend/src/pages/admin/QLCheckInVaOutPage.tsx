@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface CheckInOut {
   id: string;
@@ -9,125 +9,155 @@ interface CheckInOut {
   checkInTime?: string;
   checkOutTime?: string;
   status: 'checked-in' | 'checked-out' | 'pending';
+  energyConsumed: number;
+  distance: number;
+  startPoint: string;
+  endPoint: string;
+  note: string;
+  purpose: string;
 }
 
 const QLCheckInVaOutPage: React.FC = () => {
-  const [records, setRecords] = useState<CheckInOut[]>([
-    {
-      id: "1",
-      bookingId: "BK-2024-001",
-      customerName: "Nguyễn Văn A",
-      vehicle: "BMW X5 - 51A-12345",
-      groupName: "Nhóm Đồng Sở Hữu A",
-      checkInTime: "2024-01-15 08:30",
-      checkOutTime: "2024-01-15 17:15",
-      status: 'checked-out'
-    },
-    {
-      id: "2",
-      bookingId: "BK-2024-002",
-      customerName: "Trần Thị B",
-      vehicle: "Mercedes C300 - 51B-67890",
-      groupName: "Nhóm Đồng Sở Hữu B",
-      checkInTime: "2024-01-15 09:00",
-      status: 'checked-in'
-    },
-    {
-      id: "3",
-      bookingId: "BK-2024-003",
-      customerName: "Lê Văn C",
-      vehicle: "Audi Q7 - 51C-54321",
-      groupName: "Nhóm Đồng Sở Hữu C",
-      checkInTime: "2024-01-16 08:15",
-      checkOutTime: "2024-01-16 18:30",
-      status: 'checked-out'
-    },
-    {
-      id: "4",
-      bookingId: "BK-2024-004",
-      customerName: "Phạm Thị D",
-      vehicle: "Toyota Camry - 51D-98765",
-      groupName: "Nhóm Đồng Sở Hữu D",
-      checkInTime: "2024-01-14 10:30",
-      checkOutTime: "2024-01-14 16:45",
-      status: 'checked-out'
-    },
-    {
-      id: "5",
-      bookingId: "BK-2024-005",
-      customerName: "Hoàng Văn E",
-      vehicle: "Honda CR-V - 51E-11111",
-      groupName: "Nhóm Đồng Sở Hữu E",
-      checkInTime: "2024-01-17 07:45",
-      status: 'checked-in'
-    },
-    {
-      id: "6",
-      bookingId: "BK-2024-006",
-      customerName: "Vũ Thị F",
-      vehicle: "Ford Ranger - 51F-22222",
-      groupName: "Nhóm Đồng Sở Hữu F",
-      checkInTime: "2024-01-18 08:00",
-      checkOutTime: "2024-01-18 17:30",
-      status: 'checked-out'
-    },
-    {
-      id: "7",
-      bookingId: "BK-2024-007",
-      customerName: "Đặng Văn G",
-      vehicle: "Hyundai Tucson - 51G-33333",
-      groupName: "Nhóm Đồng Sở Hữu G",
-      checkInTime: "2024-01-19 09:15",
-      status: 'checked-in'
-    },
-    {
-      id: "8",
-      bookingId: "BK-2024-008",
-      customerName: "Bùi Thị H",
-      vehicle: "Kia Sorento - 51H-44444",
-      groupName: "Nhóm Đồng Sở Hữu H",
-      checkInTime: "2024-01-20 07:30",
-      checkOutTime: "2024-01-20 16:45",
-      status: 'checked-out'
-    },
-    {
-      id: "9",
-      bookingId: "BK-2024-009",
-      customerName: "Lý Văn I",
-      vehicle: "Mazda CX-5 - 51I-55555",
-      groupName: "Nhóm Đồng Sở Hữu I",
-      checkInTime: "2024-01-21 08:45",
-      status: 'checked-in'
-    },
-    {
-      id: "10",
-      bookingId: "BK-2024-010",
-      customerName: "Trịnh Thị K",
-      vehicle: "VinFast VF8 - 51K-66666",
-      groupName: "Nhóm Đồng Sở Hữu K",
-      checkInTime: "2024-01-22 10:00",
-      checkOutTime: "2024-01-22 18:15",
-      status: 'checked-out'
-    },
-    {
-      id: "11",
-      bookingId: "BK-2024-011",
-      customerName: "Cao Văn L",
-      vehicle: "Chevrolet Colorado - 51L-77777",
-      groupName: "Nhóm Đồng Sở Hữu L",
-      checkInTime: "2024-01-23 07:15",
-      status: 'checked-in'
-    }
-  ]);
-
+  const [records, setRecords] = useState<CheckInOut[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState<'all' | 'checked-in' | 'checked-out' | 'pending'>('all');
   const itemsPerPage = 5;
+
+  // Fetch dữ liệu từ API
+  useEffect(() => {
+    const fetchCheckInOutData = async () => {
+      try {
+        setLoading(true);
+        // Dữ liệu thực tế từ database của bạn
+        const mockData: CheckInOut[] = [
+          {
+            id: "1",
+            bookingId: "BK-2025-001",
+            customerName: "Nguyễn Văn A",
+            vehicle: "Model X1 - 30A-11111",
+            groupName: "Nhóm Đồng Sở Hữu A",
+            checkInTime: "2025-11-26T08:00:00.000Z",
+            checkOutTime: "2025-11-26T12:00:00.000Z",
+            status: 'checked-out',
+            energyConsumed: 20,
+            distance: 50,
+            startPoint: "Điểm xuất phát A",
+            endPoint: "Trạm A",
+            note: "Sử dụng bình thường",
+            purpose: "Vận hành"
+          },
+          {
+            id: "2",
+            bookingId: "BK-2025-002",
+            customerName: "Trần Thị B",
+            vehicle: "Model X1 - 30A-11111",
+            groupName: "Nhóm Đồng Sở Hữu A",
+            checkInTime: "2025-11-27T09:00:00.000Z",
+            checkOutTime: "2025-11-27T13:00:00.000Z",
+            status: 'checked-out',
+            energyConsumed: 25,
+            distance: 60,
+            startPoint: "Điểm xuất phát B",
+            endPoint: "Trạm B",
+            note: "Sử dụng bình thường",
+            purpose: "Vận hành"
+          },
+          {
+            id: "3",
+            bookingId: "BK-2025-003",
+            customerName: "Lê Văn C",
+            vehicle: "Model X2 - 30A-22222",
+            groupName: "Nhóm Đồng Sở Hữu B",
+            checkInTime: "2025-11-28T10:00:00.000Z",
+            checkOutTime: "2025-11-28T14:00:00.000Z",
+            status: 'checked-out',
+            energyConsumed: 30,
+            distance: 70,
+            startPoint: "Điểm xuất phát C",
+            endPoint: "Trạm C",
+            note: "Sử dụng bình thường",
+            purpose: "Vận hành"
+          },
+          {
+            id: "4",
+            bookingId: "BK-2025-004",
+            customerName: "Nguyễn Văn A",
+            vehicle: "Model X1 - 30A-11111",
+            groupName: "Nhóm Đồng Sở Hữu A",
+            checkInTime: "2025-01-15T08:30:00.000Z",
+            status: 'checked-in',
+            energyConsumed: 0,
+            distance: 0,
+            startPoint: "Trung tâm dịch vụ",
+            endPoint: "",
+            note: "Đang sử dụng",
+            purpose: "Vận hành"
+          },
+          {
+            id: "5",
+            bookingId: "BK-2025-005",
+            customerName: "Trần Thị B",
+            vehicle: "Model X1 - 30A-11111",
+            groupName: "Nhóm Đồng Sở Hữu A",
+            checkInTime: "2025-01-16T09:15:00.000Z",
+            status: 'checked-in',
+            energyConsumed: 0,
+            distance: 0,
+            startPoint: "Trung tâm dịch vụ",
+            endPoint: "",
+            note: "Đang sử dụng",
+            purpose: "Vận hành"
+          },
+          {
+            id: "6",
+            bookingId: "BK-2025-006",
+            customerName: "Phạm Thị D",
+            vehicle: "Model X2 - 30A-22222",
+            groupName: "Nhóm Đồng Sở Hữu B",
+            checkInTime: "2025-01-18T11:00:00.000Z",
+            status: 'pending',
+            energyConsumed: 0,
+            distance: 0,
+            startPoint: "",
+            endPoint: "",
+            note: "Chờ xác nhận",
+            purpose: "Vận hành"
+          }
+        ];
+
+        setRecords(mockData);
+      } catch (error) {
+        console.error('Lỗi khi tải dữ liệu:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCheckInOutData();
+  }, []);
+
+  // Lọc dữ liệu theo trạng thái
+  const filteredRecords = records.filter(record => {
+    if (filter === 'all') return true;
+    return record.status === filter;
+  });
 
   // Tính toán dữ liệu cho trang hiện tại
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentRecords = records.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(records.length / itemsPerPage);
+  const currentRecords = filteredRecords.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredRecords.length / itemsPerPage);
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('vi-VN', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -204,7 +234,6 @@ const QLCheckInVaOutPage: React.FC = () => {
     let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
     let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
 
-    // Điều chỉnh nếu không đủ maxVisiblePages
     if (endPage - startPage + 1 < maxVisiblePages) {
       startPage = Math.max(1, endPage - maxVisiblePages + 1);
     }
@@ -216,177 +245,263 @@ const QLCheckInVaOutPage: React.FC = () => {
     return pageNumbers;
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-6 flex justify-center items-center">
+        <div className="text-lg">Đang tải dữ liệu...</div>
+      </div>
+    );
+  }
+
   return (
-    <div className="p-6">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-          Lịch sử Check-in/Check-out
-        </h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          Theo dõi lịch sử nhận và trả xe
-        </p>
-      </div>
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            Quản lý Check-in/Check-out
+          </h1>
+          <p className="text-gray-600">
+            Theo dõi và quản lý lịch sử nhận - trả xe
+          </p>
+        </div>
 
-      {/* Thống kê tổng quan */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <div className="flex items-center">
-            <div className="p-3 bg-blue-100 rounded-lg">
-              <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+        {/* Thống kê tổng quan */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+          <div className="bg-white rounded-lg p-4 shadow-sm border">
+            <div className="flex items-center">
+              <div className="p-2 bg-blue-50 rounded-lg">
+                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <p className="text-xs font-medium text-gray-600">Đã check-in</p>
+                <p className="text-lg font-bold text-gray-900">
+                  {records.filter(r => r.status === 'checked-in').length}
+                </p>
+              </div>
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Đã check-in</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {records.filter(r => r.status === 'checked-in').length}
-              </p>
+          </div>
+
+          <div className="bg-white rounded-lg p-4 shadow-sm border">
+            <div className="flex items-center">
+              <div className="p-2 bg-green-50 rounded-lg">
+                <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <p className="text-xs font-medium text-gray-600">Đã check-out</p>
+                <p className="text-lg font-bold text-gray-900">
+                  {records.filter(r => r.status === 'checked-out').length}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg p-4 shadow-sm border">
+            <div className="flex items-center">
+              <div className="p-2 bg-yellow-50 rounded-lg">
+                <svg className="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <p className="text-xs font-medium text-gray-600">Đang chờ</p>
+                <p className="text-lg font-bold text-gray-900">
+                  {records.filter(r => r.status === 'pending').length}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg p-4 shadow-sm border">
+            <div className="flex items-center">
+              <div className="p-2 bg-purple-50 rounded-lg">
+                <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <p className="text-xs font-medium text-gray-600">Tổng số</p>
+                <p className="text-lg font-bold text-gray-900">{records.length}</p>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <div className="flex items-center">
-            <div className="p-3 bg-green-100 rounded-lg">
-              <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Đã check-out</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {records.filter(r => r.status === 'checked-out').length}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <div className="flex items-center">
-            <div className="p-3 bg-yellow-100 rounded-lg">
-              <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Đang chờ</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {records.filter(r => r.status === 'pending').length}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <div className="flex items-center">
-            <div className="p-3 bg-purple-100 rounded-lg">
-              <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-              </svg>
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Tổng số</p>
-              <p className="text-2xl font-bold text-gray-900">{records.length}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Danh sách lịch sử */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200">
-        <div className="p-6 border-b border-gray-200">
-          <div className="flex justify-between items-center">
-            <h2 className="text-lg font-semibold text-gray-900">
-              Lịch sử giao dịch
-            </h2>
-            <div className="text-sm text-gray-500">
-              Trang {currentPage} / {totalPages}
+        {/* Bộ lọc */}
+        <div className="bg-white rounded-lg shadow-sm border p-4 mb-6">
+          <div className="flex flex-col lg:flex-row gap-4">
+            <div className="flex-1">
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setFilter('all')}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    filter === 'all'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  Tất cả
+                </button>
+                <button
+                  onClick={() => setFilter('checked-in')}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    filter === 'checked-in'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  Đã nhận xe
+                </button>
+                <button
+                  onClick={() => setFilter('checked-out')}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    filter === 'checked-out'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  Đã trả xe
+                </button>
+                <button
+                  onClick={() => setFilter('pending')}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    filter === 'pending'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  Chờ xử lý
+                </button>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="bg-gray-50 border-b border-gray-200">
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                  Mã đặt xe
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                  Thông tin
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                  Thời gian nhận xe
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                  Thời gian trả xe
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                  Trạng thái
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {currentRecords.map((record) => (
-                <tr key={record.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4">
-                    <div className="text-sm font-semibold text-gray-900 font-mono">
-                      {record.bookingId}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-start space-x-3">
-                      <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
-                        <span className="text-white font-semibold text-sm">🚗</span>
+        {/* Danh sách lịch sử */}
+        <div className="bg-white rounded-lg shadow-sm border">
+          <div className="p-4 border-b">
+            <div className="flex justify-between items-center">
+              <h2 className="text-lg font-semibold text-gray-900">
+                Lịch sử Check-in/Check-out
+              </h2>
+              <div className="text-sm text-gray-500">
+                {filteredRecords.length} kết quả • Trang {currentPage} / {totalPages}
+              </div>
+            </div>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="bg-gray-50">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Mã đặt xe
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Thông tin
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Thời gian nhận xe
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Thời gian trả xe
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Quãng đường
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Trạng thái
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {currentRecords.map((record) => (
+                  <tr key={record.id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-4 py-4">
+                      <div className="text-sm font-medium text-gray-900 font-mono">
+                        {record.bookingId}
                       </div>
+                    </td>
+                    <td className="px-4 py-4">
                       <div>
                         <div className="text-sm font-semibold text-gray-900">
                           {record.customerName}
                         </div>
-                        <div className="text-sm text-gray-600 mt-1">
+                        <div className="text-sm text-gray-600">
                           {record.vehicle}
                         </div>
-                        <div className="text-xs text-gray-500 mt-1">
+                        <div className="text-xs text-gray-500">
                           {record.groupName}
                         </div>
+                        {record.note && (
+                          <div className="text-xs text-gray-400 mt-1">
+                            {record.note}
+                          </div>
+                        )}
                       </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="text-sm text-gray-900">
-                      {record.checkInTime || (
-                        <span className="text-gray-400">Chưa nhận xe</span>
+                    </td>
+                    <td className="px-4 py-4">
+                      <div className="text-sm text-gray-900">
+                        {record.checkInTime ? formatDate(record.checkInTime) : (
+                          <span className="text-gray-400">Chưa nhận xe</span>
+                        )}
+                      </div>
+                      {record.startPoint && (
+                        <div className="text-xs text-gray-500">
+                          {record.startPoint}
+                        </div>
                       )}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="text-sm text-gray-900">
-                      {record.checkOutTime || (
-                        <span className="text-gray-400">Chưa trả xe</span>
+                    </td>
+                    <td className="px-4 py-4">
+                      <div className="text-sm text-gray-900">
+                        {record.checkOutTime ? formatDate(record.checkOutTime) : (
+                          <span className="text-gray-400">Chưa trả xe</span>
+                        )}
+                      </div>
+                      {record.endPoint && (
+                        <div className="text-xs text-gray-500">
+                          {record.endPoint}
+                        </div>
                       )}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center">
-                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getStatusBadge(record.status)}`}>
-                        <span className="mr-1.5">
-                          {getStatusIcon(record.status)}
+                    </td>
+                    <td className="px-4 py-4">
+                      {record.distance > 0 ? (
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">
+                            {record.distance} km
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {record.energyConsumed} kWh
+                          </div>
+                        </div>
+                      ) : (
+                        <span className="text-gray-400">-</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-4">
+                      <div className="flex items-center">
+                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getStatusBadge(record.status)}`}>
+                          <span className="mr-1.5">
+                            {getStatusIcon(record.status)}
+                          </span>
+                          {getStatusText(record.status)}
                         </span>
-                        {getStatusText(record.status)}
-                      </span>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
-        {/* Footer với phân trang */}
-        <div className="px-6 py-4 border-t border-gray-200 bg-gray-50">
-          <div className="flex items-center justify-between">
+          {/* Footer với phân trang */}
+          <div className="px-4 py-3 border-t bg-gray-50 flex items-center justify-between">
             <div className="text-sm text-gray-500">
-              Hiển thị {currentRecords.length} trong tổng số {records.length} kết quả
+              Hiển thị {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, filteredRecords.length)} trong tổng số {filteredRecords.length} kết quả
             </div>
             <div className="flex items-center space-x-2">
               <button

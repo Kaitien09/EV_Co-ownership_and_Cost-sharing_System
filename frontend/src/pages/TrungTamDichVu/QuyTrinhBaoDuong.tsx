@@ -4,108 +4,110 @@ const QuyTrinhBaoDuong = () => {
   const [xeDangXuLy, setXeDangXuLy] = useState([
     {
       id: "1",
-      bienSo: "29A-12345",
-      model: "VinFast VF e34",
-      trangThai: "dang-lam",
-      buocHienTai: "Đang kiểm tra hệ thống phanh",
-      kyThuatVien: "Nguyễn Văn C",
-      batDau: "08:00",
-      duKienHoanThanh: "11:30",
-      tinhTrang: "Bình thường"
+      bienSo: "30A-11111",
+      model: "Model X1",
+      trangThai: "DANG_THUC_HIEN",
+      buocHienTai: "Kiểm tra pin",
+      kyThuatVien: "Nguyen Van A",
+      batDau: "2025-11-28 07:17:36",
+      duKienHoanThanh: "2025-11-28 09:17:36",
+      tinhTrang: "Pin ok",
+      danhSachKiemTra: "kiểm tra pin",
+      ketQuaKiemTra: "Thanh cong",
+      khacPhuc: "Khong can"
     },
     {
       id: "2",
-      bienSo: "29A-67890",
-      model: "VinFast VF 8",
-      trangThai: "cho",
+      bienSo: "30A-22222",
+      model: "Model X2",
+      trangThai: "DANG_THUC_HIEN",
+      buocHienTai: "Kiểm tra động cơ",
+      kyThuatVien: "Le Thi B",
+      batDau: "2025-11-28 07:17:36",
+      duKienHoanThanh: "2025-11-28 10:17:36",
+      tinhTrang: "Dong co ok",
+      danhSachKiemTra: "Kiểm tra động cơ",
+      ketQuaKiemTra: "Thanh cong",
+      khacPhuc: "Khong can"
+    },
+    {
+      id: "3",
+      bienSo: "30A-33333",
+      model: "Model X3",
+      trangThai: "HOAN_THANH",
+      buocHienTai: "Thay phụ tùng",
+      kyThuatVien: "Tran Van C",
+      batDau: "2025-11-28 07:17:36",
+      duKienHoanThanh: "2025-11-28 08:17:36",
+      tinhTrang: "Thay phu tung thanh cong",
+      danhSachKiemTra: "Thay phụ tùng",
+      ketQuaKiemTra: "Thanh cong",
+      khacPhuc: "Khac phuc xong"
+    },
+    {
+      id: "4",
+      bienSo: "30A-44444",
+      model: "Model X4",
+      trangThai: "CHO_XAC_NHAN",
       buocHienTai: "Chờ tiếp nhận",
       kyThuatVien: "",
       batDau: "",
       duKienHoanThanh: "",
-      tinhTrang: "Cần kiểm tra điều hòa"
+      tinhTrang: "Cần kiểm tra hệ thống điện",
+      danhSachKiemTra: {},
+      ketQuaKiemTra: "",
+      khacPhuc: ""
     },
     {
-      id: "3",
-      bienSo: "29A-99999",
-      model: "Tesla Model 3",
-      trangThai: "hoan-tat",
-      buocHienTai: "Đã hoàn thành bảo dưỡng",
-      kyThuatVien: "Trần Thị D",
-      batDau: "07:30",
-      duKienHoanThanh: "10:15",
-      tinhTrang: "Tốt, không phát hiện lỗi"
+      id: "5",
+      bienSo: "30A-55555",
+      model: "Model X5",
+      trangThai: "DA_XAC_NHAN",
+      buocHienTai: "Chờ phân công kỹ thuật viên",
+      kyThuatVien: "",
+      batDau: "",
+      duKienHoanThanh: "",
+      tinhTrang: "Bảo dưỡng định kỳ",
+      danhSachKiemTra: {},
+      ketQuaKiemTra: "",
+      khacPhuc: ""
     }
   ]);
 
-  // Chức năng bắt đầu xử lý xe
-  const handleBatDauXuLy = (xeId: string) => {
-    setXeDangXuLy(prev => prev.map(xe => {
-      if (xe.id === xeId) {
-        return {
-          ...xe,
-          trangThai: "dang-lam",
-          buocHienTai: "Đang kiểm tra tổng quan",
-          kyThuatVien: "Nguyễn Văn C",
-          batDau: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
-          duKienHoanThanh: new Date(Date.now() + 3 * 60 * 60 * 1000).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
-        };
-      }
-      return xe;
-    }));
-  };
-
-  // Chức năng hoàn thành xe
-  const handleHoanThanh = (xeId: string) => {
-    setXeDangXuLy(prev => prev.map(xe => {
-      if (xe.id === xeId) {
-        return {
-          ...xe,
-          trangThai: "hoan-tat",
-          buocHienTai: "Đã hoàn thành bảo dưỡng",
-          duKienHoanThanh: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
-        };
-      }
-      return xe;
-    }));
-  };
-
-  // Chức năng cập nhật tình trạng
-  const handleUpdateTinhTrang = (xeId: string, tinhTrang: string) => {
-    setXeDangXuLy(prev => prev.map(xe => {
-      if (xe.id === xeId) {
-        return {
-          ...xe,
-          tinhTrang: tinhTrang
-        };
-      }
-      return xe;
-    }));
-  };
-
   const getTrangThaiColor = (trangThai: string) => {
     const colors = {
-      cho: "bg-gray-100 text-gray-700 border border-gray-300",
-      "dang-lam": "bg-blue-50 text-blue-700 border border-blue-200",
-      "hoan-tat": "bg-green-50 text-green-700 border border-green-200"
+      "CHO_XAC_NHAN": "bg-gray-100 text-gray-700 border border-gray-300",
+      "DA_XAC_NHAN": "bg-blue-50 text-blue-700 border border-blue-200",
+      "DANG_THUC_HIEN": "bg-orange-50 text-orange-700 border border-orange-200",
+      "HOAN_THANH": "bg-green-50 text-green-700 border border-green-200"
     };
-    return colors[trangThai as keyof typeof colors];
+    return colors[trangThai as keyof typeof colors] || colors["CHO_XAC_NHAN"];
   };
 
   const getTrangThaiText = (trangThai: string) => {
     const texts = {
-      cho: "Chờ xử lý",
-      "dang-lam": "Đang thực hiện",
-      "hoan-tat": "Hoàn thành"
+      "CHO_XAC_NHAN": "Chờ xác nhận",
+      "DA_XAC_NHAN": "Đã xác nhận",
+      "DANG_THUC_HIEN": "Đang thực hiện",
+      "HOAN_THANH": "Hoàn thành"
     };
-    return texts[trangThai as keyof typeof texts];
+    return texts[trangThai as keyof typeof texts] || trangThai;
+  };
+
+  const formatThoiGian = (thoiGian: string) => {
+    if (!thoiGian) return "";
+    return new Date(thoiGian).toLocaleString('vi-VN');
   };
 
   // Thống kê
   const thongKe = {
-    cho: xeDangXuLy.filter(xe => xe.trangThai === "cho").length,
-    dangXuLy: xeDangXuLy.filter(xe => xe.trangThai === "dang-lam").length,
-    hoanThanh: xeDangXuLy.filter(xe => xe.trangThai === "hoan-tat").length
+    choXacNhan: xeDangXuLy.filter(xe => xe.trangThai === "CHO_XAC_NHAN").length,
+    daXacNhan: xeDangXuLy.filter(xe => xe.trangThai === "DA_XAC_NHAN").length,
+    dangXuLy: xeDangXuLy.filter(xe => xe.trangThai === "DANG_THUC_HIEN").length,
+    hoanThanh: xeDangXuLy.filter(xe => xe.trangThai === "HOAN_THANH").length
   };
+
+  const tongXe = xeDangXuLy.length;
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -121,7 +123,7 @@ const QuyTrinhBaoDuong = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Tiến độ tổng quan - ĐƯA LÊN TRÊN */}
+          {/* Tiến độ tổng quan */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
@@ -132,14 +134,14 @@ const QuyTrinhBaoDuong = () => {
                   <div className="flex justify-between text-sm mb-2">
                     <span className="text-gray-600">Tổng số xe</span>
                     <span className="font-medium text-gray-900">
-                      {xeDangXuLy.length} xe
+                      {tongXe} xe
                     </span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
                     <div
                       className="bg-green-500 h-2 rounded-full transition-all duration-300"
                       style={{
-                        width: `${Math.round((thongKe.hoanThanh / xeDangXuLy.length) * 100)}%`
+                        width: `${Math.round((thongKe.hoanThanh / tongXe) * 100)}%`
                       }}
                     ></div>
                   </div>
@@ -149,13 +151,20 @@ const QuyTrinhBaoDuong = () => {
                   <div className="flex items-center justify-between text-sm">
                     <div className="flex items-center">
                       <div className="w-3 h-3 bg-gray-400 rounded-full mr-2"></div>
-                      <span className="text-gray-600">Chờ xử lý</span>
+                      <span className="text-gray-600">Chờ xác nhận</span>
                     </div>
-                    <span className="font-medium text-gray-900">{thongKe.cho}</span>
+                    <span className="font-medium text-gray-900">{thongKe.choXacNhan}</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
                     <div className="flex items-center">
                       <div className="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
+                      <span className="text-gray-600">Đã xác nhận</span>
+                    </div>
+                    <span className="font-medium text-gray-900">{thongKe.daXacNhan}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center">
+                      <div className="w-3 h-3 bg-orange-500 rounded-full mr-2"></div>
                       <span className="text-gray-600">Đang xử lý</span>
                     </div>
                     <span className="font-medium text-gray-900">{thongKe.dangXuLy}</span>
@@ -172,7 +181,7 @@ const QuyTrinhBaoDuong = () => {
             </div>
           </div>
 
-          {/* Danh sách xe - CHIẾM 3/4 CÒN LẠI */}
+          {/* Danh sách xe */}
           <div className="lg:col-span-3">
             <div className="bg-white rounded-lg shadow-sm border border-gray-200">
               <div className="px-6 py-4 border-b border-gray-200">
@@ -207,53 +216,49 @@ const QuyTrinhBaoDuong = () => {
                             Kỹ thuật viên: {xe.kyThuatVien}
                           </p>
                         )}
+                        {xe.ketQuaKiemTra && (
+                          <p className="text-sm text-green-600 mt-1">
+                            Kết quả: {xe.ketQuaKiemTra}
+                          </p>
+                        )}
+                        {xe.khacPhuc && (
+                          <p className="text-sm text-blue-600 mt-1">
+                            Khắc phục: {xe.khacPhuc}
+                          </p>
+                        )}
                       </div>
                       <div className="text-sm text-gray-600 space-y-1">
                         {xe.batDau && (
-                          <p>Bắt đầu: {xe.batDau}</p>
+                          <p>Bắt đầu: {formatThoiGian(xe.batDau)}</p>
                         )}
                         {xe.duKienHoanThanh && (
-                          <p>Dự kiến: {xe.duKienHoanThanh}</p>
+                          <p>Dự kiến: {formatThoiGian(xe.duKienHoanThanh)}</p>
                         )}
                       </div>
                     </div>
+
+                    {/* Danh sách kiểm tra */}
+                    {Object.keys(xe.danhSachKiemTra).length > 0 && (
+                      <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Danh sách kiểm tra:
+                        </label>
+                        <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                          <pre className="text-sm text-gray-700">
+                            {JSON.stringify(xe.danhSachKiemTra, null, 2)}
+                          </pre>
+                        </div>
+                      </div>
+                    )}
 
                     {/* Ghi nhận tình trạng */}
                     <div className="mb-4">
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Ghi nhận tình trạng:
                       </label>
-                      <textarea
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        rows={2}
-                        placeholder="Mô tả tình trạng xe..."
-                        value={xe.tinhTrang}
-                        onChange={(e) => handleUpdateTinhTrang(xe.id, e.target.value)}
-                      />
-                    </div>
-
-                    <div className="flex gap-2">
-                      {xe.trangThai === "cho" && (
-                        <button
-                          onClick={() => handleBatDauXuLy(xe.id)}
-                          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
-                        >
-                          Bắt đầu xử lý
-                        </button>
-                      )}
-                      {xe.trangThai === "dang-lam" && (
-                        <button
-                          onClick={() => handleHoanThanh(xe.id)}
-                          className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
-                        >
-                          Hoàn thành
-                        </button>
-                      )}
-                      {xe.trangThai === "hoan-tat" && (
-                        <span className="px-4 py-2 bg-green-50 text-green-700 rounded-lg border border-green-200 text-sm font-medium">
-                          Đã hoàn thành
-                        </span>
-                      )}
+                      <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                        <p className="text-sm text-gray-700">{xe.tinhTrang}</p>
+                      </div>
                     </div>
                   </div>
                 ))}
