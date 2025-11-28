@@ -22,7 +22,7 @@ const TheoDoiVaGiamSatPage: React.FC = () => {
       id: "1",
       disputeCode: "TRANHCHAP-2024-001",
       customerName: "Nguyễn Văn A",
-      vehicle: "BMW X5 - 51A-12345",
+      vehicle: "Model X1 - 30A-11111",
       serviceCode: "DV-2024-001",
       type: 'quality',
       status: 'investigating',
@@ -35,7 +35,7 @@ const TheoDoiVaGiamSatPage: React.FC = () => {
       id: "2",
       disputeCode: "TRANHCHAP-2024-002",
       customerName: "Trần Thị B",
-      vehicle: "Mercedes C300 - 51B-67890",
+      vehicle: "Model X1 - 30A-11111",
       serviceCode: "DV-2024-002",
       type: 'damage',
       status: 'open',
@@ -48,7 +48,7 @@ const TheoDoiVaGiamSatPage: React.FC = () => {
       id: "3",
       disputeCode: "TRANHCHAP-2024-003",
       customerName: "Lê Văn C",
-      vehicle: "Audi Q7 - 51C-54321",
+      vehicle: "Model X2 - 30A-22222",
       serviceCode: "DV-2024-003",
       type: 'payment',
       status: 'resolved',
@@ -63,7 +63,7 @@ const TheoDoiVaGiamSatPage: React.FC = () => {
       id: "4",
       disputeCode: "TRANHCHAP-2024-004",
       customerName: "Phạm Thị D",
-      vehicle: "Toyota Camry - 51D-98765",
+      vehicle: "Model X2 - 30A-22222",
       serviceCode: "DV-2024-004",
       type: 'other',
       status: 'closed',
@@ -76,7 +76,7 @@ const TheoDoiVaGiamSatPage: React.FC = () => {
     }
   ]);
 
-  const [selectedDispute, setSelectedDispute] = useState<Dispute | null>(null);
+  const [selectedDispute, setSelectedDispute] = useState<Dispute | null>(disputes[0]);
   const [filter, setFilter] = useState('all');
 
   const getTypeBadge = (type: string) => {
@@ -166,6 +166,19 @@ const TheoDoiVaGiamSatPage: React.FC = () => {
           }
         : dispute
     ));
+
+    // Cập nhật selected dispute nếu đang được chọn
+    if (selectedDispute && selectedDispute.id === disputeId) {
+      setSelectedDispute(prev => prev ? {
+        ...prev,
+        status: newStatus,
+        ...(newStatus === 'resolved' && !prev.resolvedDate ? { resolvedDate: new Date().toISOString().split('T')[0] } : {})
+      } : null);
+    }
+  };
+
+  const handleViewDetail = (dispute: Dispute) => {
+    setSelectedDispute(dispute);
   };
 
   return (
@@ -331,8 +344,9 @@ const TheoDoiVaGiamSatPage: React.FC = () => {
                     return (
                       <tr
                         key={dispute.id}
-                        className="hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
-                        onClick={() => setSelectedDispute(dispute)}
+                        className={`hover:bg-gray-50 dark:hover:bg-gray-700 ${
+                          selectedDispute?.id === dispute.id ? 'bg-blue-50 dark:bg-blue-900/20' : ''
+                        }`}
                       >
                         <td className="px-4 py-3">
                           <div className="text-sm font-medium text-gray-900 dark:text-white">
@@ -390,8 +404,11 @@ const TheoDoiVaGiamSatPage: React.FC = () => {
                               </button>
                             )}
                             <button
-                              onClick={(e) => e.stopPropagation()}
-                              className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300 text-sm"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleViewDetail(dispute);
+                              }}
+                              className="bg-purple-600 text-white px-3 py-1 rounded text-sm hover:bg-purple-700 transition-colors"
                             >
                               Chi tiết
                             </button>

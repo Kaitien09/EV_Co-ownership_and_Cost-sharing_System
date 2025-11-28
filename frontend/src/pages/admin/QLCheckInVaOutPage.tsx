@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface CheckInOut {
   id: string;
@@ -12,116 +12,88 @@ interface CheckInOut {
 }
 
 const QLCheckInVaOutPage: React.FC = () => {
-  const [records, setRecords] = useState<CheckInOut[]>([
-    {
-      id: "1",
-      bookingId: "BK-2024-001",
-      customerName: "Nguyễn Văn A",
-      vehicle: "BMW X5 - 51A-12345",
-      groupName: "Nhóm Đồng Sở Hữu A",
-      checkInTime: "2024-01-15 08:30",
-      checkOutTime: "2024-01-15 17:15",
-      status: 'checked-out'
-    },
-    {
-      id: "2",
-      bookingId: "BK-2024-002",
-      customerName: "Trần Thị B",
-      vehicle: "Mercedes C300 - 51B-67890",
-      groupName: "Nhóm Đồng Sở Hữu B",
-      checkInTime: "2024-01-15 09:00",
-      status: 'checked-in'
-    },
-    {
-      id: "3",
-      bookingId: "BK-2024-003",
-      customerName: "Lê Văn C",
-      vehicle: "Audi Q7 - 51C-54321",
-      groupName: "Nhóm Đồng Sở Hữu C",
-      checkInTime: "2024-01-16 08:15",
-      checkOutTime: "2024-01-16 18:30",
-      status: 'checked-out'
-    },
-    {
-      id: "4",
-      bookingId: "BK-2024-004",
-      customerName: "Phạm Thị D",
-      vehicle: "Toyota Camry - 51D-98765",
-      groupName: "Nhóm Đồng Sở Hữu D",
-      checkInTime: "2024-01-14 10:30",
-      checkOutTime: "2024-01-14 16:45",
-      status: 'checked-out'
-    },
-    {
-      id: "5",
-      bookingId: "BK-2024-005",
-      customerName: "Hoàng Văn E",
-      vehicle: "Honda CR-V - 51E-11111",
-      groupName: "Nhóm Đồng Sở Hữu E",
-      checkInTime: "2024-01-17 07:45",
-      status: 'checked-in'
-    },
-    {
-      id: "6",
-      bookingId: "BK-2024-006",
-      customerName: "Vũ Thị F",
-      vehicle: "Ford Ranger - 51F-22222",
-      groupName: "Nhóm Đồng Sở Hữu F",
-      checkInTime: "2024-01-18 08:00",
-      checkOutTime: "2024-01-18 17:30",
-      status: 'checked-out'
-    },
-    {
-      id: "7",
-      bookingId: "BK-2024-007",
-      customerName: "Đặng Văn G",
-      vehicle: "Hyundai Tucson - 51G-33333",
-      groupName: "Nhóm Đồng Sở Hữu G",
-      checkInTime: "2024-01-19 09:15",
-      status: 'checked-in'
-    },
-    {
-      id: "8",
-      bookingId: "BK-2024-008",
-      customerName: "Bùi Thị H",
-      vehicle: "Kia Sorento - 51H-44444",
-      groupName: "Nhóm Đồng Sở Hữu H",
-      checkInTime: "2024-01-20 07:30",
-      checkOutTime: "2024-01-20 16:45",
-      status: 'checked-out'
-    },
-    {
-      id: "9",
-      bookingId: "BK-2024-009",
-      customerName: "Lý Văn I",
-      vehicle: "Mazda CX-5 - 51I-55555",
-      groupName: "Nhóm Đồng Sở Hữu I",
-      checkInTime: "2024-01-21 08:45",
-      status: 'checked-in'
-    },
-    {
-      id: "10",
-      bookingId: "BK-2024-010",
-      customerName: "Trịnh Thị K",
-      vehicle: "VinFast VF8 - 51K-66666",
-      groupName: "Nhóm Đồng Sở Hữu K",
-      checkInTime: "2024-01-22 10:00",
-      checkOutTime: "2024-01-22 18:15",
-      status: 'checked-out'
-    },
-    {
-      id: "11",
-      bookingId: "BK-2024-011",
-      customerName: "Cao Văn L",
-      vehicle: "Chevrolet Colorado - 51L-77777",
-      groupName: "Nhóm Đồng Sở Hữu L",
-      checkInTime: "2024-01-23 07:15",
-      status: 'checked-in'
-    }
-  ]);
-
+  const [records, setRecords] = useState<CheckInOut[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true);
   const itemsPerPage = 5;
+
+  // Fetch dữ liệu từ API
+  useEffect(() => {
+    const fetchCheckInOutData = async () => {
+      try {
+        setLoading(true);
+        // Giả lập API call - trong thực tế sẽ gọi API thật
+        const mockData: CheckInOut[] = [
+          {
+            id: "1",
+            bookingId: "BK-2024-001",
+            customerName: "Nguyễn Văn A",
+            vehicle: "Model X1 - 30A-11111",
+            groupName: "Nhóm Đồng Sở Hữu A",
+            checkInTime: "2024-01-15 08:30",
+            checkOutTime: "2024-01-15 17:15",
+            status: 'checked-out'
+          },
+          {
+            id: "2",
+            bookingId: "BK-2024-002",
+            customerName: "Trần Thị B",
+            vehicle: "Model X1 - 30A-11111",
+            groupName: "Nhóm Đồng Sở Hữu A",
+            checkInTime: "2024-01-16 09:00",
+            status: 'checked-in'
+          },
+          {
+            id: "3",
+            bookingId: "BK-2024-003",
+            customerName: "Lê Văn C",
+            vehicle: "Model X2 - 30A-22222",
+            groupName: "Nhóm Đồng Sở Hữu B",
+            checkInTime: "2024-01-16 08:15",
+            checkOutTime: "2024-01-16 18:30",
+            status: 'checked-out'
+          },
+          {
+            id: "4",
+            bookingId: "BK-2024-004",
+            customerName: "Phạm Thị D",
+            vehicle: "Model X2 - 30A-22222",
+            groupName: "Nhóm Đồng Sở Hữu B",
+            checkInTime: "2024-01-17 10:30",
+            checkOutTime: "2024-01-17 16:45",
+            status: 'checked-out'
+          },
+          {
+            id: "5",
+            bookingId: "BK-2024-005",
+            customerName: "Hoàng Văn E",
+            vehicle: "Model X3 - 30A-33333",
+            groupName: "Nhóm Đồng Sở Hữu C",
+            checkInTime: "2024-01-17 07:45",
+            status: 'checked-in'
+          },
+          {
+            id: "6",
+            bookingId: "BK-2024-006",
+            customerName: "Nguyễn Văn A",
+            vehicle: "Model X3 - 30A-33333",
+            groupName: "Nhóm Đồng Sở Hữu C",
+            checkInTime: "2024-01-18 08:00",
+            checkOutTime: "2024-01-18 17:30",
+            status: 'checked-out'
+          }
+        ];
+
+        setRecords(mockData);
+      } catch (error) {
+        console.error('Lỗi khi tải dữ liệu:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCheckInOutData();
+  }, []);
 
   // Tính toán dữ liệu cho trang hiện tại
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -204,7 +176,6 @@ const QLCheckInVaOutPage: React.FC = () => {
     let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
     let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
 
-    // Điều chỉnh nếu không đủ maxVisiblePages
     if (endPage - startPage + 1 < maxVisiblePages) {
       startPage = Math.max(1, endPage - maxVisiblePages + 1);
     }
@@ -216,6 +187,14 @@ const QLCheckInVaOutPage: React.FC = () => {
     return pageNumbers;
   };
 
+  if (loading) {
+    return (
+      <div className="p-6 flex justify-center items-center h-64">
+        <div className="text-lg">Đang tải dữ liệu...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="p-6">
       <div className="mb-8">
@@ -223,7 +202,7 @@ const QLCheckInVaOutPage: React.FC = () => {
           Lịch sử Check-in/Check-out
         </h1>
         <p className="text-gray-600 dark:text-gray-400">
-          Theo dõi lịch sử nhận và trả xe
+          Theo dõi lịch sử nhận và trả xe theo dữ liệu thực tế
         </p>
       </div>
 
@@ -297,7 +276,7 @@ const QLCheckInVaOutPage: React.FC = () => {
         <div className="p-6 border-b border-gray-200">
           <div className="flex justify-between items-center">
             <h2 className="text-lg font-semibold text-gray-900">
-              Lịch sử giao dịch
+              Lịch sử giao dịch theo dữ liệu hệ thống
             </h2>
             <div className="text-sm text-gray-500">
               Trang {currentPage} / {totalPages}

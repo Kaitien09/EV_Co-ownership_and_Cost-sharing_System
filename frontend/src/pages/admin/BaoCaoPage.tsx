@@ -16,65 +16,81 @@ interface FinancialReport {
 
 const BaoCaoPage: React.FC = () => {
   const [reports, setReports] = useState<FinancialReport[]>([
-
     {
       id: "1",
-      reportCode: "BC-TC-2024-01",
-      period: "Tháng 1/2024",
-      group: "Nhóm Dịch vụ Cao cấp",
-      totalRevenue: 250000000,
-      totalCost: 150000000,
-      profit: 100000000,
+      reportCode: "BC-TC-2025-08",
+      period: "Tháng 08/2025",
+      group: "Nhóm Đồng Sở Hữu A",
+      totalRevenue: 1650000,
+      totalCost: 7000000,
+      profit: -550000,
       status: 'published',
-      createdDate: "2024-01-31",
-      createdBy: "Admin A"
+      createdDate: "2025-08-30",
+      createdBy: "Admin A",
+      description: "Báo cáo dịch vụ và chi phí tháng 11"
     },
     {
       id: "2",
-      reportCode: "BC-TC-2024-02",
-      period: "Tháng 1/2024",
-      group: "Nhóm Dịch vụ Thường",
-      totalRevenue: 180000000,
-      totalCost: 120000000,
-      profit: 60000000,
+      reportCode: "BC-TC-2025-08",
+      period: "Tháng 08/2025",
+      group: "Nhóm Đồng Sở Hữu B",
+      totalRevenue: 1870000,
+      totalCost: 8500000,
+      profit: -6630000,
       status: 'published',
-      createdDate: "2024-01-31",
-      createdBy: "Admin B"
+      createdDate: "2025-08-30",
+      createdBy: "Admin B",
+      description: "Báo cáo dịch vụ và sửa chữa tháng 11"
     },
     {
       id: "3",
-      reportCode: "BC-TC-2023-12",
-      period: "Tháng 12/2023",
-      group: "Nhóm Dịch vụ Cao cấp",
-      totalRevenue: 230000000,
-      totalCost: 140000000,
-      profit: 90000000,
-      status: 'archived',
-      createdDate: "2023-12-31",
-      createdBy: "Admin A"
+      reportCode: "BC-TC-2025-08",
+      period: "Tháng 08/2025",
+      group: "Nhóm Đồng Sở Hữu C",
+      totalRevenue: 1210000,
+      totalCost: 4000000,
+      profit: -2790000,
+      status: 'published',
+      createdDate: "2025-08-30",
+      createdBy: "Admin A",
+      description: "Báo cáo dịch vụ và nhiên liệu tháng 08"
     },
     {
       id: "4",
-      reportCode: "BC-TC-2024-03",
-      period: "Tháng 2/2024",
-      group: "Nhóm Dịch vụ Cao cấp",
+      reportCode: "BC-TC-20245-05",
+      period: "Tháng 05/2025",
+      group: "Nhóm Đồng Sở Hữu A",
       totalRevenue: 0,
       totalCost: 0,
       profit: 0,
       status: 'draft',
-      createdDate: "2024-02-01",
-      createdBy: "Admin A"
+      createdDate: "2025-05-01",
+      createdBy: "Admin A",
+      description: "Báo cáo dự kiến tháng 5"
+    },
+    {
+      id: "5",
+      reportCode: "BC-TC-2025-10",
+      period: "Tháng 10/2025",
+      group: "Nhóm Đồng Sở Hữu A",
+      totalRevenue: 1200000,
+      totalCost: 4500000,
+      profit: -300000,
+      status: 'archived',
+      createdDate: "2025-10-31",
+      createdBy: "Admin A",
+      description: "Báo cáo đã lưu trữ tháng 10"
     }
   ]);
 
   const [selectedReport, setSelectedReport] = useState<FinancialReport | null>(null);
-  const [selectedPeriod, setSelectedPeriod] = useState('2024-01');
+  const [selectedPeriod, setSelectedPeriod] = useState('2024-11');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [newReport, setNewReport] = useState<Partial<FinancialReport>>({
-    period: "Tháng 2/2024",
-    group: "Nhóm Dịch vụ Cao cấp",
+    period: "Tháng 12/2024",
+    group: "Nhóm Đồng Sở Hữu A",
     totalRevenue: 0,
     totalCost: 0,
     description: ""
@@ -112,7 +128,8 @@ const BaoCaoPage: React.FC = () => {
         return 'Không xác định';
     }
   };
-// Chức năng xuất PDF - Phiên bản cải tiến
+
+  // Chức năng xuất PDF - Phiên bản cải tiến
   const handleExportPDF = async (report: FinancialReport) => {
     try {
       console.log('Bắt đầu xuất PDF cho:', report.reportCode);
@@ -134,7 +151,7 @@ const BaoCaoPage: React.FC = () => {
         Doanh thu: ${formatCurrency(report.totalRevenue)}
         Chi phí: ${formatCurrency(report.totalCost)}
         Lợi nhuận: ${formatCurrency(report.profit)}
-        Tỷ lệ lợi nhuận: ${((report.profit / report.totalRevenue) * 100).toFixed(1)}%
+        ${report.totalRevenue > 0 ? `Tỷ lệ lợi nhuận: ${((report.profit / report.totalRevenue) * 100).toFixed(1)}%` : 'Chưa có doanh thu'}
 
         Thông tin khác:
         - Người tạo: ${report.createdBy}
@@ -159,51 +176,6 @@ const BaoCaoPage: React.FC = () => {
     } catch (error) {
       console.error('Lỗi khi xuất PDF:', error);
       alert('Có lỗi xảy ra khi xuất PDF. Vui lòng thử lại.');
-    }
-  };
-
-  // Hoặc sử dụng thư viện chuyên nghiệp hơn (ví dụ với jsPDF)
-  const handleExportPDFProfessional = async (report: FinancialReport) => {
-    try {
-      // Kiểm tra xem jsPDF đã được cài đặt chưa
-      const { jsPDF } = await import('jspdf');
-
-      const doc = new jsPDF();
-
-      // Tiêu đề
-      doc.setFontSize(16);
-      doc.text('BÁO CÁO TÀI CHÍNH', 20, 20);
-      doc.setFontSize(12);
-      doc.text(`Mã báo cáo: ${report.reportCode}`, 20, 35);
-      doc.text(`Kỳ báo cáo: ${report.period}`, 20, 45);
-      doc.text(`Nhóm: ${report.group}`, 20, 55);
-
-      // Bảng số liệu
-      doc.text('DOANH THU CHI PHÍ LỢI NHUẬN', 20, 75);
-      doc.text(`Doanh thu: ${formatCurrency(report.totalRevenue)}`, 20, 85);
-      doc.text(`Chi phí: ${formatCurrency(report.totalCost)}`, 20, 95);
-      doc.text(`Lợi nhuận: ${formatCurrency(report.profit)}`, 20, 105);
-      doc.text(`Tỷ lệ lợi nhuận: ${((report.profit / report.totalRevenue) * 100).toFixed(1)}%`, 20, 115);
-
-      // Thông tin khác
-      doc.text('Thông tin khác:', 20, 135);
-      doc.text(`- Người tạo: ${report.createdBy}`, 20, 145);
-      doc.text(`- Ngày tạo: ${report.createdDate}`, 20, 155);
-      doc.text(`- Trạng thái: ${getStatusText(report.status)}`, 20, 165);
-
-      if (report.description) {
-        doc.text(`- Ghi chú: ${report.description}`, 20, 175);
-      }
-
-      // Lưu file
-      doc.save(`${report.reportCode}.pdf`);
-
-      console.log('Xuất PDF chuyên nghiệp thành công');
-
-    } catch (error) {
-      console.error('Lỗi khi xuất PDF chuyên nghiệp:', error);
-      // Fallback về phương pháp đơn giản
-      handleExportPDF(report);
     }
   };
 
@@ -232,8 +204,8 @@ const BaoCaoPage: React.FC = () => {
     const newReportData: FinancialReport = {
       id: reportId,
       reportCode: `BC-TC-${new Date().getFullYear()}-${String(reports.length + 1).padStart(2, '0')}`,
-      period: newReport.period || "Tháng 2/2024",
-      group: newReport.group || "Nhóm Dịch vụ Cao cấp",
+      period: newReport.period || "Tháng 12/2024",
+      group: newReport.group || "Nhóm Đồng Sở Hữu A",
       totalRevenue: newReport.totalRevenue || 0,
       totalCost: newReport.totalCost || 0,
       profit: (newReport.totalRevenue || 0) - (newReport.totalCost || 0),
@@ -246,8 +218,8 @@ const BaoCaoPage: React.FC = () => {
     setReports(prev => [newReportData, ...prev]);
     setShowCreateModal(false);
     setNewReport({
-      period: "Tháng 2/2024",
-      group: "Nhóm Dịch vụ Cao cấp",
+      period: "Tháng 12/2024",
+      group: "Nhóm Đồng Sở Hữu A",
       totalRevenue: 0,
       totalCost: 0,
       description: ""
@@ -293,11 +265,16 @@ const BaoCaoPage: React.FC = () => {
     alert("Đã lưu trữ báo cáo!");
   };
 
-  // Dữ liệu biểu đồ
+  // Tính toán thống kê từ dữ liệu thực tế
+  const totalRevenue = reports.reduce((sum, report) => sum + report.totalRevenue, 0);
+  const totalCost = reports.reduce((sum, report) => sum + report.totalCost, 0);
+  const totalProfit = reports.reduce((sum, report) => sum + report.profit, 0);
+
+  // Dữ liệu biểu đồ dựa trên database
   const chartData = {
-    labels: ['Dịch vụ Cao cấp', 'Dịch vụ Thường', 'Phụ tùng', 'Khác'],
-    revenue: [120000000, 80000000, 30000000, 20000000],
-    cost: [70000000, 50000000, 20000000, 10000000]
+    labels: ['Nhóm Đồng Sở Hữu A', 'Nhóm Đồng Sở Hữu B', 'Nhóm Đồng Sở Hữu C'],
+    revenue: [1650000, 1870000, 1210000],
+    cost: [7000000, 8500000, 4000000]
   };
 
   return (
@@ -307,7 +284,7 @@ const BaoCaoPage: React.FC = () => {
           Báo cáo tài chính
         </h1>
         <p className="text-gray-600 dark:text-gray-400">
-          Xuất báo cáo tài chính minh bạch cho từng nhóm
+          Xuất báo cáo tài chính minh bạch cho từng nhóm đồng sở hữu
         </p>
       </div>
 
@@ -391,9 +368,9 @@ const BaoCaoPage: React.FC = () => {
                 onChange={(e) => setSelectedPeriod(e.target.value)}
                 className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white text-sm"
               >
-                <option value="2024-01">Tháng 1/2024</option>
-                <option value="2023-12">Tháng 12/2023</option>
-                <option value="2023-11">Tháng 11/2023</option>
+                <option value="2024-11">Tháng 11/2024</option>
+                <option value="2024-10">Tháng 10/2024</option>
+                <option value="2024-09">Tháng 9/2024</option>
               </select>
             </div>
 
@@ -433,40 +410,40 @@ const BaoCaoPage: React.FC = () => {
             <div className="space-y-4">
               <div className="flex justify-between items-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
                 <div>
-                  <p className="text-sm font-medium text-green-800 dark:text-green-300">Nhóm Cao cấp</p>
+                  <p className="text-sm font-medium text-green-800 dark:text-green-300">Nhóm Đồng Sở Hữu A</p>
                   <p className="text-2xl font-bold text-green-900 dark:text-green-200">
-                    {formatCurrency(100000000)}
+                    {formatCurrency(1650000)}
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm text-green-600 dark:text-green-400">Lợi nhuận</p>
-                  <p className="text-sm text-green-700 dark:text-green-300">+25% so T12</p>
+                  <p className="text-sm text-green-600 dark:text-green-400">Doanh thu</p>
+                  <p className="text-sm text-green-700 dark:text-green-300">Chi phí: {formatCurrency(7000000)}</p>
                 </div>
               </div>
 
               <div className="flex justify-between items-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                 <div>
-                  <p className="text-sm font-medium text-blue-800 dark:text-blue-300">Nhóm Thường</p>
+                  <p className="text-sm font-medium text-blue-800 dark:text-blue-300">Nhóm Đồng Sở Hữu B</p>
                   <p className="text-2xl font-bold text-blue-900 dark:text-blue-200">
-                    {formatCurrency(60000000)}
+                    {formatCurrency(1870000)}
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm text-blue-600 dark:text-blue-400">Lợi nhuận</p>
-                  <p className="text-sm text-blue-700 dark:text-blue-300">+15% so T12</p>
+                  <p className="text-sm text-blue-600 dark:text-blue-400">Doanh thu</p>
+                  <p className="text-sm text-blue-700 dark:text-blue-300">Chi phí: {formatCurrency(8500000)}</p>
                 </div>
               </div>
 
               <div className="flex justify-between items-center p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
                 <div>
-                  <p className="text-sm font-medium text-purple-800 dark:text-purple-300">Tỷ lệ lợi nhuận</p>
+                  <p className="text-sm font-medium text-purple-800 dark:text-purple-300">Nhóm Đồng Sở Hữu C</p>
                   <p className="text-2xl font-bold text-purple-900 dark:text-purple-200">
-                    37.2%
+                    {formatCurrency(1210000)}
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm text-purple-600 dark:text-purple-400">Trung bình</p>
-                  <p className="text-sm text-purple-700 dark:text-purple-300">+2.1% so T12</p>
+                  <p className="text-sm text-purple-600 dark:text-purple-400">Doanh thu</p>
+                  <p className="text-sm text-purple-700 dark:text-purple-300">Chi phí: {formatCurrency(4000000)}</p>
                 </div>
               </div>
             </div>
@@ -628,9 +605,9 @@ const BaoCaoPage: React.FC = () => {
                   onChange={(e) => setNewReport({...newReport, period: e.target.value})}
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 >
-                  <option value="Tháng 1/2024">Tháng 1/2024</option>
-                  <option value="Tháng 2/2024">Tháng 2/2024</option>
-                  <option value="Tháng 3/2024">Tháng 3/2024</option>
+                  <option value="Tháng 12/2024">Tháng 12/2024</option>
+                  <option value="Tháng 11/2024">Tháng 11/2024</option>
+                  <option value="Tháng 10/2024">Tháng 10/2024</option>
                 </select>
               </div>
 
@@ -643,9 +620,9 @@ const BaoCaoPage: React.FC = () => {
                   onChange={(e) => setNewReport({...newReport, group: e.target.value})}
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 >
-                  <option value="Nhóm Dịch vụ Cao cấp">Nhóm Dịch vụ Cao cấp</option>
-                  <option value="Nhóm Dịch vụ Thường">Nhóm Dịch vụ Thường</option>
-                  <option value="Nhóm Phụ tùng">Nhóm Phụ tùng</option>
+                  <option value="Nhóm Đồng Sở Hữu A">Nhóm Đồng Sở Hữu A</option>
+                  <option value="Nhóm Đồng Sở Hữu B">Nhóm Đồng Sở Hữu B</option>
+                  <option value="Nhóm Đồng Sở Hữu C">Nhóm Đồng Sở Hữu C</option>
                 </select>
               </div>
 
@@ -747,9 +724,14 @@ const BaoCaoPage: React.FC = () => {
                 </p>
               </div>
               <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
-                <p className="text-sm font-medium text-purple-800 dark:text-purple-300">Tỷ lệ lợi nhuận</p>
+                <p className="text-sm font-medium text-purple-800 dark:text-purple-300">
+                  {selectedReport.totalRevenue > 0 ? 'Tỷ lệ lợi nhuận' : 'Trạng thái'}
+                </p>
                 <p className="text-2xl font-bold text-purple-900 dark:text-purple-200">
-                  {((selectedReport.profit / selectedReport.totalRevenue) * 100).toFixed(1)}%
+                  {selectedReport.totalRevenue > 0
+                    ? `${((selectedReport.profit / selectedReport.totalRevenue) * 100).toFixed(1)}%`
+                    : 'Chưa có doanh thu'
+                  }
                 </p>
               </div>
             </div>
@@ -815,9 +797,9 @@ const BaoCaoPage: React.FC = () => {
                   onChange={(e) => setNewReport({...newReport, period: e.target.value})}
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 >
-                  <option value="Tháng 1/2024">Tháng 1/2024</option>
-                  <option value="Tháng 2/2024">Tháng 2/2024</option>
-                  <option value="Tháng 3/2024">Tháng 3/2024</option>
+                  <option value="Tháng 12/2024">Tháng 12/2024</option>
+                  <option value="Tháng 11/2024">Tháng 11/2024</option>
+                  <option value="Tháng 10/2024">Tháng 10/2024</option>
                 </select>
               </div>
 
@@ -830,9 +812,9 @@ const BaoCaoPage: React.FC = () => {
                   onChange={(e) => setNewReport({...newReport, group: e.target.value})}
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 >
-                  <option value="Nhóm Dịch vụ Cao cấp">Nhóm Dịch vụ Cao cấp</option>
-                  <option value="Nhóm Dịch vụ Thường">Nhóm Dịch vụ Thường</option>
-                  <option value="Nhóm Phụ tùng">Nhóm Phụ tùng</option>
+                  <option value="Nhóm Đồng Sở Hữu A">Nhóm Đồng Sở Hữu A</option>
+                  <option value="Nhóm Đồng Sở Hữu B">Nhóm Đồng Sở Hữu B</option>
+                  <option value="Nhóm Đồng Sở Hữu C">Nhóm Đồng Sở Hữu C</option>
                 </select>
               </div>
 
