@@ -14,7 +14,7 @@ interface ChiPhi {
 interface ChiaChiPhi {
     chiaChiPhiId: number;
     chiPhiId: number;
-    chuXeId: number;
+    chuXeId: number;c
     soTienPhaiTra: number;
     ghiChu: string;
 }

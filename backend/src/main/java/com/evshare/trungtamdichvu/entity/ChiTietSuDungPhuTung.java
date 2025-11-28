@@ -1,5 +1,7 @@
 package com.evshare.trungtamdichvu.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -13,10 +15,12 @@ public class ChiTietSuDungPhuTung {
 
     @ManyToOne
     @JoinColumn(name = "phieuId", nullable = false)
+    @JsonIgnoreProperties({"chiTietSuDungPhuTung", "hoaDon", "lichHen", "kyThuatVien"}) // QUAN TRỌNG
     private PhieuDichVu phieuDichVu;
 
     @ManyToOne
     @JoinColumn(name = "phuTungId", nullable = false)
+    @JsonIgnoreProperties({"chiTietSuDung"}) // QUAN TRỌNG
     private PhuTung phuTung;
 
     @Column(nullable = false)
@@ -27,7 +31,6 @@ public class ChiTietSuDungPhuTung {
 
     private String ghiChu;
 
-    // Tính thành tiền
     public Double getThanhTien() {
         return soLuong * donGia;
     }

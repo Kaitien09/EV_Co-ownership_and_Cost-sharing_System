@@ -1,5 +1,6 @@
 package com.evshare.trungtamdichvu.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.util.ArrayList;
@@ -31,5 +32,6 @@ public class PhuTung {
     private Double giaBan;
 
     @OneToMany(mappedBy = "phuTung")
+    @JsonIgnore // QUAN TRỌNG
     private List<ChiTietSuDungPhuTung> chiTietSuDung = new ArrayList<>();
 }

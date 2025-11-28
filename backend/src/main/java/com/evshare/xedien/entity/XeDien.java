@@ -1,6 +1,8 @@
 package com.evshare.xedien.entity;
 
 import com.evshare.nhom.entity.ThanhVienNhom;
+import com.evshare.xedien.entity.TrangThaiXe;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.util.ArrayList;
@@ -35,13 +37,17 @@ public class XeDien {
 
     // Quan hệ với thành viên nhóm (đồng sở hữu)
     @OneToMany(mappedBy = "xe")
+    @JsonIgnore
     private List<ThanhVienNhom> thanhVienSoHuu = new ArrayList<>();
 
     // Quan hệ với đặt lịch
     @OneToMany(mappedBy = "xe")
+    @JsonIgnore
     private List<DatLich> danhSachDatLich = new ArrayList<>();
 
     // Quan hệ với lịch sử sử dụng
     @OneToMany(mappedBy = "xe")
+    @JsonIgnore
     private List<LichSuSuDung> lichSuSuDung = new ArrayList<>();
+
 }

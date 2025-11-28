@@ -1,5 +1,7 @@
 package com.evshare.trungtamdichvu.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
@@ -16,17 +18,19 @@ public class PhieuDichVu {
 
     @OneToOne
     @JoinColumn(name = "lichHenId", nullable = false, unique = true)
+    @JsonIgnoreProperties({"phieuDichVu", "xe", "chuXe", "trungTam"}) // QUAN TRỌNG
     private LichHenDichVu lichHen;
 
     @ManyToOne
     @JoinColumn(name = "kyThuatVienId")
+    @JsonIgnoreProperties({"phieuDichVus", "trungTam"})
     private KyThuatVien kyThuatVien;
 
     @Enumerated(EnumType.STRING)
     private TrangThaiPhieuDichVu trangThai = TrangThaiPhieuDichVu.MOI_TAO;
 
     @Column(columnDefinition = "JSON")
-    private String danhSachKiemTra; // JSON checklist
+    private String danhSachKiemTra;
 
     private String ketQuaKiemTra;
     private String khacPhuc;
@@ -36,9 +40,11 @@ public class PhieuDichVu {
     private LocalDateTime ngayHoanThanh;
 
     @OneToMany(mappedBy = "phieuDichVu", cascade = CascadeType.ALL)
+    @JsonIgnore // QUAN TRỌNG
     private List<ChiTietSuDungPhuTung> chiTietSuDungPhuTung = new ArrayList<>();
 
     @OneToOne(mappedBy = "phieuDichVu", cascade = CascadeType.ALL)
+    @JsonIgnore // QUAN TRỌNG
     private HoaDon hoaDon;
 
     @PrePersist

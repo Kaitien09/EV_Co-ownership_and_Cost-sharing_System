@@ -1,6 +1,8 @@
 package com.evshare.taichinh.entity;
 
 import com.evshare.nhom.entity.NhomDongSoHuu;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDate;
@@ -18,6 +20,7 @@ public class ChiPhi {
 
     @ManyToOne
     @JoinColumn(name = "nhomId", nullable = false)
+    @JsonIgnoreProperties({"thanhVien", "hopDongs", "boPhieus"}) // QUAN TRỌNG
     private NhomDongSoHuu nhom;
 
     @Enumerated(EnumType.STRING)
@@ -35,5 +38,6 @@ public class ChiPhi {
     private LocalDateTime ngayTao = LocalDateTime.now();
 
     @OneToMany(mappedBy = "chiPhi", cascade = CascadeType.ALL)
+    @JsonIgnore // QUAN TRỌNG
     private List<ChiaChiPhi> danhSachChia = new ArrayList<>();
 }

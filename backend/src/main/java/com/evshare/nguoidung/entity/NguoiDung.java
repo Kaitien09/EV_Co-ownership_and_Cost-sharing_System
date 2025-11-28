@@ -1,5 +1,6 @@
 package com.evshare.nguoidung.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -9,6 +10,7 @@ import java.time.LocalDateTime;
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 @Builder
 public class NguoiDung {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer nguoiDungId;
@@ -17,9 +19,11 @@ public class NguoiDung {
     private String tenDangNhap;
 
     @Column(unique = true, nullable = false, length = 100)
+    @JsonIgnore
     private String email;
 
     @Column(nullable = false)
+    @JsonIgnore
     private String matKhau;
 
     @Enumerated(EnumType.STRING)
@@ -33,6 +37,6 @@ public class NguoiDung {
     private TrangThaiNguoiDung trangThai = TrangThaiNguoiDung.HOAT_DONG;
 
     @OneToOne(mappedBy = "nguoiDung", cascade = CascadeType.ALL)
+    @JsonIgnore
     private ChuXe chuXe;
-
 }

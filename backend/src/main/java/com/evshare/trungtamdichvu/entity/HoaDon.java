@@ -1,5 +1,7 @@
 package com.evshare.trungtamdichvu.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
@@ -14,6 +16,7 @@ public class HoaDon {
 
     @OneToOne
     @JoinColumn(name = "phieuId", nullable = false, unique = true)
+    @JsonIgnoreProperties({"hoaDon", "lichHen", "kyThuatVien", "chiTietSuDungPhuTung"}) // QUAN TRỌNG
     private PhieuDichVu phieuDichVu;
 
     private String maHoaDon;
@@ -30,14 +33,12 @@ public class HoaDon {
 
     @PrePersist
     public void prePersist() {
-        // Tự động tính tổng tiền
         if (tienDichVu == null) tienDichVu = 0.0;
         if (tienPhuTung == null) tienPhuTung = 0.0;
         if (thueVAT == null) thueVAT = 0.0;
 
         tongTien = tienDichVu + tienPhuTung + thueVAT;
 
-        // Tạo mã hóa đơn nếu chưa có
         if (maHoaDon == null) {
             maHoaDon = "HD" + System.currentTimeMillis();
         }

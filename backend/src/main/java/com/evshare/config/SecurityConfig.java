@@ -78,7 +78,16 @@ public class SecurityConfig {
                         .requestMatchers("/api/chu-xe/**").hasAnyRole("KHACH_HANG","ADMIN")
                         .requestMatchers("/api/dat-lich/**").permitAll()
                         .requestMatchers("/api/xe-dien/**").permitAll()
+                        .requestMatchers("/api/nhom/**").permitAll()
+                        .requestMatchers("/api/chi-phi/**").permitAll()
                         .requestMatchers("/api/lich-su-su-dung/**").permitAll()
+                        .requestMatchers("/api/bo-phieu/**").permitAll()
+                        .requestMatchers("/api/hop-dong/**").permitAll()
+                        .requestMatchers("/api/thanh-vien/**").permitAll()
+                        .requestMatchers("/api/phieu-bau/**").permitAll()
+                        .requestMatchers("/api/chia-chi-phi/**").permitAll()
+                        .requestMatchers("/api/lich-su-quy/**").permitAll()
+                        .requestMatchers("/api/quy-chung/**").permitAll()
                         .anyRequest().authenticated()
                 );
 

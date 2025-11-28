@@ -1,5 +1,7 @@
 package com.evshare.trungtamdichvu.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -13,6 +15,7 @@ public class KyThuatVien {
 
     @ManyToOne
     @JoinColumn(name = "trungTamId", nullable = false)
+    @JsonIgnoreProperties({"kyThuatViens", "lichHenDichVus"})
     private TrungTamDichVu trungTam;
 
     @Column(nullable = false, length = 100)
@@ -22,9 +25,10 @@ public class KyThuatVien {
     private String chuyenMon;
     private String soDienThoai;
     private String email;
-    private Integer kinhNghiem; // số năm kinh nghiệm
+    private Integer kinhNghiem;
     private Boolean dangLamViec = true;
 
     @OneToMany(mappedBy = "kyThuatVien")
+    @JsonIgnore // QUAN TRỌNG
     private java.util.List<PhieuDichVu> phieuDichVus;
 }

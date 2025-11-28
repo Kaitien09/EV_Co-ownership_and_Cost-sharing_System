@@ -1,5 +1,7 @@
 package com.evshare.xedien.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
@@ -14,10 +16,12 @@ public class LichSuSuDung {
 
     @OneToOne
     @JoinColumn(name = "datLichId", nullable = false, unique = true)
+    @JsonIgnoreProperties({"lichSuSuDung", "chuXe", "xe"}) // QUAN TRỌNG
     private DatLich datLich;
 
     @ManyToOne
     @JoinColumn(name = "xeId", nullable = false)
+    @JsonIgnoreProperties({"thanhVienSoHuu", "danhSachDatLich", "lichSuSuDung"})
     private XeDien xe;
 
     @Column(nullable = false)
@@ -25,13 +29,12 @@ public class LichSuSuDung {
 
     private LocalDateTime thoiGianTraXe;
 
-    private Integer quangDuong = 0; // km
-    private Double nangLuongTieuThu = 0.0; // kWh
+    private Integer quangDuong = 0;
+    private Double nangLuongTieuThu = 0.0;
     private String diemXuatPhat;
     private String diemDen;
     private String ghiChu;
 
-    // Phương thức tính thời gian sử dụng (phút)
     public Long tinhThoiGianSuDung() {
         if (thoiGianTraXe != null && thoiGianNhanXe != null) {
             return java.time.Duration.between(thoiGianNhanXe, thoiGianTraXe).toMinutes();
@@ -39,7 +42,6 @@ public class LichSuSuDung {
         return 0L;
     }
 
-    // Phương thức tính hiệu suất năng lượng (km/kWh)
     public Double tinhHieuSuatNangLuong() {
         if (nangLuongTieuThu > 0 && quangDuong > 0) {
             return quangDuong / nangLuongTieuThu;

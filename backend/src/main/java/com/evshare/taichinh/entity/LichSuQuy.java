@@ -1,5 +1,7 @@
 package com.evshare.taichinh.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
@@ -14,10 +16,12 @@ public class LichSuQuy {
 
     @ManyToOne
     @JoinColumn(name = "quyId", nullable = false)
+    @JsonIgnoreProperties({"lichSuQuy", "nhom"}) // QUAN TRỌNG
     private QuyChung quy;
 
     @ManyToOne
     @JoinColumn(name = "chiPhiId")
+    @JsonIgnoreProperties({"danhSachChia", "nhom"}) // QUAN TRỌNG
     private ChiPhi chiPhi;
 
     @Column(nullable = false)

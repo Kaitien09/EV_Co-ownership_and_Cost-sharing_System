@@ -2,6 +2,8 @@ package com.evshare.trungtamdichvu.entity;
 
 import com.evshare.xedien.entity.XeDien;
 import com.evshare.nguoidung.entity.ChuXe;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
@@ -16,14 +18,17 @@ public class LichHenDichVu {
 
     @ManyToOne
     @JoinColumn(name = "xeId", nullable = false)
+    @JsonIgnoreProperties({"thanhVienSoHuu", "danhSachDatLich", "lichSuSuDung"})
     private XeDien xe;
 
     @ManyToOne
     @JoinColumn(name = "chuXeId", nullable = false)
+    @JsonIgnoreProperties({"thanhVienNhoms", "datLichs", "lichHenDichVus", "chiaChiPhis", "thanhToans", "phieuBaus"})
     private ChuXe chuXe;
 
     @ManyToOne
     @JoinColumn(name = "trungTamId", nullable = false)
+    @JsonIgnoreProperties({"kyThuatViens", "lichHenDichVus"})
     private TrungTamDichVu trungTam;
 
     @Column(nullable = false)
@@ -40,5 +45,6 @@ public class LichHenDichVu {
     private LocalDateTime ngayTao = LocalDateTime.now();
 
     @OneToOne(mappedBy = "lichHen", cascade = CascadeType.ALL)
+    @JsonIgnore // QUAN TRỌNG
     private PhieuDichVu phieuDichVu;
 }

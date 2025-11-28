@@ -1,6 +1,8 @@
 package com.evshare.taichinh.entity;
 
 import com.evshare.nhom.entity.NhomDongSoHuu;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.util.ArrayList;
@@ -16,12 +18,14 @@ public class QuyChung {
 
     @OneToOne
     @JoinColumn(name = "nhomId", nullable = false, unique = true)
+    @JsonIgnoreProperties({"thanhVien", "hopDongs", "boPhieus"}) // QUAN TRỌNG
     private NhomDongSoHuu nhom;
 
     @Column(nullable = false)
     private Double soDu = 0.0;
 
     @OneToMany(mappedBy = "quy", cascade = CascadeType.ALL)
+    @JsonIgnore // QUAN TRỌNG
     private List<LichSuQuy> lichSuQuy = new ArrayList<>();
 
     // Phương thức cập nhật số dư

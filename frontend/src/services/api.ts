@@ -103,15 +103,5 @@ export const xeService = {
   }
 };
 
-export const nhomService = {
-  getNhomByChuXe: async (chuXeId: number) => {
-    const response = await fetch(`${API_BASE}/chu-xe/${chuXeId}/nhom`);
 
-    if (!response.ok) {
-      throw new Error('Không thể lấy danh sách nhóm');
-    }
-
-    return response.json();
-  }
-};
 
