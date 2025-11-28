@@ -33,7 +33,7 @@ const navItems: NavItem[] = [
     path: "/",
   },
   {
-      icon: <UserCircleIcon />,
+      icon: <PageIcon/>,
       name: "Hợp đồng",
       path:"/hop-dong",},
   {
