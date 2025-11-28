@@ -14,7 +14,7 @@ const LichHenDichVu = () => {
       id: "2",
       ten: "Trung tâm Dịch vụ Quận 7",
       diaChi: "456 Nguyễn Lương Bằng, Quận 7, TP.HCM",
-      thoiGianLamViec: "7:30 - 17:30 (Thứ 2 - Thứ 7)", 
+      thoiGianLamViec: "7:30 - 17:30 (Thứ 2 - Thứ 7)",
       soDienThoai: "028 5412 3789"
     },
     {
@@ -35,7 +35,7 @@ const LichHenDichVu = () => {
       chiPhiTu: "1.500.000 VNĐ"
     },
     {
-      id: "2", 
+      id: "2",
       ten: "Thay ắc quy Lithium",
       moTa: "Thay thế và cân bằng cell ắc quy, bảo dưỡng hệ thống làm mát",
       thoiGianDuKien: "4-6 giờ",
@@ -45,7 +45,7 @@ const LichHenDichVu = () => {
       id: "3",
       ten: "Sửa chữa hệ thống phanh",
       moTa: "Kiểm tra và thay thế má phanh, đĩa phanh, bảo dưỡng phanh tái sinh",
-      thoiGianDuKien: "3-4 giờ", 
+      thoiGianDuKien: "3-4 giờ",
       chiPhiTu: "2.500.000 VNĐ"
     },
     {
@@ -76,7 +76,7 @@ const LichHenDichVu = () => {
     {
       id: "2",
       bienSo: "29A-67890",
-      model: "VinFast VF 8", 
+      model: "VinFast VF 8",
       chuXe: "Trần Thị B",
       soKm: 8900,
       ngayDangKiem: "20/04/2025"
@@ -98,7 +98,7 @@ const LichHenDichVu = () => {
     },
     {
       id: "2",
-      maLichHen: "LH-002", 
+      maLichHen: "LH-002",
       xe: "29A-67890 - VinFast VF 8",
       trungTam: "Trung tâm Dịch vụ Quận 7",
       dichVu: "Thay ắc quy Lithium",
@@ -111,7 +111,7 @@ const LichHenDichVu = () => {
     {
       id: "3",
       maLichHen: "LH-003",
-      xe: "51B-12346 - VinFast VF 9", 
+      xe: "51B-12346 - VinFast VF 9",
       trungTam: "Trung tâm Dịch vụ Thủ Đức",
       dichVu: "Sửa chữa hệ thống phanh",
       ngayGioHen: "20/11/2024 13:30",
@@ -122,19 +122,10 @@ const LichHenDichVu = () => {
     }
   ]);
 
-  const [showXacNhanModal, setShowXacNhanModal] = useState(false);
-  const [showChiTietModal, setShowChiTietModal] = useState(false);
-  const [showXacNhanAdminModal, setShowXacNhanAdminModal] = useState(false);
-  
+  const [showThongBaoThanhCong, setShowThongBaoThanhCong] = useState(false);
+
   const [newLichHen, setNewLichHen] = useState({
-    loaiKhachHang: "khach-moi",
     xeId: "",
-    bienSo: "",
-    model: "",
-    chuXe: "",
-    soDienThoai: "",
-    email: "",
-    soKm: "",
     trungTamId: "",
     dichVuId: "",
     ngayHen: "",
@@ -143,7 +134,6 @@ const LichHenDichVu = () => {
   });
 
   const [selectedLichHen, setSelectedLichHen] = useState<any>(null);
-  const [adminGhiChu, setAdminGhiChu] = useState("");
 
   // Thống kê
   const thongKeLichHen = {
@@ -157,145 +147,62 @@ const LichHenDichVu = () => {
   // Chức năng đặt lịch
   const handleDatLich = () => {
     // Validate thông tin cơ bản
-    if (!newLichHen.trungTamId || !newLichHen.dichVuId || !newLichHen.ngayHen || !newLichHen.gioHen) {
+    if (!newLichHen.xeId || !newLichHen.trungTamId || !newLichHen.dichVuId || !newLichHen.ngayHen || !newLichHen.gioHen) {
       alert("Vui lòng điền đầy đủ thông tin bắt buộc!");
       return;
     }
 
-    // Validate thông tin xe
-    if (newLichHen.loaiKhachHang === "khach-moi") {
-      if (!newLichHen.bienSo || !newLichHen.model || !newLichHen.chuXe || !newLichHen.soDienThoai) {
-        alert("Vui lòng điền đầy đủ thông tin xe!");
-        return;
-      }
-    } else {
-      if (!newLichHen.xeId) {
-        alert("Vui lòng chọn xe!");
-        return;
-      }
-    }
-
-    let thongTinXe = "";
-    let thongTinLienHe = {};
-    
-    if (newLichHen.loaiKhachHang === "khach-quen") {
-      const xeSelected = danhSachXe.find(xe => xe.id === newLichHen.xeId);
-      thongTinXe = `${xeSelected?.bienSo} - ${xeSelected?.model}`;
-      thongTinLienHe = {
-        chuXe: xeSelected?.chuXe,
-        soDienThoai: "Đã có trong hệ thống"
-      };
-    } else {
-      thongTinXe = `${newLichHen.bienSo} - ${newLichHen.model}`;
-      thongTinLienHe = {
-        chuXe: newLichHen.chuXe,
-        soDienThoai: newLichHen.soDienThoai,
-        email: newLichHen.email
-      };
-    }
-
+    const xeSelected = danhSachXe.find(xe => xe.id === newLichHen.xeId);
     const trungTamSelected = trungTamDichVu.find(tt => tt.id === newLichHen.trungTamId);
     const dichVuSelected = loaiDichVu.find(dv => dv.id === newLichHen.dichVuId);
 
     const lichHenMoi = {
       id: (lichHen.length + 1).toString(),
       maLichHen: `LH-${String(lichHen.length + 1).padStart(3, '0')}`,
-      xe: thongTinXe,
+      xe: `${xeSelected?.bienSo} - ${xeSelected?.model}`,
       trungTam: trungTamSelected?.ten,
       dichVu: dichVuSelected?.ten,
       ngayGioHen: `${newLichHen.ngayHen} ${newLichHen.gioHen}`,
       trangThai: "cho-xac-nhan",
       thoiGianTao: new Date().toLocaleDateString('vi-VN') + " " + new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
       ghiChu: newLichHen.ghiChu,
-      loaiKhachHang: newLichHen.loaiKhachHang,
-      thongTinLienHe: thongTinLienHe,
-      soKm: newLichHen.soKm || "Chưa cập nhật"
+      loaiKhachHang: "khach-quen",
+      thongTinLienHe: {
+        chuXe: xeSelected?.chuXe,
+        soDienThoai: "Đã có trong hệ thống"
+      },
+      soKm: xeSelected?.soKm || "Chưa cập nhật"
     };
 
     setLichHen(prev => [lichHenMoi, ...prev]);
-    
+
     // Reset form
     setNewLichHen({
-      loaiKhachHang: "khach-moi",
       xeId: "",
-      bienSo: "",
-      model: "",
-      chuXe: "",
-      soDienThoai: "",
-      email: "",
-      soKm: "",
       trungTamId: "",
       dichVuId: "",
       ngayHen: "",
       gioHen: "",
       ghiChu: ""
     });
-    
+
     setSelectedLichHen(lichHenMoi);
-    setShowXacNhanModal(true);
+    setShowThongBaoThanhCong(true);
+
+    // Tự động ẩn thông báo sau 5 giây
+    setTimeout(() => {
+      setShowThongBaoThanhCong(false);
+    }, 5000);
   };
 
   // Chức năng hủy lịch hẹn
   const handleHuyLichHen = (lichHenId: string) => {
     if (confirm("Bạn có chắc chắn muốn hủy lịch hẹn này?")) {
-      setLichHen(prev => prev.map(lh => 
+      setLichHen(prev => prev.map(lh =>
         lh.id === lichHenId ? { ...lh, trangThai: "da-huy" } : lh
       ));
       alert("Đã hủy lịch hẹn thành công!");
     }
-  };
-
-  // Chức năng xác nhận lịch hẹn (Admin)
-  const handleXacNhanLichHen = () => {
-    if (!selectedLichHen) return;
-
-    setLichHen(prev => prev.map(lh => 
-      lh.id === selectedLichHen.id 
-        ? { 
-            ...lh, 
-            trangThai: "da-xac-nhan",
-            ghiChu: adminGhiChu ? `${lh.ghiChu ? lh.ghiChu + '\n' : ''}[Admin]: ${adminGhiChu}` : lh.ghiChu
-          } 
-        : lh
-    ));
-    
-    setShowXacNhanAdminModal(false);
-    setAdminGhiChu("");
-    alert("Đã xác nhận lịch hẹn thành công!");
-  };
-
-  // Chức năng từ chối lịch hẹn (Admin)
-  const handleTuChoiLichHen = () => {
-    if (!selectedLichHen) return;
-
-    const lyDo = prompt("Lý do từ chối lịch hẹn:");
-    if (lyDo) {
-      setLichHen(prev => prev.map(lh => 
-        lh.id === selectedLichHen.id 
-          ? { 
-              ...lh, 
-              trangThai: "da-huy",
-              ghiChu: `${lh.ghiChu ? lh.ghiChu + '\n' : ''}[Admin - Từ chối]: ${lyDo}`
-            } 
-          : lh
-      ));
-      
-      setShowXacNhanAdminModal(false);
-      setAdminGhiChu("");
-      alert("Đã từ chối lịch hẹn!");
-    }
-  };
-
-  // Chức năng xem chi tiết lịch hẹn
-  const handleXemChiTiet = (lichHen: any) => {
-    setSelectedLichHen(lichHen);
-    setShowChiTietModal(true);
-  };
-
-  // Chức năng mở modal xác nhận admin
-  const handleMoXacNhanAdmin = (lichHen: any) => {
-    setSelectedLichHen(lichHen);
-    setShowXacNhanAdminModal(true);
   };
 
   const getTrangThaiColor = (trangThai: string) => {
@@ -324,7 +231,7 @@ const LichHenDichVu = () => {
   const getNgayTrongTuan = () => {
     const today = new Date();
     const ngayTrongTuan = [];
-    
+
     for (let i = 0; i < 7; i++) {
       const ngay = new Date(today);
       ngay.setDate(today.getDate() + i);
@@ -336,17 +243,47 @@ const LichHenDichVu = () => {
         });
       }
     }
-    
+
     return ngayTrongTuan.slice(0, 5); // Chỉ lấy 5 ngày làm việc
   };
 
   const gioTrongNgay = [
-    "07:30", "08:00", "08:30", "09:00", "09:30", "10:00", "10:30", 
+    "07:30", "08:00", "08:30", "09:00", "09:30", "10:00", "10:30",
     "13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00"
   ];
 
   return (
     <div className="p-6">
+      {/* Thông báo thành công */}
+      {showThongBaoThanhCong && selectedLichHen && (
+        <div className="fixed top-4 right-4 bg-green-50 border border-green-200 rounded-lg p-4 shadow-lg z-50 max-w-sm">
+          <div className="flex items-start gap-3">
+            <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+              <span className="text-green-600 text-sm">✓</span>
+            </div>
+            <div className="flex-1">
+              <h4 className="font-semibold text-green-800 mb-2">Đặt lịch thành công!</h4>
+              <div className="text-sm text-green-700 space-y-1 mb-3">
+                <div><strong>Mã lịch hẹn:</strong> {selectedLichHen.maLichHen}</div>
+                <div><strong>Xe:</strong> {selectedLichHen.xe}</div>
+                <div><strong>Trung tâm:</strong> {selectedLichHen.trungTam}</div>
+                <div><strong>Dịch vụ:</strong> {selectedLichHen.dichVu}</div>
+                <div><strong>Thời gian:</strong> {selectedLichHen.ngayGioHen}</div>
+              </div>
+              <p className="text-xs text-green-600 border-t border-green-200 pt-2">
+                Chúng tôi sẽ xác nhận lịch hẹn qua SMS/Email trong vòng 2 giờ làm việc.
+              </p>
+            </div>
+            <button
+              onClick={() => setShowThongBaoThanhCong(false)}
+              className="text-green-600 hover:text-green-800 text-lg"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
           Đặt lịch Dịch vụ
@@ -392,7 +329,7 @@ const LichHenDichVu = () => {
                   : 'border-transparent text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
               }`}
             >
-              🗓️ Đặt lịch mới
+              Đặt lịch mới
             </button>
             <button
               onClick={() => setActiveTab('lich-su')}
@@ -402,7 +339,7 @@ const LichHenDichVu = () => {
                   : 'border-transparent text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
               }`}
             >
-              📋 Lịch sử đặt lịch ({lichHen.length})
+              Lịch sử đặt lịch ({lichHen.length})
             </button>
           </nav>
         </div>
@@ -420,151 +357,24 @@ const LichHenDichVu = () => {
               </div>
               <div className="p-6">
                 <div className="space-y-6">
-                  {/* Chọn loại khách hàng */}
+                  {/* Chọn xe */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                      Bạn là? *
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Chọn xe *
                     </label>
-                    <div className="flex gap-4">
-                      <label className="flex items-center">
-                        <input
-                          type="radio"
-                          name="loaiKhachHang"
-                          value="khach-moi"
-                          checked={newLichHen.loaiKhachHang === "khach-moi"}
-                          onChange={(e) => setNewLichHen({...newLichHen, loaiKhachHang: e.target.value, xeId: ""})}
-                          className="mr-2"
-                        />
-                        <span className="text-sm">Khách hàng mới</span>
-                      </label>
-                      <label className="flex items-center">
-                        <input
-                          type="radio"
-                          name="loaiKhachHang"
-                          value="khach-quen"
-                          checked={newLichHen.loaiKhachHang === "khach-quen"}
-                          onChange={(e) => setNewLichHen({...newLichHen, loaiKhachHang: e.target.value, bienSo: "", model: "", chuXe: "", soDienThoai: "", email: ""})}
-                          className="mr-2"
-                        />
-                        <span className="text-sm">Khách hàng thân thiết</span>
-                      </label>
-                    </div>
+                    <select
+                      value={newLichHen.xeId}
+                      onChange={(e) => setNewLichHen({...newLichHen, xeId: e.target.value})}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    >
+                      <option value="">Chọn xe</option>
+                      {danhSachXe.map((xe) => (
+                        <option key={xe.id} value={xe.id}>
+                          {xe.bienSo} - {xe.model} ({xe.chuXe})
+                        </option>
+                      ))}
+                    </select>
                   </div>
-
-                  {/* Form thông tin xe - Hiển thị theo loại khách hàng */}
-                  {newLichHen.loaiKhachHang === "khach-quen" ? (
-                    /* KHÁCH QUEN: Chọn xe từ danh sách */
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Chọn xe *
-                      </label>
-                      <select
-                        value={newLichHen.xeId}
-                        onChange={(e) => setNewLichHen({...newLichHen, xeId: e.target.value})}
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                      >
-                        <option value="">Chọn xe</option>
-                        {danhSachXe.map((xe) => (
-                          <option key={xe.id} value={xe.id}>
-                            {xe.bienSo} - {xe.model} ({xe.chuXe})
-                          </option>
-                        ))}
-                      </select>
-                      <p className="text-xs text-gray-500 mt-1">
-                        Chọn xe từ danh sách xe đã đăng ký
-                      </p>
-                    </div>
-                  ) : (
-                    /* KHÁCH MỚI: Nhập thông tin xe */
-                    <div className="space-y-4">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Biển số xe *
-                          </label>
-                          <input
-                            type="text"
-                            value={newLichHen.bienSo}
-                            onChange={(e) => setNewLichHen({...newLichHen, bienSo: e.target.value})}
-                            placeholder="VD: 29A-12345"
-                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Model xe *
-                          </label>
-                          <select
-                            value={newLichHen.model}
-                            onChange={(e) => setNewLichHen({...newLichHen, model: e.target.value})}
-                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                          >
-                            <option value="">Chọn model</option>
-                            <option value="VinFast VF e34">VinFast VF e34</option>
-                            <option value="VinFast VF 8">VinFast VF 8</option>
-                            <option value="VinFast VF 9">VinFast VF 9</option>
-                            <option value="VinFast VF 6">VinFast VF 6</option>
-                            <option value="VinFast VF 5">VinFast VF 5</option>
-                            <option value="Khác">Khác</option>
-                          </select>
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Tên chủ xe *
-                          </label>
-                          <input
-                            type="text"
-                            value={newLichHen.chuXe}
-                            onChange={(e) => setNewLichHen({...newLichHen, chuXe: e.target.value})}
-                            placeholder="Họ và tên chủ xe"
-                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Số điện thoại *
-                          </label>
-                          <input
-                            type="tel"
-                            value={newLichHen.soDienThoai}
-                            onChange={(e) => setNewLichHen({...newLichHen, soDienThoai: e.target.value})}
-                            placeholder="VD: 0912345678"
-                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Email
-                          </label>
-                          <input
-                            type="email"
-                            value={newLichHen.email}
-                            onChange={(e) => setNewLichHen({...newLichHen, email: e.target.value})}
-                            placeholder="email@example.com"
-                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Số km hiện tại
-                          </label>
-                          <input
-                            type="number"
-                            value={newLichHen.soKm}
-                            onChange={(e) => setNewLichHen({...newLichHen, soKm: e.target.value})}
-                            placeholder="VD: 15000"
-                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  )}
 
                   {/* Chọn trung tâm */}
                   <div>
@@ -660,13 +470,15 @@ const LichHenDichVu = () => {
                   <button
                     onClick={handleDatLich}
                     disabled={
-                      !newLichHen.trungTamId || !newLichHen.dichVuId || !newLichHen.ngayHen || !newLichHen.gioHen ||
-                      (newLichHen.loaiKhachHang === "khach-moi" && (!newLichHen.bienSo || !newLichHen.model || !newLichHen.chuXe || !newLichHen.soDienThoai)) ||
-                      (newLichHen.loaiKhachHang === "khach-quen" && !newLichHen.xeId)
+                      !newLichHen.xeId ||
+                      !newLichHen.trungTamId ||
+                      !newLichHen.dichVuId ||
+                      !newLichHen.ngayHen ||
+                      !newLichHen.gioHen
                     }
                     className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
-                    🗓️ Đặt lịch ngay
+                    Đặt lịch ngay
                   </button>
                 </div>
               </div>
@@ -678,7 +490,7 @@ const LichHenDichVu = () => {
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
               <div className="p-4 border-b border-gray-200 dark:border-gray-700">
                 <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
-                  🏢 Trung tâm dịch vụ
+                  Trung tâm dịch vụ
                 </h3>
               </div>
               <div className="p-4">
@@ -699,7 +511,7 @@ const LichHenDichVu = () => {
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 mt-6">
               <div className="p-4 border-b border-gray-200 dark:border-gray-700">
                 <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
-                  🔧 Dịch vụ phổ biến
+                  Dịch vụ phổ biến
                 </h3>
               </div>
               <div className="p-4">
@@ -743,6 +555,7 @@ const LichHenDichVu = () => {
             ) : (
               lichHen.map((lh) => (
                 <div key={lh.id} className="p-4 hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors">
+                  {/* Header */}
                   <div className="flex justify-between items-start mb-3">
                     <div>
                       <h4 className="font-semibold text-gray-800 dark:text-white">
@@ -762,275 +575,66 @@ const LichHenDichVu = () => {
                     </span>
                   </div>
 
-                  <div className="flex justify-between items-center mb-3">
-                    <span className="text-sm text-gray-700 dark:text-gray-300">
-                      {lh.dichVu}
-                    </span>
-                    <span className="font-semibold text-gray-800 dark:text-white">
-                      {lh.ngayGioHen}
-                    </span>
+                  {/* Thông tin chi tiết */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600 dark:text-gray-400">Dịch vụ:</span>
+                        <span className="text-sm font-medium text-gray-800 dark:text-white">{lh.dichVu}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600 dark:text-gray-400">Thời gian hẹn:</span>
+                        <span className="text-sm font-medium text-gray-800 dark:text-white">{lh.ngayGioHen}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600 dark:text-gray-400">Đặt lúc:</span>
+                        <span className="text-sm text-gray-600 dark:text-gray-400">{lh.thoiGianTao}</span>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600 dark:text-gray-400">Số km:</span>
+                        <span className="text-sm text-gray-800 dark:text-white">{lh.soKm || "Chưa cập nhật"}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600 dark:text-gray-400">Chủ xe:</span>
+                        <span className="text-sm text-gray-800 dark:text-white">
+                          {lh.thongTinLienHe?.chuXe || "Không có thông tin"}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600 dark:text-gray-400">Liên hệ:</span>
+                        <span className="text-sm text-gray-800 dark:text-white">
+                          {lh.thongTinLienHe?.soDienThoai || "Đã có trong hệ thống"}
+                        </span>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="flex justify-between items-center text-sm text-gray-500 dark:text-gray-400">
-                    <span>Đặt lúc: {lh.thoiGianTao}</span>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => handleXemChiTiet(lh)}
-                        className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
-                      >
-                        Chi tiết
-                      </button>
-
-                      {/* Nút xác nhận (chỉ hiện cho admin và lịch chờ xác nhận) */}
-                      {lh.trangThai === "cho-xac-nhan" && (
-                        <button
-                          onClick={() => handleMoXacNhanAdmin(lh)}
-                          className="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
-                        >
-                          Xác nhận
-                        </button>
-                      )}
-
-                      {(lh.trangThai === "cho-xac-nhan" || lh.trangThai === "da-xac-nhan") && (
-                        <button
-                          onClick={() => handleHuyLichHen(lh.id)}
-                          className="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
-                        >
-                          Hủy lịch
-                        </button>
-                      )}
+                  {/* Ghi chú (nếu có) */}
+                  {lh.ghiChu && (
+                    <div className="mb-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                      <div className="flex justify-between items-start">
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Ghi chú:</span>
+                      </div>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 whitespace-pre-wrap">{lh.ghiChu}</p>
                     </div>
+                  )}
+
+                  {/* Nút hủy lịch */}
+                  <div className="flex justify-end">
+                    {(lh.trangThai === "cho-xac-nhan" || lh.trangThai === "da-xac-nhan") && (
+                      <button
+                        onClick={() => handleHuyLichHen(lh.id)}
+                        className="px-4 py-2 text-sm bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+                      >
+                        Hủy lịch
+                      </button>
+                    )}
                   </div>
                 </div>
               ))
             )}
-          </div>
-        </div>
-      )}
-
-      {/* Modal xác nhận đặt lịch */}
-      {showXacNhanModal && selectedLichHen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-96">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl text-green-600">✅</span>
-              </div>
-              <h3 className="text-lg font-semibold mb-2">Đặt lịch thành công!</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                Mã lịch hẹn: <span className="font-medium">{selectedLichHen.maLichHen}</span>
-              </p>
-
-              <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 mb-4 text-left">
-                <div className="text-sm space-y-2">
-                  <div><strong>Xe:</strong> {selectedLichHen.xe}</div>
-                  <div><strong>Trung tâm:</strong> {selectedLichHen.trungTam}</div>
-                  <div><strong>Dịch vụ:</strong> {selectedLichHen.dichVu}</div>
-                  <div><strong>Thời gian:</strong> {selectedLichHen.ngayGioHen}</div>
-                  {selectedLichHen.thongTinLienHe && (
-                    <div><strong>Liên hệ:</strong> {selectedLichHen.thongTinLienHe.soDienThoai}</div>
-                  )}
-                </div>
-              </div>
-
-              <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-                Chúng tôi sẽ xác nhận lịch hẹn qua SMS/Email trong vòng 2 giờ làm việc.
-              </p>
-
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setShowXacNhanModal(false)}
-                  className="flex-1 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors"
-                >
-                  Đóng
-                </button>
-                <button
-                  onClick={() => {
-                    setShowXacNhanModal(false);
-                    setActiveTab('lich-su');
-                  }}
-                  className="flex-1 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
-                >
-                  Xem lịch hẹn
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Modal chi tiết lịch hẹn */}
-      {showChiTietModal && selectedLichHen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center mb-6">
-              <div>
-                <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
-                  {selectedLichHen.maLichHen}
-                </h3>
-                <p className="text-lg text-gray-600 dark:text-gray-400">
-                  {selectedLichHen.dichVu}
-                </p>
-              </div>
-              <button
-                onClick={() => setShowChiTietModal(false)}
-                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-2xl"
-              >
-                ✕
-              </button>
-            </div>
-
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Thông tin xe
-                </label>
-                <p className="text-sm text-gray-800 dark:text-white">{selectedLichHen.xe}</p>
-              </div>
-
-              {selectedLichHen.thongTinLienHe && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Thông tin liên hệ
-                  </label>
-                  <div className="text-sm text-gray-800 dark:text-white">
-                    <div>Chủ xe: {selectedLichHen.thongTinLienHe.chuXe}</div>
-                    <div>SĐT: {selectedLichHen.thongTinLienHe.soDienThoai}</div>
-                    {selectedLichHen.thongTinLienHe.email && (
-                      <div>Email: {selectedLichHen.thongTinLienHe.email}</div>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Trung tâm dịch vụ
-                </label>
-                <p className="text-sm text-gray-800 dark:text-white">{selectedLichHen.trungTam}</p>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Thời gian hẹn
-                </label>
-                <p className="text-sm text-gray-800 dark:text-white">{selectedLichHen.ngayGioHen}</p>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Số km
-                </label>
-                <p className="text-sm text-gray-800 dark:text-white">{selectedLichHen.soKm}</p>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Trạng thái
-                </label>
-                <span className={`px-2 py-1 rounded-full text-xs border ${getTrangThaiColor(selectedLichHen.trangThai)}`}>
-                  {getTrangThaiText(selectedLichHen.trangThai)}
-                </span>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Thời gian tạo
-                </label>
-                <p className="text-sm text-gray-800 dark:text-white">{selectedLichHen.thoiGianTao}</p>
-              </div>
-
-              {selectedLichHen.ghiChu && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Ghi chú
-                  </label>
-                  <p className="text-sm text-gray-800 dark:text-white whitespace-pre-wrap">{selectedLichHen.ghiChu}</p>
-                </div>
-              )}
-            </div>
-
-            <div className="mt-6 flex gap-2">
-              <button
-                onClick={() => setShowChiTietModal(false)}
-                className="flex-1 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors"
-              >
-                Đóng
-              </button>
-              {selectedLichHen.trangThai === "cho-xac-nhan" && (
-                <button
-                  onClick={() => {
-                    setShowChiTietModal(false);
-                    handleMoXacNhanAdmin(selectedLichHen);
-                  }}
-                  className="flex-1 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
-                >
-                  Xác nhận
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Modal xác nhận lịch hẹn (Admin) */}
-      {showXacNhanAdminModal && selectedLichHen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-96">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
-                Xác nhận lịch hẹn
-              </h3>
-              <button
-                onClick={() => setShowXacNhanAdminModal(false)}
-                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-              >
-                ✕
-              </button>
-            </div>
-
-            <div className="space-y-4 mb-4">
-              <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                <div className="text-sm space-y-2">
-                  <div><strong>Mã:</strong> {selectedLichHen.maLichHen}</div>
-                  <div><strong>Xe:</strong> {selectedLichHen.xe}</div>
-                  <div><strong>Trung tâm:</strong> {selectedLichHen.trungTam}</div>
-                  <div><strong>Dịch vụ:</strong> {selectedLichHen.dichVu}</div>
-                  <div><strong>Thời gian:</strong> {selectedLichHen.ngayGioHen}</div>
-                  {selectedLichHen.thongTinLienHe && (
-                    <div><strong>Liên hệ:</strong> {selectedLichHen.thongTinLienHe.soDienThoai}</div>
-                  )}
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Ghi chú xác nhận (tùy chọn)
-                </label>
-                <textarea
-                  value={adminGhiChu}
-                  onChange={(e) => setAdminGhiChu(e.target.value)}
-                  rows={3}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                  placeholder="Thông tin thêm cho khách hàng..."
-                />
-              </div>
-            </div>
-
-            <div className="flex gap-2">
-              <button
-                onClick={handleTuChoiLichHen}
-                className="flex-1 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
-              >
-                Từ chối
-              </button>
-              <button
-                onClick={handleXacNhanLichHen}
-                className="flex-1 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
-              >
-                Xác nhận
-              </button>
-            </div>
           </div>
         </div>
       )}
