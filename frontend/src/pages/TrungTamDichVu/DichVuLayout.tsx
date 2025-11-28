@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Routes, Route, useNavigate, useLocation, Link } from "react-router-dom";
 import KhachHangXe from "./KhachHangXe";
-import LichHenDichVu from "./LichHenDichVu";
+import QLLichHenDichVu from "./QLLichHenDichVu";
 import QuyTrinhBaoDuong from "./QuyTrinhBaoDuong";
 import QuanLyPhuTung from "./QuanLyPhuTung";
 import QuanLyNhanSu from "./QuanLyNhanSu";
@@ -25,7 +25,7 @@ const DichVuLayout = () => {
       name: "Lịch hẹn & Dịch vụ",
       icon: "📅",
       path: "/dich-vu/lich-hen",
-      component: <LichHenDichVu />
+      component: <QLLichHenDichVu />
     },
     {
       id: "baoduong",

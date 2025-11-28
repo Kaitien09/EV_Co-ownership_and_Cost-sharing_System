@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const LichHenDichVu = () => {
+const QLLichHenDichVu = () => {
   const [yeuCauMoi, setYeuCauMoi] = useState([
     {
       id: "1",
@@ -353,4 +353,4 @@ const LichHenDichVu = () => {
   );
 };
 
-export default LichHenDichVu;
+export default QLLichHenDichVu;
