@@ -31,6 +31,7 @@ const Calendar: React.FC = () => {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [filteredEvents, setFilteredEvents] = useState<CalendarEvent[]>([]);
   const [selectedFilter, setSelectedFilter] = useState<string>("all");
+  const [bookingError, setBookingError] = useState<string>("");
   const calendarRef = useRef<FullCalendar>(null);
   const { isOpen, openModal, closeModal } = useModal();
 
@@ -126,6 +127,32 @@ const Calendar: React.FC = () => {
     .filter(event => event.extendedProps.bookerName === currentUser)
     .slice(0, 5);
 
+  // Hàm kiểm tra xem xe đã được đặt trong khoảng thời gian này chưa
+  const isVehicleBooked = (licensePlate: string, startDateTime: string, endDateTime: string, excludeEventId?: string): boolean => {
+    const newStart = new Date(startDateTime);
+    const newEnd = new Date(endDateTime);
+
+    return events.some(event => {
+      // Bỏ qua sự kiện hiện tại khi chỉnh sửa
+      if (excludeEventId && event.id === excludeEventId) return false;
+
+      // Chỉ kiểm tra các sự kiện cùng biển số xe
+      if (event.extendedProps.licensePlate !== licensePlate) return false;
+
+      const eventStart = new Date(event.start as string);
+      const eventEnd = new Date(event.end as string);
+
+      // Kiểm tra xem có sự chồng lấn thời gian không
+      const hasOverlap = (
+        (newStart >= eventStart && newStart < eventEnd) || // Thời gian bắt đầu mới nằm trong sự kiện hiện có
+        (newEnd > eventStart && newEnd <= eventEnd) || // Thời gian kết thúc mới nằm trong sự kiện hiện có
+        (newStart <= eventStart && newEnd >= eventEnd) // Thời gian mới bao trùm sự kiện hiện có
+      );
+
+      return hasOverlap;
+    });
+  };
+
   const handleDateSelect = (selectInfo: DateSelectArg) => {
     resetModalFields();
     const startStr = selectInfo.startStr;
@@ -145,12 +172,36 @@ const Calendar: React.FC = () => {
     setEndDate(event.end?.toISOString().split("T")[0] || "");
     setStartTime(event.extendedProps.startTime || "08:00");
     setEndTime(event.extendedProps.endTime || "17:00");
+    setBookingError("");
     openModal();
   };
 
   const handleAddOrUpdateBooking = () => {
     if (!bookerName || !selectedVehicle || !startDate) {
-      alert("Vui lòng điền đầy đủ thông tin bắt buộc");
+      setBookingError("Vui lòng điền đầy đủ thông tin bắt buộc");
+      return;
+    }
+
+    // Tạo datetime string từ date và time
+    const startDateTime = `${startDate}T${startTime}:00`;
+    const endDateTime = endDate ? `${endDate}T${endTime}:00` : `${startDate}T${endTime}:00`;
+
+    // Kiểm tra nếu ngày kết thúc trước ngày bắt đầu
+    if (endDate && new Date(endDateTime) <= new Date(startDateTime)) {
+      setBookingError("Thời gian kết thúc phải sau thời gian bắt đầu");
+      return;
+    }
+
+    // Kiểm tra xem xe đã được đặt trong khoảng thời gian này chưa
+    const isBooked = isVehicleBooked(
+      selectedVehicle,
+      startDateTime,
+      endDateTime,
+      selectedEvent?.id
+    );
+
+    if (isBooked) {
+      setBookingError(`Xe ${selectedVehicle} đã được đặt trong khoảng thời gian này. Vui lòng chọn thời gian khác.`);
       return;
     }
 
@@ -161,8 +212,8 @@ const Calendar: React.FC = () => {
             ? {
                 ...event,
                 title: selectedVehicle,
-                start: `${startDate}T${startTime}:00`,
-                end: `${endDate}T${endTime}:00`,
+                start: startDateTime,
+                end: endDateTime,
                 backgroundColor: "transparent",
                 borderColor: "transparent",
                 textColor: vehicleTextColorMap[selectedVehicle],
@@ -181,8 +232,8 @@ const Calendar: React.FC = () => {
       const newEvent: CalendarEvent = {
         id: Date.now().toString(),
         title: selectedVehicle,
-        start: `${startDate}T${startTime}:00`,
-        end: `${endDate}T${endTime}:00`,
+        start: startDateTime,
+        end: endDateTime,
         backgroundColor: "transparent",
         borderColor: "transparent",
         textColor: vehicleTextColorMap[selectedVehicle],
@@ -208,6 +259,7 @@ const Calendar: React.FC = () => {
     setStartTime("08:00");
     setEndTime("17:00");
     setSelectedEvent(null);
+    setBookingError("");
   };
 
   const formatDate = (dateString: string) => {
@@ -362,10 +414,18 @@ const Calendar: React.FC = () => {
         <div className="flex flex-col px-2 overflow-y-auto custom-scrollbar">
           <div>
             <h5 className="mb-2 font-semibold text-gray-800 modal-title text-theme-xl dark:text-white/90 lg:text-2xl">
-              {selectedEvent ? "Chỉnh sửa lịch đặt xe" : "Đặt lịch xe mới"}
+              {selectedEvent ? "Xem lịch đặt xe" : "Đặt lịch xe mới"}
             </h5>
           </div>
-          <div className="mt-8 space-y-6">
+
+          {/* Hiển thị lỗi đặt lịch */}
+          {bookingError && (
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm dark:bg-red-900/20 dark:border-red-800 dark:text-red-300">
+              ⚠️ {bookingError}
+            </div>
+          )}
+
+          <div className="mt-4 space-y-6">
             <div>
               <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
                 Tên người đặt *
@@ -457,13 +517,17 @@ const Calendar: React.FC = () => {
             >
               Đóng
             </button>
-            <button
-              onClick={handleAddOrUpdateBooking}
-              type="button"
-              className="btn btn-success btn-update-event flex w-full justify-center rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-600 sm:w-auto"
-            >
-              {selectedEvent ? "Cập nhật" : "Đặt lịch"}
-            </button>
+
+            {/* Chỉ hiển thị nút "Đặt lịch" khi không có selectedEvent (đặt lịch mới) */}
+            {!selectedEvent && (
+              <button
+                onClick={handleAddOrUpdateBooking}
+                type="button"
+                className="btn btn-success btn-update-event flex w-full justify-center rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-600 sm:w-auto"
+              >
+                Đặt lịch
+              </button>
+            )}
           </div>
         </div>
       </Modal>
