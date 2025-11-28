@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router";
 
 interface ThanhVienHopDong {
   thanhVienId: number;
@@ -37,7 +36,8 @@ interface HopDongDongSoHuu {
 }
 
 const QLHopDongPhapLyPage: React.FC = () => {
-  const navigate = useNavigate();
+  const [selectedHopDong, setSelectedHopDong] = useState<HopDongDongSoHuu | null>(null);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
 
   const [hopDongList] = useState<HopDongDongSoHuu[]>([
     {
@@ -145,7 +145,15 @@ const QLHopDongPhapLyPage: React.FC = () => {
     return <span className={`px-2 py-1 text-xs rounded-full ${status.class}`}>{status.text}</span>;
   };
 
-  const handleViewDetail = (hopDongId: number) => navigate(`/admin/ql-hd/${hopDongId}`);
+  const handleViewDetail = (hopDong: HopDongDongSoHuu) => {
+    setSelectedHopDong(hopDong);
+    setIsDetailOpen(true);
+  };
+
+  const closeDetail = () => {
+    setIsDetailOpen(false);
+    setSelectedHopDong(null);
+  };
 
   return (
     <div className="p-6">
@@ -261,13 +269,15 @@ const QLHopDongPhapLyPage: React.FC = () => {
               {hopDongList.map((hopDong) => (
                 <tr
                   key={hopDong.hopDongId}
-                  className="hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
-                  onClick={() => handleViewDetail(hopDong.hopDongId)}
+                  className="hover:bg-gray-50 dark:hover:bg-gray-700"
                 >
                   <td className="px-4 py-3">
-                    <div className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
+                    <button
+                      onClick={() => handleViewDetail(hopDong)}
+                      className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline cursor-pointer"
+                    >
                       {hopDong.maHopDong}
-                    </div>
+                    </button>
                   </td>
                   <td className="px-4 py-3">
                     <div className="text-sm text-gray-900 dark:text-white">
@@ -295,6 +305,168 @@ const QLHopDongPhapLyPage: React.FC = () => {
           </table>
         </div>
       </div>
+
+      {/* Modal chi tiết hợp đồng */}
+      {isDetailOpen && selectedHopDong && (
+        <div className="fixed inset-0 bg-gray bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+                  Chi tiết hợp đồng: {selectedHopDong.maHopDong}
+                </h2>
+                <button
+                  onClick={closeDetail}
+                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              {/* Thông tin hợp đồng */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                      Thông tin hợp đồng
+                    </h3>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600 dark:text-gray-400">Mã hợp đồng:</span>
+                        <span className="font-medium text-gray-900 dark:text-white">{selectedHopDong.maHopDong}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600 dark:text-gray-400">Tên nhóm:</span>
+                        <span className="font-medium text-gray-900 dark:text-white">{selectedHopDong.tenNhom}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600 dark:text-gray-400">Ngày bắt đầu:</span>
+                        <span className="font-medium text-gray-900 dark:text-white">{formatDate(selectedHopDong.ngayBatDau)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600 dark:text-gray-400">Ngày kết thúc:</span>
+                        <span className="font-medium text-gray-900 dark:text-white">
+                          {selectedHopDong.ngayKetThuc ? formatDate(selectedHopDong.ngayKetThuc) : 'Chưa xác định'}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600 dark:text-gray-400">Trạng thái:</span>
+                        {getStatusBadge(selectedHopDong.trangThai)}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                    Thông tin xe
+                  </h3>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600 dark:text-gray-400">Biển số:</span>
+                      <span className="font-medium text-gray-900 dark:text-white">{selectedHopDong.xe.bienSo}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600 dark:text-gray-400">Model:</span>
+                      <span className="font-medium text-gray-900 dark:text-white">{selectedHopDong.xe.model}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600 dark:text-gray-400">Màu xe:</span>
+                      <span className="font-medium text-gray-900 dark:text-white">{selectedHopDong.xe.mauXe}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600 dark:text-gray-400">Năm sản xuất:</span>
+                      <span className="font-medium text-gray-900 dark:text-white">{selectedHopDong.xe.namSanXuat}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600 dark:text-gray-400">Dung lượng pin:</span>
+                      <span className="font-medium text-gray-900 dark:text-white">{selectedHopDong.xe.dungLuongPin} kWh</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600 dark:text-gray-400">Quãng đường tối đa:</span>
+                      <span className="font-medium text-gray-900 dark:text-white">{selectedHopDong.xe.quangDuongToiDa} km</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600 dark:text-gray-400">Trạng thái xe:</span>
+                      {getTrangThaiXeBadge(selectedHopDong.xe.trangThai)}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Thành viên hợp đồng */}
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                  Thành viên hợp đồng
+                </h3>
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="bg-gray-50 dark:bg-gray-700">
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
+                          Tên thành viên
+                        </th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
+                          Tỷ lệ sở hữu
+                        </th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
+                          Email
+                        </th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
+                          Số điện thoại
+                        </th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
+                          Loại thành viên
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                      {selectedHopDong.thanhVien.map((thanhVien) => (
+                        <tr key={thanhVien.thanhVienId}>
+                          <td className="px-4 py-2 text-sm text-gray-900 dark:text-white">
+                            {thanhVien.tenThanhVien}
+                          </td>
+                          <td className="px-4 py-2 text-sm text-gray-900 dark:text-white">
+                            {thanhVien.tyLeSoHuu}%
+                          </td>
+                          <td className="px-4 py-2 text-sm text-gray-900 dark:text-white">
+                            {thanhVien.email}
+                          </td>
+                          <td className="px-4 py-2 text-sm text-gray-900 dark:text-white">
+                            {thanhVien.soDienThoai}
+                          </td>
+                          <td className="px-4 py-2">
+                            {thanhVien.isCurrentUser ? (
+                              <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                                Người dùng hiện tại
+                              </span>
+                            ) : (
+                              <span className="px-2 py-1 bg-gray-100 text-gray-800 text-xs rounded-full">
+                                Thành viên
+                              </span>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div className="flex justify-end mt-6">
+                <button
+                  onClick={closeDetail}
+                  className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors"
+                >
+                  Đóng
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
