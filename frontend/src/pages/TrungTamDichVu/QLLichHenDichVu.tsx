@@ -5,188 +5,183 @@ const QLLichHenDichVu = () => {
     {
       id: "1",
       khachHang: "Nguyễn Văn A",
-      bienSo: "29A-12345",
-      dichVu: "Bảo dưỡng định kỳ",
-      ngayYeuCau: "19/11/2024 08:30",
+      bienSo: "30A-11111",
+      dichVu: "Bảo dưỡng pin",
+      ngayYeuCau: "2025-11-27 08:00:00",
       uuTien: "cao",
-      soDienThoai: "0912345678",
-      loaiXe: "VinFast VF e34"
+      soDienThoai: "0903000001",
+      loaiXe: "Model X1",
+      moTaVanDe: "Bao duong pin",
+      trangThai: "CHO_XAC_NHAN"
     },
     {
       id: "2",
-      khachHang: "Trần Thị B",
-      bienSo: "29A-67890",
-      dichVu: "Sửa chữa điều hòa",
-      ngayYeuCau: "19/11/2024 09:15",
+      khachHang: "Tran Thi B",
+      bienSo: "30A-22222",
+      dichVu: "Kiểm tra hệ thống",
+      ngayYeuCau: "2025-11-28 09:00:00",
       uuTien: "trung-binh",
-      soDienThoai: "0912345679",
-      loaiXe: "Tesla Model 3"
+      soDienThoai: "0903000002",
+      loaiXe: "Model X2",
+      moTaVanDe: "Kiem tra he thong",
+      trangThai: "CHO_XAC_NHAN"
+    },
+    {
+      id: "3",
+      khachHang: "Le Van C",
+      bienSo: "30A-33333",
+      dichVu: "Thay thế phụ tùng",
+      ngayYeuCau: "2025-11-29 10:00:00",
+      uuTien: "thap",
+      soDienThoai: "0903000003",
+      loaiXe: "Model X3",
+      moTaVanDe: "Thay phu tung xe",
+      trangThai: "CHO_XAC_NHAN"
     }
   ]);
 
   const [kyThuatVien, setKyThuatVien] = useState([
     {
       id: "1",
-      ten: "Nguyễn Văn C",
-      chuyenMon: "Động cơ & Hệ thống điện",
-      ca: "Sáng (8h-12h)",
-      lichTrinh: [
-        {
-          id: "1",
-          gio: "08:00",
-          xe: "29A-12345",
-          dichVu: "Bảo dưỡng định kỳ",
-          trangThai: "dang-thuc-hien",
-          khachHang: "Nguyễn Văn A"
-        }
-      ]
+      ten: "Nguyen Van A",
+      chuyenMon: "Điện",
+      kinhNghiem: 5,
+      chungChi: "CC01",
+      soDienThoai: "0902000001",
+      email: "kth1@example.com",
+      congViecDangLam: 1
     },
     {
       id: "2",
-      ten: "Trần Thị D",
-      chuyenMon: "Điều hòa & Hệ thống làm mát",
-      ca: "Sáng (8h-12h)",
-      lichTrinh: []
-    }
-  ]);
-
-  const [phieuTiepNhan, setPhieuTiepNhan] = useState([
+      ten: "Le Thi B",
+      chuyenMon: "Cơ Khí",
+      kinhNghiem: 3,
+      chungChi: "CC02",
+      soDienThoai: "0902000002",
+      email: "kth2@example.com",
+      congViecDangLam: 1
+    },
     {
-      id: "1",
-      soPhieu: "PN-001",
-      khachHang: "Nguyễn Văn A",
-      bienSo: "29A-12345",
-      ngayTiepNhan: "19/11/2024 08:00",
-      dichVu: "Bảo dưỡng định kỳ",
-      trangThai: "dang-thuc-hien",
-      kyThuatVien: "Nguyễn Văn C"
+      id: "3",
+      ten: "Tran Van C",
+      chuyenMon: "Điện Tử",
+      kinhNghiem: 7,
+      chungChi: "CC03",
+      soDienThoai: "0902000003",
+      email: "kth3@example.com",
+      congViecDangLam: 0
     }
   ]);
-
-  const [activeTab, setActiveTab] = useState("yeu-cau");
 
   // Tự động chọn KTV có ít công việc nhất
   const chonKTVTuDong = () => {
     return kyThuatVien.reduce((minKTV, ktv) => {
-      return ktv.lichTrinh.length < minKTV.lichTrinh.length ? ktv : minKTV;
+      return ktv.congViecDangLam < minKTV.congViecDangLam ? ktv : minKTV;
     });
   };
 
   // Chức năng tiếp nhận yêu cầu
-  const handleTiepNhanYeuCau = (yeuCauId: string) => {
+  const handleTiepNhanYeuCau = (yeuCauId) => {
     const yeuCau = yeuCauMoi.find(yc => yc.id === yeuCauId);
     if (!yeuCau) return;
 
     const ktv = chonKTVTuDong();
 
-    // Tạo phiếu tiếp nhận
-    const newPhieu = {
-      id: Date.now().toString(),
-      soPhieu: `PN-${Date.now().toString().slice(-4)}`,
-      khachHang: yeuCau.khachHang,
-      bienSo: yeuCau.bienSo,
-      ngayTiepNhan: new Date().toLocaleString('vi-VN'),
-      dichVu: yeuCau.dichVu,
-      trangThai: "da-phan-cong",
-      kyThuatVien: ktv.ten
-    };
-
-    // Thêm vào lịch KTV
-    const newLich = {
-      id: Date.now().toString(),
-      gio: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
-      xe: yeuCau.bienSo,
-      dichVu: yeuCau.dichVu,
-      trangThai: "cho",
-      khachHang: yeuCau.khachHang
-    };
-
-    setKyThuatVien(prev => prev.map(k =>
-      k.id === ktv.id
-        ? { ...k, lichTrinh: [...k.lichTrinh, newLich] }
-        : k
+    // Cập nhật trạng thái yêu cầu thành "Đang làm"
+    setYeuCauMoi(prev => prev.map(yc =>
+      yc.id === yeuCauId
+        ? {
+            ...yc,
+            trangThai: "DANG_THUC_HIEN",
+            kyThuatVien: ktv.ten,
+            ngayBatDau: new Date().toISOString().slice(0, 19).replace('T', ' '),
+            duKienHoanThanh: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString().slice(0, 19).replace('T', ' ')
+          }
+        : yc
     ));
 
-    setPhieuTiepNhan(prev => [...prev, newPhieu]);
-    setYeuCauMoi(prev => prev.filter(yc => yc.id !== yeuCauId));
+    // Cập nhật số lượng công việc của KTV
+    setKyThuatVien(prev => prev.map(k =>
+      k.id === ktv.id
+        ? { ...k, congViecDangLam: k.congViecDangLam + 1 }
+        : k
+    ));
   };
 
   // Chức năng từ chối yêu cầu
-  const handleTuChoiYeuCau = (yeuCauId: string) => {
+  const handleTuChoiYeuCau = (yeuCauId) => {
     setYeuCauMoi(prev => prev.filter(yc => yc.id !== yeuCauId));
   };
 
-  // Chức năng bắt đầu dịch vụ
-  const handleBatDauDichVu = (ktvId: string, lichId: string) => {
-    setKyThuatVien(prev => prev.map(ktv => {
-      if (ktv.id === ktvId) {
-        return {
-          ...ktv,
-          lichTrinh: ktv.lichTrinh.map(lich =>
-            lich.id === lichId
-              ? { ...lich, trangThai: "dang-thuc-hien" }
-              : lich
-          )
-        };
-      }
-      return ktv;
-    }));
-
-    // Cập nhật phiếu tiếp nhận
-    const lich = kyThuatVien.flatMap(ktv => ktv.lichTrinh).find(l => l.id === lichId);
-    if (lich) {
-      setPhieuTiepNhan(prev => prev.map(p =>
-        p.bienSo === lich.xe && p.dichVu === lich.dichVu
-          ? { ...p, trangThai: "dang-thuc-hien" }
-          : p
-      ));
-    }
-  };
-
   // Chức năng hoàn thành dịch vụ
-  const handleHoanThanhDichVu = (ktvId: string, lichId: string) => {
-    setKyThuatVien(prev => prev.map(ktv => {
-      if (ktv.id === ktvId) {
-        return {
-          ...ktv,
-          lichTrinh: ktv.lichTrinh.map(lich =>
-            lich.id === lichId
-              ? { ...lich, trangThai: "hoan-thanh" }
-              : lich
-          )
-        };
-      }
-      return ktv;
-    }));
+  const handleHoanThanhDichVu = (yeuCauId) => {
+    const yeuCau = yeuCauMoi.find(yc => yc.id === yeuCauId);
+    if (!yeuCau) return;
 
-    // Cập nhật phiếu tiếp nhận
-    const lich = kyThuatVien.flatMap(ktv => ktv.lichTrinh).find(l => l.id === lichId);
-    if (lich) {
-      setPhieuTiepNhan(prev => prev.map(p =>
-        p.bienSo === lich.xe && p.dichVu === lich.dichVu
-          ? { ...p, trangThai: "hoan-thanh" }
-          : p
-      ));
+    // Cập nhật trạng thái yêu cầu thành "Hoàn thành"
+    setYeuCauMoi(prev => prev.map(yc =>
+      yc.id === yeuCauId
+        ? {
+            ...yc,
+            trangThai: "HOAN_THANH",
+            ngayHoanThanh: new Date().toISOString().slice(0, 19).replace('T', ' ')
+          }
+        : yc
+    ));
+
+    // Giảm số lượng công việc của KTV
+    if (yeuCau.kyThuatVien) {
+      const ktv = kyThuatVien.find(k => k.ten === yeuCau.kyThuatVien);
+      if (ktv) {
+        setKyThuatVien(prev => prev.map(k =>
+          k.id === ktv.id
+            ? { ...k, congViecDangLam: Math.max(0, k.congViecDangLam - 1) }
+            : k
+        ));
+      }
     }
   };
 
-  const getUuTienColor = (uuTien: string) => {
+  const getUuTienColor = (uuTien) => {
     const colors = {
       cao: "bg-red-50 text-red-700 border border-red-200",
       "trung-binh": "bg-yellow-50 text-yellow-700 border border-yellow-200",
       thap: "bg-green-50 text-green-700 border border-green-200"
     };
-    return colors[uuTien as keyof typeof colors];
+    return colors[uuTien] || colors["trung-binh"];
   };
 
-  const getTrangThaiColor = (trangThai: string) => {
+  const getTrangThaiColor = (trangThai) => {
     const colors = {
-      "cho": "bg-gray-100 text-gray-700 border border-gray-300",
-      "da-phan-cong": "bg-blue-50 text-blue-700 border border-blue-200",
-      "dang-thuc-hien": "bg-orange-50 text-orange-700 border border-orange-200",
-      "hoan-thanh": "bg-green-50 text-green-700 border border-green-200"
+      "CHO_XAC_NHAN": "bg-gray-100 text-gray-700 border border-gray-300",
+      "DANG_THUC_HIEN": "bg-orange-50 text-orange-700 border border-orange-200",
+      "HOAN_THANH": "bg-green-50 text-green-700 border border-green-200",
+      "DA_HUY": "bg-red-50 text-red-700 border border-red-200"
     };
-    return colors[trangThai as keyof typeof colors];
+    return colors[trangThai] || colors["CHO_XAC_NHAN"];
+  };
+
+  const formatTrangThai = (trangThai) => {
+    const mappings = {
+      "CHO_XAC_NHAN": "Chờ xác nhận",
+      "DANG_THUC_HIEN": "Đang thực hiện",
+      "HOAN_THANH": "Hoàn thành",
+      "DA_HUY": "Đã hủy"
+    };
+    return mappings[trangThai] || trangThai;
+  };
+
+  const formatNgay = (ngayString) => {
+    if (!ngayString) return "";
+    return new Date(ngayString).toLocaleString('vi-VN');
+  };
+
+  // Thống kê
+  const thongKe = {
+    choXacNhan: yeuCauMoi.filter(x => x.trangThai === "CHO_XAC_NHAN").length,
+    dangThucHien: yeuCauMoi.filter(x => x.trangThai === "DANG_THUC_HIEN").length,
+    hoanThanh: yeuCauMoi.filter(x => x.trangThai === "HOAN_THANH").length,
+    tong: yeuCauMoi.length
   };
 
   return (
@@ -202,94 +197,178 @@ const QLLichHenDichVu = () => {
           </p>
         </div>
 
-        {/* Navigation Tabs */}
-        <div className="mb-6">
-          <div className="flex space-x-1 bg-white rounded-lg border border-gray-200 p-1">
-            {[
-              { id: "yeu-cau", label: "Yêu cầu mới", count: yeuCauMoi.length },
-              { id: "lich-ktv", label: "Lịch kỹ thuật viên", count: kyThuatVien.length },
-              { id: "phieu-tiep-nhan", label: "Phiếu tiếp nhận", count: phieuTiepNhan.length }
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`flex-1 py-3 px-4 rounded-md text-sm font-medium transition-colors ${
-                  activeTab === tab.id
-                    ? "bg-blue-600 text-white"
-                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-                }`}
-              >
-                <div className="flex items-center justify-center gap-2">
-                  {tab.label}
-                  <span className={`px-2 py-1 rounded-full text-xs ${
-                    activeTab === tab.id ? "bg-blue-500" : "bg-gray-200"
-                  }`}>
-                    {tab.count}
-                  </span>
-                </div>
-              </button>
-            ))}
+        {/* Thống kê nhanh */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+            <div className="flex items-center">
+              <div className="w-3 h-3 bg-gray-400 rounded-full mr-3"></div>
+              <div>
+                <p className="text-sm text-gray-600">Chờ xác nhận</p>
+                <p className="text-2xl font-bold text-gray-900">{thongKe.choXacNhan}</p>
+              </div>
+            </div>
+          </div>
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+            <div className="flex items-center">
+              <div className="w-3 h-3 bg-orange-500 rounded-full mr-3"></div>
+              <div>
+                <p className="text-sm text-gray-600">Đang thực hiện</p>
+                <p className="text-2xl font-bold text-gray-900">{thongKe.dangThucHien}</p>
+              </div>
+            </div>
+          </div>
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+            <div className="flex items-center">
+              <div className="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
+              <div>
+                <p className="text-sm text-gray-600">Hoàn thành</p>
+                <p className="text-2xl font-bold text-gray-900">{thongKe.hoanThanh}</p>
+              </div>
+            </div>
+          </div>
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+            <div className="flex items-center">
+              <div className="w-3 h-3 bg-blue-500 rounded-full mr-3"></div>
+              <div>
+                <p className="text-sm text-gray-600">Tổng số</p>
+                <p className="text-2xl font-bold text-gray-900">{thongKe.tong}</p>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Tab Content */}
-        <div className="space-y-6">
-          {/* Yêu cầu mới */}
-          {activeTab === "yeu-cau" && (
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-              <div className="px-6 py-4 border-b border-gray-200">
-                <h2 className="text-lg font-semibold text-gray-900">
-                  Yêu cầu đặt lịch mới
-                </h2>
-              </div>
-              <div className="divide-y divide-gray-200">
-                {yeuCauMoi.map((yeuCau) => (
-                  <div key={yeuCau.id} className="p-6">
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-3">
-                          <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center border">
-                            <span className="text-gray-600 font-semibold text-lg">
-                              {yeuCau.khachHang.split(' ').pop()?.charAt(0)}
-                            </span>
-                          </div>
-                          <div>
-                            <h3 className="font-semibold text-gray-900 text-lg">
-                              {yeuCau.khachHang}
-                            </h3>
-                            <p className="text-sm text-gray-600">{yeuCau.loaiXe}</p>
-                          </div>
-                        </div>
+        {/* Danh sách kỹ thuật viên */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+          <div className="px-6 py-4 border-b border-gray-200">
+            <h2 className="text-lg font-semibold text-gray-900">
+              Kỹ thuật viên hiện có
+            </h2>
+          </div>
+          <div className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {kyThuatVien.map((ktv) => (
+                <div key={ktv.id} className="border border-gray-200 rounded-lg p-4">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center border">
+                      <span className="text-gray-600 font-semibold text-lg">
+                        {ktv.ten.split(' ').pop()?.charAt(0)}
+                      </span>
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900">{ktv.ten}</h3>
+                      <p className="text-sm text-gray-600">{ktv.chuyenMon}</p>
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-center text-sm text-gray-600">
+                    <span>Kinh nghiệm: {ktv.kinhNghiem} năm</span>
+                    <span className={`px-2 py-1 rounded-full text-xs ${
+                      ktv.congViecDangLam > 0 ? 'bg-orange-100 text-orange-800' : 'bg-green-100 text-green-800'
+                    }`}>
+                      {ktv.congViecDangLam} công việc
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
 
-                        <div className="grid grid-cols-2 gap-4 mb-3 text-sm text-gray-600">
-                          <div>
-                            <span className="font-medium">Biển số:</span>
-                            <span className="font-mono ml-1">{yeuCau.bienSo}</span>
-                          </div>
-                          <div>
-                            <span className="font-medium">Điện thoại:</span>
-                            <span className="ml-1">{yeuCau.soDienThoai}</span>
-                          </div>
-                        </div>
-
-                        <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 mb-3">
-                          <p className="text-gray-800 font-medium">
-                            {yeuCau.dichVu}
-                          </p>
-                        </div>
+        {/* Danh sách yêu cầu */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+          <div className="px-6 py-4 border-b border-gray-200">
+            <h2 className="text-lg font-semibold text-gray-900">
+              Danh sách yêu cầu dịch vụ
+            </h2>
+          </div>
+          <div className="divide-y divide-gray-200">
+            {yeuCauMoi.map((yeuCau) => (
+              <div key={yeuCau.id} className="p-6">
+                <div className="flex justify-between items-start mb-4">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center border">
+                        <span className="text-gray-600 font-semibold text-lg">
+                          {yeuCau.khachHang.split(' ').pop()?.charAt(0)}
+                        </span>
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-gray-900 text-lg">
+                          {yeuCau.khachHang}
+                        </h3>
+                        <p className="text-sm text-gray-600">{yeuCau.loaiXe} - {yeuCau.bienSo}</p>
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <span className="text-sm text-gray-500">
-                          {yeuCau.ngayYeuCau}
-                        </span>
-                        <span className={`px-3 py-1 rounded-full text-sm font-medium ${getUuTienColor(yeuCau.uuTien)}`}>
-                          {yeuCau.uuTien === 'cao' ? 'Ưu tiên cao' : 'Ưu tiên trung bình'}
-                        </span>
+                    <div className="grid grid-cols-2 gap-4 mb-3 text-sm text-gray-600">
+                      <div>
+                        <span className="font-medium">Dịch vụ:</span>
+                        <span className="ml-1">{yeuCau.dichVu}</span>
                       </div>
-                      <div className="flex gap-2">
+                      <div>
+                        <span className="font-medium">Điện thoại:</span>
+                        <span className="ml-1">{yeuCau.soDienThoai}</span>
+                      </div>
+                    </div>
+
+                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 mb-3">
+                      <p className="text-gray-800 font-medium">
+                        {yeuCau.dichVu}
+                      </p>
+                      <p className="text-sm text-gray-600 mt-1">
+                        {yeuCau.moTaVanDe}
+                      </p>
+                    </div>
+
+                    {/* Thông tin thêm khi đang làm hoặc hoàn thành */}
+                    {(yeuCau.trangThai === "DANG_THUC_HIEN" || yeuCau.trangThai === "HOAN_THANH") && (
+                      <div className="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                        <div className="grid grid-cols-2 gap-4 text-sm">
+                          <div>
+                            <span className="font-medium">Kỹ thuật viên:</span>
+                            <span className="ml-1">{yeuCau.kyThuatVien}</span>
+                          </div>
+                          <div>
+                            <span className="font-medium">Bắt đầu:</span>
+                            <span className="ml-1">{formatNgay(yeuCau.ngayBatDau)}</span>
+                          </div>
+                          {yeuCau.duKienHoanThanh && (
+                            <div>
+                              <span className="font-medium">Dự kiến hoàn thành:</span>
+                              <span className="ml-1">{formatNgay(yeuCau.duKienHoanThanh)}</span>
+                            </div>
+                          )}
+                          {yeuCau.ngayHoanThanh && (
+                            <div>
+                              <span className="font-medium">Hoàn thành:</span>
+                              <span className="ml-1">{formatNgay(yeuCau.ngayHoanThanh)}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex flex-col items-end gap-3">
+                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${getTrangThaiColor(yeuCau.trangThai)}`}>
+                      {formatTrangThai(yeuCau.trangThai)}
+                    </span>
+                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${getUuTienColor(yeuCau.uuTien)}`}>
+                      {yeuCau.uuTien === 'cao' ? 'Ưu tiên cao' :
+                       yeuCau.uuTien === 'thap' ? 'Ưu tiên thấp' : 'Ưu tiên trung bình'}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm text-gray-500">
+                      Yêu cầu: {formatNgay(yeuCau.ngayYeuCau)}
+                    </span>
+                  </div>
+
+                  <div className="flex gap-2">
+                    {yeuCau.trangThai === "CHO_XAC_NHAN" && (
+                      <>
                         <button
                           onClick={() => handleTiepNhanYeuCau(yeuCau.id)}
                           className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
@@ -302,173 +381,33 @@ const QLLichHenDichVu = () => {
                         >
                           Từ chối
                         </button>
-                      </div>
-                    </div>
+                      </>
+                    )}
+                    {yeuCau.trangThai === "DANG_THUC_HIEN" && (
+                      <button
+                        onClick={() => handleHoanThanhDichVu(yeuCau.id)}
+                        className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
+                      >
+                        Hoàn thành
+                      </button>
+                    )}
+                    {yeuCau.trangThai === "HOAN_THANH" && (
+                      <span className="px-4 py-2 bg-green-50 text-green-700 rounded-lg border border-green-200 text-sm font-medium">
+                        Đã hoàn thành
+                      </span>
+                    )}
                   </div>
-                ))}
-                {yeuCauMoi.length === 0 && (
-                  <div className="p-8 text-center text-gray-500">
-                    <p className="text-lg">Không có yêu cầu mới</p>
-                    <p className="text-sm">Tất cả yêu cầu đã được xử lý</p>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Lịch kỹ thuật viên */}
-          {activeTab === "lich-ktv" && (
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-              <div className="px-6 py-4 border-b border-gray-200">
-                <h2 className="text-lg font-semibold text-gray-900">
-                  Lịch kỹ thuật viên
-                </h2>
-              </div>
-              <div className="p-6">
-                <div className="space-y-6">
-                  {kyThuatVien.map((ktv) => (
-                    <div key={ktv.id} className="border border-gray-200 rounded-lg p-6">
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center gap-4">
-                          <div className="w-14 h-14 bg-gray-100 rounded-lg flex items-center justify-center border">
-                            <span className="text-gray-600 font-semibold text-lg">
-                              {ktv.ten.split(' ').pop()?.charAt(0)}
-                            </span>
-                          </div>
-                          <div>
-                            <h3 className="font-semibold text-gray-900 text-lg">
-                              {ktv.ten}
-                            </h3>
-                            <p className="text-sm text-gray-600">{ktv.chuyenMon}</p>
-                            <p className="text-sm text-gray-500">{ktv.ca}</p>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-sm text-gray-600">
-                            {ktv.lichTrinh.length} công việc
-                          </div>
-                          <div className={`text-xs px-2 py-1 rounded-full ${
-                            ktv.lichTrinh.length < 3 ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'
-                          }`}>
-                            {ktv.lichTrinh.length < 3 ? 'Còn trống' : 'Gần đầy'}
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="space-y-3">
-                        {ktv.lichTrinh.map((lich) => (
-                          <div key={lich.id} className={`flex items-center justify-between p-4 rounded-lg border-l-4 ${
-                            lich.trangThai === 'dang-thuc-hien' ? 'border-l-orange-500 bg-orange-50' :
-                            lich.trangThai === 'hoan-thanh' ? 'border-l-green-500 bg-green-50' :
-                            'border-l-blue-500 bg-blue-50'
-                          }`}>
-                            <div className="flex items-center gap-4">
-                              <div className="text-center">
-                                <div className="font-bold text-gray-900">{lich.gio}</div>
-                              </div>
-                              <div>
-                                <div className="font-semibold text-gray-900">
-                                  {lich.xe}
-                                </div>
-                                <div className="text-sm text-gray-600">
-                                  {lich.dichVu}
-                                </div>
-                                <div className="text-xs text-gray-500">
-                                  {lich.khachHang}
-                                </div>
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-3">
-                              <span className={`px-3 py-1 rounded-full text-sm font-medium ${getTrangThaiColor(lich.trangThai)}`}>
-                                {lich.trangThai === 'cho' ? 'Chờ thực hiện' :
-                                 lich.trangThai === 'dang-thuc-hien' ? 'Đang thực hiện' : 'Hoàn thành'}
-                              </span>
-                              {lich.trangThai === "cho" && (
-                                <button
-                                  onClick={() => handleBatDauDichVu(ktv.id, lich.id)}
-                                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
-                                >
-                                  Bắt đầu
-                                </button>
-                              )}
-                              {lich.trangThai === "dang-thuc-hien" && (
-                                <button
-                                  onClick={() => handleHoanThanhDichVu(ktv.id, lich.id)}
-                                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
-                                >
-                                  Hoàn thành
-                                </button>
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                        {ktv.lichTrinh.length === 0 && (
-                          <div className="text-center py-8 text-gray-500">
-                            <p className="text-lg">Chưa có lịch trình</p>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
                 </div>
               </div>
-            </div>
-          )}
+            ))}
 
-          {/* Phiếu tiếp nhận */}
-          {activeTab === "phieu-tiep-nhan" && (
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-              <div className="px-6 py-4 border-b border-gray-200">
-                <h2 className="text-lg font-semibold text-gray-900">
-                  Phiếu tiếp nhận dịch vụ
-                </h2>
+            {yeuCauMoi.length === 0 && (
+              <div className="p-8 text-center text-gray-500">
+                <p className="text-lg">Không có yêu cầu nào</p>
+                <p className="text-sm">Tất cả yêu cầu đã được xử lý</p>
               </div>
-              <div className="p-6">
-                <div className="space-y-4">
-                  {phieuTiepNhan.map((phieu) => (
-                    <div key={phieu.id} className={`p-6 rounded-lg border-l-4 ${
-                      phieu.trangThai === 'dang-thuc-hien' ? 'border-l-orange-500 bg-orange-50' :
-                      phieu.trangThai === 'hoan-thanh' ? 'border-l-green-500 bg-green-50' :
-                      'border-l-blue-500 bg-blue-50'
-                    }`}>
-                      <div className="flex justify-between items-start mb-3">
-                        <div>
-                          <div className="flex items-center gap-3 mb-2">
-                            <span className="font-bold text-gray-900 text-lg">
-                              {phieu.soPhieu}
-                            </span>
-                            <span className="font-semibold text-gray-900">
-                              {phieu.khachHang}
-                            </span>
-                          </div>
-                          <div className="text-sm text-gray-600 mb-1">
-                            {phieu.bienSo} • {phieu.dichVu}
-                          </div>
-                        </div>
-                        <span className={`px-3 py-1 rounded-full text-sm font-medium ${getTrangThaiColor(phieu.trangThai)}`}>
-                          {phieu.trangThai === 'da-phan-cong' ? 'Đã phân công' :
-                           phieu.trangThai === 'dang-thuc-hien' ? 'Đang thực hiện' : 'Hoàn thành'}
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center text-sm text-gray-600">
-                        <div>
-                          Kỹ thuật viên: {phieu.kyThuatVien}
-                        </div>
-                        <div>
-                          {phieu.ngayTiepNhan}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                  {phieuTiepNhan.length === 0 && (
-                    <div className="text-center py-8 text-gray-500">
-                      <p className="text-lg">Chưa có phiếu tiếp nhận</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </div>
