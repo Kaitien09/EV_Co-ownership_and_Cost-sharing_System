@@ -18,65 +18,52 @@ const BaoCaoPage: React.FC = () => {
   const [reports, setReports] = useState<QuyReport[]>([
     {
       id: "1",
-      reportCode: "BC-Q-2024-01",
-      period: "Tháng 1/2024",
+      reportCode: "BC-Q-2025-11",
+      period: "Tháng 11/2025",
       group: "Nhóm Đồng Sở Hữu A",
-      thuQuy: 3500000,
-      chiQuy: 2500000,
+      thuQuy: 0,
+      chiQuy: 4500000,
       soDu: 10000000,
       status: 'published',
-      createdDate: "2024-01-31",
+      createdDate: "2025-11-28",
       createdBy: "Admin A",
-      description: "Báo cáo thu chi quỹ tháng 1 - Chi phí bảo dưỡng và bảo hiểm"
+      description: "Chi phí bảo dưỡng (2,500,000 VNĐ) và bảo hiểm (2,000,000 VNĐ)"
     },
     {
       id: "2",
-      reportCode: "BC-Q-2024-02",
-      period: "Tháng 1/2024",
+      reportCode: "BC-Q-2025-11",
+      period: "Tháng 11/2025",
       group: "Nhóm Đồng Sở Hữu B",
-      thuQuy: 7000000,
-      chiQuy: 4900000,
+      thuQuy: 0,
+      chiQuy: 7000000,
       soDu: 8000000,
       status: 'published',
-      createdDate: "2024-01-31",
+      createdDate: "2025-11-28",
       createdBy: "Admin B",
-      description: "Báo cáo thu chi quỹ tháng 1 - Chi phí sửa chữa và phí đường"
+      description: "Chi phí sửa chữa (7,000,000 VNĐ)"
     },
     {
       id: "3",
-      reportCode: "BC-Q-2023-12",
-      period: "Tháng 12/2023",
-      group: "Nhóm Đồng Sở Hữu C",
-      thuQuy: 2200000,
-      chiQuy: 1800000,
-      soDu: 5000000,
-      status: 'archived',
-      createdDate: "2023-12-31",
-      createdBy: "Admin A",
-      description: "Báo cáo thu chi quỹ tháng 12 - Chi phí nhiên liệu"
-    },
-    {
-      id: "4",
-      reportCode: "BC-Q-2024-03",
-      period: "Tháng 2/2024",
+      reportCode: "BC-Q-2025-12",
+      period: "Tháng 12/2025",
       group: "Nhóm Đồng Sở Hữu A",
       thuQuy: 0,
       chiQuy: 0,
       soDu: 10000000,
       status: 'draft',
-      createdDate: "2024-02-01",
+      createdDate: "2025-12-01",
       createdBy: "Admin A",
-      description: "Báo cáo dự kiến cho tháng 2"
+      description: "Báo cáo dự kiến cho tháng 12"
     }
   ]);
 
   const [selectedReport, setSelectedReport] = useState<QuyReport | null>(null);
-  const [selectedPeriod, setSelectedPeriod] = useState('2024-01');
+  const [selectedPeriod, setSelectedPeriod] = useState('2025-11');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [newReport, setNewReport] = useState<Partial<QuyReport>>({
-    period: "Tháng 2/2024",
+    period: "Tháng 12/2025",
     group: "Nhóm Đồng Sở Hữu A",
     thuQuy: 0,
     chiQuy: 0,
@@ -189,7 +176,7 @@ const BaoCaoPage: React.FC = () => {
     const newReportData: QuyReport = {
       id: reportId,
       reportCode: `BC-Q-${new Date().getFullYear()}-${String(reports.length + 1).padStart(2, '0')}`,
-      period: newReport.period || "Tháng 2/2024",
+      period: newReport.period || "Tháng 12/2025",
       group: newReport.group || "Nhóm Đồng Sở Hữu A",
       thuQuy: newReport.thuQuy || 0,
       chiQuy: newReport.chiQuy || 0,
@@ -203,7 +190,7 @@ const BaoCaoPage: React.FC = () => {
     setReports(prev => [newReportData, ...prev]);
     setShowCreateModal(false);
     setNewReport({
-      period: "Tháng 2/2024",
+      period: "Tháng 12/2025",
       group: "Nhóm Đồng Sở Hữu A",
       thuQuy: 0,
       chiQuy: 0,
@@ -254,9 +241,21 @@ const BaoCaoPage: React.FC = () => {
   // Dữ liệu biểu đồ dựa trên database
   const chartData = {
     labels: ['Nhóm Đồng Sở Hữu A', 'Nhóm Đồng Sở Hữu B', 'Nhóm Đồng Sở Hữu C'],
-    thuQuy: [3500000, 7000000, 2200000],
-    chiQuy: [2500000, 4900000, 1800000],
-    soDu: [10000000, 8000000, 5000000]
+    thuQuy: [
+      reports.filter(r => r.group === 'Nhóm Đồng Sở Hữu A').reduce((sum, r) => sum + r.thuQuy, 0),
+      reports.filter(r => r.group === 'Nhóm Đồng Sở Hữu B').reduce((sum, r) => sum + r.thuQuy, 0),
+      reports.filter(r => r.group === 'Nhóm Đồng Sở Hữu C').reduce((sum, r) => sum + r.thuQuy, 0)
+    ],
+    chiQuy: [
+      reports.filter(r => r.group === 'Nhóm Đồng Sở Hữu A').reduce((sum, r) => sum + r.chiQuy, 0),
+      reports.filter(r => r.group === 'Nhóm Đồng Sở Hữu B').reduce((sum, r) => sum + r.chiQuy, 0),
+      reports.filter(r => r.group === 'Nhóm Đồng Sở Hữu C').reduce((sum, r) => sum + r.chiQuy, 0)
+    ],
+    soDu: [
+      reports.filter(r => r.group === 'Nhóm Đồng Sở Hữu A').reduce((sum, r) => sum + r.soDu, 0) / Math.max(reports.filter(r => r.group === 'Nhóm Đồng Sở Hữu A').length, 1),
+      reports.filter(r => r.group === 'Nhóm Đồng Sở Hữu B').reduce((sum, r) => sum + r.soDu, 0) / Math.max(reports.filter(r => r.group === 'Nhóm Đồng Sở Hữu B').length, 1),
+      reports.filter(r => r.group === 'Nhóm Đồng Sở Hữu C').reduce((sum, r) => sum + r.soDu, 0) / Math.max(reports.filter(r => r.group === 'Nhóm Đồng Sở Hữu C').length, 1)
+    ]
   };
 
   // Tính toán tổng quan từ dữ liệu thực tế
@@ -355,9 +354,9 @@ const BaoCaoPage: React.FC = () => {
                 onChange={(e) => setSelectedPeriod(e.target.value)}
                 className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white text-sm"
               >
-                <option value="2024-01">Tháng 1/2024</option>
-                <option value="2023-12">Tháng 12/2023</option>
-                <option value="2023-11">Tháng 11/2023</option>
+                <option value="2025-11">Tháng 11/2025</option>
+                <option value="2025-10">Tháng 10/2025</option>
+                <option value="2025-09">Tháng 9/2025</option>
               </select>
             </div>
 
@@ -374,7 +373,9 @@ const BaoCaoPage: React.FC = () => {
                   <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                     <div
                       className="bg-green-600 h-2 rounded-full"
-                      style={{ width: `${(chartData.thuQuy[index] / Math.max(...chartData.thuQuy)) * 100}%` }}
+                      style={{
+                        width: `${(chartData.thuQuy[index] / Math.max(...chartData.thuQuy.filter(val => val > 0), 1)) * 100}%`
+                      }}
                     ></div>
                   </div>
                   <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400">
@@ -395,48 +396,52 @@ const BaoCaoPage: React.FC = () => {
             </h2>
 
             <div className="space-y-4">
-              <div className="flex justify-between items-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                <div>
-                  <p className="text-sm font-medium text-green-800 dark:text-green-300">Nhóm Đồng Sở Hữu A</p>
-                  <p className="text-2xl font-bold text-green-900 dark:text-green-200">
-                    {formatCurrency(10000000)}
-                  </p>
+              {chartData.labels.map((label, index) => (
+                <div
+                  key={label}
+                  className={`flex justify-between items-center p-4 rounded-lg ${
+                    index === 0 ? 'bg-green-50 dark:bg-green-900/20' :
+                    index === 1 ? 'bg-blue-50 dark:bg-blue-900/20' :
+                    'bg-purple-50 dark:bg-purple-900/20'
+                  }`}
+                >
+                  <div>
+                    <p className={`text-sm font-medium ${
+                      index === 0 ? 'text-green-800 dark:text-green-300' :
+                      index === 1 ? 'text-blue-800 dark:text-blue-300' :
+                      'text-purple-800 dark:text-purple-300'
+                    }`}>
+                      {label}
+                    </p>
+                    <p className={`text-2xl font-bold ${
+                      index === 0 ? 'text-green-900 dark:text-green-200' :
+                      index === 1 ? 'text-blue-900 dark:text-blue-200' :
+                      'text-purple-900 dark:text-purple-200'
+                    }`}>
+                      {formatCurrency(chartData.soDu[index])}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className={`text-sm ${
+                      index === 0 ? 'text-green-600 dark:text-green-400' :
+                      index === 1 ? 'text-blue-600 dark:text-blue-400' :
+                      'text-purple-600 dark:text-purple-400'
+                    }`}>
+                      Số dư quỹ
+                    </p>
+                    <p className={`text-sm ${
+                      index === 0 ? 'text-green-700 dark:text-green-300' :
+                      index === 1 ? 'text-blue-700 dark:text-blue-300' :
+                      'text-purple-700 dark:text-purple-300'
+                    }`}>
+                      Thu: {formatCurrency(chartData.thuQuy[index])} - Chi: {formatCurrency(chartData.chiQuy[index])}
+                    </p>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <p className="text-sm text-green-600 dark:text-green-400">Số dư quỹ</p>
-                  <p className="text-sm text-green-700 dark:text-green-300">Thu: 3.5M - Chi: 2.5M</p>
-                </div>
-              </div>
-
-              <div className="flex justify-between items-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                <div>
-                  <p className="text-sm font-medium text-blue-800 dark:text-blue-300">Nhóm Đồng Sở Hữu B</p>
-                  <p className="text-2xl font-bold text-blue-900 dark:text-blue-200">
-                    {formatCurrency(8000000)}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm text-blue-600 dark:text-blue-400">Số dư quỹ</p>
-                  <p className="text-sm text-blue-700 dark:text-blue-300">Thu: 7M - Chi: 4.9M</p>
-                </div>
-              </div>
-
-              <div className="flex justify-between items-center p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
-                <div>
-                  <p className="text-sm font-medium text-purple-800 dark:text-purple-300">Nhóm Đồng Sở Hữu C</p>
-                  <p className="text-2xl font-bold text-purple-900 dark:text-purple-200">
-                    {formatCurrency(5000000)}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm text-purple-600 dark:text-purple-400">Số dư quỹ</p>
-                  <p className="text-sm text-purple-700 dark:text-purple-300">Thu: 2.2M - Chi: 1.8M</p>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
-
         {/* Danh sách báo cáo */}
         <div className="col-span-4">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
@@ -568,7 +573,7 @@ const BaoCaoPage: React.FC = () => {
 
       {/* Modal tạo báo cáo mới */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-gray bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-2xl">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
@@ -592,11 +597,11 @@ const BaoCaoPage: React.FC = () => {
                   onChange={(e) => setNewReport({...newReport, period: e.target.value})}
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 >
-                  <option value="Tháng 1/2024">Tháng 1/2024</option>
-                  <option value="Tháng 2/2024">Tháng 2/2024</option>
-                  <option value="Tháng 3/2024">Tháng 3/2024</option>
-                  <option value="Quý 1/2024">Quý 1/2024</option>
-                  <option value="Quý 2/2024">Quý 2/2024</option>
+                  <option value="Tháng 11/2025">Tháng 11/2025</option>
+                  <option value="Tháng 12/2025">Tháng 12/2025</option>
+                  <option value="Tháng 1/2026">Tháng 1/2026</option>
+                  <option value="Quý 4/2025">Quý 4/2025</option>
+                  <option value="Quý 1/2026">Quý 1/2026</option>
                 </select>
               </div>
 
@@ -792,9 +797,9 @@ const BaoCaoPage: React.FC = () => {
                   onChange={(e) => setNewReport({...newReport, period: e.target.value})}
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 >
-                  <option value="Tháng 1/2024">Tháng 1/2024</option>
-                  <option value="Tháng 2/2024">Tháng 2/2024</option>
-                  <option value="Tháng 3/2024">Tháng 3/2024</option>
+                  <option value="Tháng 11/2025">Tháng 11/2025</option>
+                  <option value="Tháng 12/2025">Tháng 12/2025</option>
+                  <option value="Tháng 1/2026">Tháng 1/2026</option>
                 </select>
               </div>
 

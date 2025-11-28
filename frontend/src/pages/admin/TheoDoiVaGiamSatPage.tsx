@@ -20,90 +20,111 @@ const TheoDoiVaGiamSatPage: React.FC = () => {
   const [disputes, setDisputes] = useState<Dispute[]>([
     {
       id: "1",
-      disputeCode: "TRANHCHAP-2024-001",
+      disputeCode: "TRANHCHAP-2025-001",
       customerName: "Nguyễn Văn A",
       vehicle: "Model X1 - 30A-11111",
-      serviceCode: "DV-2024-001",
+      serviceCode: "DV-2025-001",
       type: 'quality',
       status: 'investigating',
       priority: 'high',
-      createdDate: "2024-01-12",
+      createdDate: "2025-01-15T09:30:00.000Z",
       description: "Khách hàng phản ánh chất lượng dịch vụ bảo dưỡng không đạt yêu cầu, xe vẫn có tiếng ồn sau khi bảo dưỡng",
-      assignedTo: "Quản lý A"
+      assignedTo: "Nguyen Van A"
     },
     {
       id: "2",
-      disputeCode: "TRANHCHAP-2024-002",
+      disputeCode: "TRANHCHAP-2025-002",
       customerName: "Trần Thị B",
       vehicle: "Model X1 - 30A-11111",
-      serviceCode: "DV-2024-002",
+      serviceCode: "DV-2025-002",
       type: 'damage',
       status: 'open',
       priority: 'critical',
-      createdDate: "2024-01-15",
+      createdDate: "2025-01-16T14:15:00.000Z",
       description: "Khách hàng phát hiện vết xước trên thân xe sau khi nhận xe từ dịch vụ sửa chữa",
-      assignedTo: "Quản lý B"
+      assignedTo: "Le Thi B"
     },
     {
       id: "3",
-      disputeCode: "TRANHCHAP-2024-003",
+      disputeCode: "TRANHCHAP-2025-003",
       customerName: "Lê Văn C",
       vehicle: "Model X2 - 30A-22222",
-      serviceCode: "DV-2024-003",
+      serviceCode: "DV-2025-003",
       type: 'payment',
       status: 'resolved',
       priority: 'medium',
-      createdDate: "2024-01-08",
-      resolvedDate: "2024-01-10",
+      createdDate: "2025-01-14T11:00:00.000Z",
+      resolvedDate: "2025-01-15T16:45:00.000Z",
       description: "Khách hàng khiếu nại về chi phí phát sinh không được thông báo trước",
-      assignedTo: "Quản lý C",
+      assignedTo: "Tran Van C",
       resolution: "Đã hoàn lại 50% chi phí phát sinh và gửi lời xin lỗi đến khách hàng"
     },
     {
       id: "4",
-      disputeCode: "TRANHCHAP-2024-004",
+      disputeCode: "TRANHCHAP-2025-004",
       customerName: "Phạm Thị D",
       vehicle: "Model X2 - 30A-22222",
-      serviceCode: "DV-2024-004",
+      serviceCode: "DV-2025-004",
       type: 'other',
       status: 'closed',
       priority: 'low',
-      createdDate: "2024-01-05",
-      resolvedDate: "2024-01-07",
+      createdDate: "2025-01-13T08:20:00.000Z",
+      resolvedDate: "2025-01-14T15:10:00.000Z",
       description: "Khách hàng không hài lòng về thái độ phục vụ của nhân viên",
-      assignedTo: "Quản lý A",
+      assignedTo: "Nguyen Van A",
       resolution: "Đã đào tạo lại nhân viên và tặng voucher giảm giá 10% cho lần dịch vụ tiếp theo"
+    },
+    {
+      id: "5",
+      disputeCode: "TRANHCHAP-2025-005",
+      customerName: "Hoàng Văn E",
+      vehicle: "Model X3 - 30A-33333",
+      serviceCode: "DV-2025-005",
+      type: 'quality',
+      status: 'open',
+      priority: 'high',
+      createdDate: "2025-01-17T10:45:00.000Z",
+      description: "Khách hàng phản ánh điều hòa không lạnh sau khi bảo dưỡng",
+      assignedTo: "Le Thi B"
     }
   ]);
 
-  const [selectedDispute, setSelectedDispute] = useState<Dispute | null>(disputes[0]);
-  const [filter, setFilter] = useState('all');
+  const [selectedDispute, setSelectedDispute] = useState<Dispute | null>(null);
+  const [isResolveModalOpen, setIsResolveModalOpen] = useState(false);
+  const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
+  const [resolutionText, setResolutionText] = useState("");
+  const [assignTo, setAssignTo] = useState("");
 
-  const getTypeBadge = (type: string) => {
-    switch (type) {
-      case 'quality':
-        return { label: 'Chất lượng', color: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300' };
-      case 'payment':
-        return { label: 'Thanh toán', color: 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300' };
-      case 'damage':
-        return { label: 'Hư hại', color: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300' };
-      default:
-        return { label: 'Khác', color: 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300' };
-    }
+  const staffList = [
+    "Nguyen Van A",
+    "Le Thi B",
+    "Tran Van C",
+    "Pham Van Dien",
+    "Nguyen Thi Dien Lanh"
+  ];
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('vi-VN', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
   };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'open':
-        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300';
+        return 'bg-yellow-100 text-yellow-800 border border-yellow-200';
       case 'investigating':
-        return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300';
+        return 'bg-blue-100 text-blue-800 border border-blue-200';
       case 'resolved':
-        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
+        return 'bg-green-100 text-green-800 border border-green-200';
       case 'closed':
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300';
+        return 'bg-gray-100 text-gray-800 border border-gray-200';
       default:
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300';
+        return 'bg-gray-100 text-gray-800 border border-gray-200';
     }
   };
 
@@ -125,401 +146,378 @@ const TheoDoiVaGiamSatPage: React.FC = () => {
   const getPriorityBadge = (priority: string) => {
     switch (priority) {
       case 'low':
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300';
+        return { label: 'Thấp', color: 'bg-gray-100 text-gray-800 border border-gray-200' };
       case 'medium':
-        return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300';
+        return { label: 'Trung bình', color: 'bg-blue-100 text-blue-800 border border-blue-200' };
       case 'high':
-        return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300';
+        return { label: 'Cao', color: 'bg-orange-100 text-orange-800 border border-orange-200' };
       case 'critical':
-        return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300';
+        return { label: 'Khẩn cấp', color: 'bg-red-100 text-red-800 border border-red-200' };
       default:
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300';
+        return { label: 'Không xác định', color: 'bg-gray-100 text-gray-800 border border-gray-200' };
     }
   };
 
-  const getPriorityText = (priority: string) => {
-    switch (priority) {
-      case 'low':
-        return 'Thấp';
-      case 'medium':
-        return 'Trung bình';
-      case 'high':
-        return 'Cao';
-      case 'critical':
-        return 'Khẩn cấp';
+  const getTypeBadge = (type: string) => {
+    switch (type) {
+      case 'quality':
+        return { label: 'Chất lượng', color: 'bg-purple-100 text-purple-800 border border-purple-200' };
+      case 'payment':
+        return { label: 'Thanh toán', color: 'bg-indigo-100 text-indigo-800 border border-indigo-200' };
+      case 'damage':
+        return { label: 'Hư hại', color: 'bg-red-100 text-red-800 border border-red-200' };
+      case 'other':
+        return { label: 'Khác', color: 'bg-gray-100 text-gray-800 border border-gray-200' };
       default:
-        return 'Không xác định';
+        return { label: 'Khác', color: 'bg-gray-100 text-gray-800 border border-gray-200' };
     }
   };
 
-  const filteredDisputes = filter === 'all'
-    ? disputes
-    : disputes.filter(dispute => dispute.status === filter);
+  // Hàm xử lý giải quyết khiếu nại
+  const handleResolve = (dispute: Dispute) => {
+    setSelectedDispute(dispute);
+    setResolutionText(dispute.resolution || "");
+    setIsResolveModalOpen(true);
+  };
 
-  const updateDisputeStatus = (disputeId: string, newStatus: Dispute['status']) => {
+  const handleSaveResolution = () => {
+    if (selectedDispute && resolutionText.trim()) {
+      setDisputes(prev => prev.map(dispute =>
+        dispute.id === selectedDispute.id
+          ? {
+              ...dispute,
+              status: 'resolved' as const,
+              resolution: resolutionText,
+              resolvedDate: new Date().toISOString()
+            }
+          : dispute
+      ));
+      setIsResolveModalOpen(false);
+      setResolutionText("");
+      setSelectedDispute(null);
+    }
+  };
+
+  // Hàm xử lý phân công
+  const handleAssign = (dispute: Dispute) => {
+    setSelectedDispute(dispute);
+    setAssignTo(dispute.assignedTo);
+    setIsAssignModalOpen(true);
+  };
+
+  const handleSaveAssignment = () => {
+    if (selectedDispute && assignTo.trim()) {
+      setDisputes(prev => prev.map(dispute =>
+        dispute.id === selectedDispute.id
+          ? {
+              ...dispute,
+              assignedTo: assignTo,
+              status: dispute.status === 'open' ? 'investigating' as const : dispute.status
+            }
+          : dispute
+      ));
+      setIsAssignModalOpen(false);
+      setAssignTo("");
+      setSelectedDispute(null);
+    }
+  };
+
+  // Hàm đóng khiếu nại
+  const handleCloseDispute = (disputeId: string) => {
     setDisputes(prev => prev.map(dispute =>
       dispute.id === disputeId
-        ? {
-            ...dispute,
-            status: newStatus,
-            ...(newStatus === 'resolved' && !dispute.resolvedDate ? { resolvedDate: new Date().toISOString().split('T')[0] } : {})
-          }
+        ? { ...dispute, status: 'closed' as const }
         : dispute
     ));
-
-    // Cập nhật selected dispute nếu đang được chọn
-    if (selectedDispute && selectedDispute.id === disputeId) {
-      setSelectedDispute(prev => prev ? {
-        ...prev,
-        status: newStatus,
-        ...(newStatus === 'resolved' && !prev.resolvedDate ? { resolvedDate: new Date().toISOString().split('T')[0] } : {})
-      } : null);
-    }
   };
 
-  const handleViewDetail = (dispute: Dispute) => {
-    setSelectedDispute(dispute);
+  // Hàm thay đổi trạng thái
+  const handleStatusChange = (disputeId: string, newStatus: Dispute['status']) => {
+    setDisputes(prev => prev.map(dispute =>
+      dispute.id === disputeId
+        ? { ...dispute, status: newStatus }
+        : dispute
+    ));
   };
 
   return (
-    <div className="p-6">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Theo dõi & Giám sát tranh chấp
-        </h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          Quản lý và giải quyết các khiếu nại, tranh chấp từ khách hàng
-        </p>
-      </div>
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            Theo dõi và Giám sát Khiếu nại
+          </h1>
+          <p className="text-gray-600">
+            Quản lý và xử lý các khiếu nại, tranh chấp từ khách hàng
+          </p>
+        </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Thống kê */}
-        <div className="col-span-4 grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow">
+        {/* Thống kê nhanh */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+          <div className="bg-white rounded-lg p-4 shadow-sm border">
             <div className="flex items-center">
-              <div className="p-2 bg-red-100 rounded-lg dark:bg-red-900">
-                <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+              <div className="p-2 bg-blue-50 rounded-lg">
+                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Tổng tranh chấp</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">{disputes.length}</p>
+              <div className="ml-3">
+                <p className="text-xs font-medium text-gray-600">Tổng khiếu nại</p>
+                <p className="text-lg font-bold text-gray-900">{disputes.length}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow">
+          <div className="bg-white rounded-lg p-4 shadow-sm border">
             <div className="flex items-center">
-              <div className="p-2 bg-yellow-100 rounded-lg dark:bg-yellow-900">
-                <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="p-2 bg-yellow-50 rounded-lg">
+                <svg className="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Đang mở</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {disputes.filter(d => d.status === 'open').length}
+              <div className="ml-3">
+                <p className="text-xs font-medium text-gray-600">Đang xử lý</p>
+                <p className="text-lg font-bold text-gray-900">
+                  {disputes.filter(d => d.status === 'open' || d.status === 'investigating').length}
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow">
+          <div className="bg-white rounded-lg p-4 shadow-sm border">
             <div className="flex items-center">
-              <div className="p-2 bg-blue-100 rounded-lg dark:bg-blue-900">
-                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                </svg>
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Đang điều tra</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {disputes.filter(d => d.status === 'investigating').length}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow">
-            <div className="flex items-center">
-              <div className="p-2 bg-green-100 rounded-lg dark:bg-green-900">
-                <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="p-2 bg-green-50 rounded-lg">
+                <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Đã giải quyết</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+              <div className="ml-3">
+                <p className="text-xs font-medium text-gray-600">Đã giải quyết</p>
+                <p className="text-lg font-bold text-gray-900">
                   {disputes.filter(d => d.status === 'resolved' || d.status === 'closed').length}
                 </p>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Bộ lọc */}
-        <div className="col-span-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 mb-6">
-            <div className="flex flex-wrap gap-2">
-              <button
-                onClick={() => setFilter('all')}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  filter === 'all'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-                }`}
-              >
-                Tất cả
-              </button>
-              <button
-                onClick={() => setFilter('open')}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  filter === 'open'
-                    ? 'bg-yellow-600 text-white'
-                    : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-                }`}
-              >
-                Đang mở
-              </button>
-              <button
-                onClick={() => setFilter('investigating')}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  filter === 'investigating'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-                }`}
-              >
-                Đang điều tra
-              </button>
-              <button
-                onClick={() => setFilter('resolved')}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  filter === 'resolved'
-                    ? 'bg-green-600 text-white'
-                    : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-                }`}
-              >
-                Đã giải quyết
-              </button>
+          <div className="bg-white rounded-lg p-4 shadow-sm border">
+            <div className="flex items-center">
+              <div className="p-2 bg-red-50 rounded-lg">
+                <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <p className="text-xs font-medium text-gray-600">Khẩn cấp</p>
+                <p className="text-lg font-bold text-gray-900">
+                  {disputes.filter(d => d.priority === 'critical').length}
+                </p>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Danh sách tranh chấp */}
-        <div className="col-span-3">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
-            <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Danh sách tranh chấp
+        {/* Danh sách khiếu nại */}
+        <div className="bg-white rounded-lg shadow-sm border">
+          <div className="p-4 border-b">
+            <div className="flex justify-between items-center">
+              <h2 className="text-lg font-semibold text-gray-900">
+                Danh sách khiếu nại
               </h2>
+              <span className="text-sm text-gray-500">
+                {disputes.length} khiếu nại
+              </span>
             </div>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="bg-gray-50 dark:bg-gray-700">
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
-                      Mã tranh chấp
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
-                      Khách hàng & Xe
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
-                      Loại
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
-                      Ưu tiên
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
-                      Trạng thái
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
-                      Thao tác
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                  {filteredDisputes.map((dispute) => {
-                    const typeBadge = getTypeBadge(dispute.type);
-                    return (
-                      <tr
-                        key={dispute.id}
-                        className={`hover:bg-gray-50 dark:hover:bg-gray-700 ${
-                          selectedDispute?.id === dispute.id ? 'bg-blue-50 dark:bg-blue-900/20' : ''
-                        }`}
+          </div>
+
+          <div className="divide-y divide-gray-200">
+            {disputes.map((dispute) => {
+              const priorityBadge = getPriorityBadge(dispute.priority);
+              const typeBadge = getTypeBadge(dispute.type);
+
+              return (
+                <div key={dispute.id} className="p-4 hover:bg-gray-50 transition-colors">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${typeBadge.color}`}>
+                          {typeBadge.label}
+                        </span>
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${priorityBadge.color}`}>
+                          {priorityBadge.label}
+                        </span>
+                        <span className="text-sm font-medium text-gray-900">
+                          {dispute.disputeCode}
+                        </span>
+                      </div>
+
+                      <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                        {dispute.customerName} - {dispute.vehicle}
+                      </h3>
+
+                      <p className="text-sm text-gray-600 mb-2">
+                        {dispute.description}
+                      </p>
+
+                      <div className="flex items-center gap-4 text-sm text-gray-500">
+                        <span>Mã DV: {dispute.serviceCode}</span>
+                        <span>•</span>
+                        <span>•</span>
+                        <span>Ngày tạo: {formatDate(dispute.createdDate)}</span>
+                      </div>
+                    </div>
+
+                    <div className="text-right ml-4">
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusBadge(dispute.status)} mb-2`}>
+                        {getStatusText(dispute.status)}
+                      </span>
+                      {dispute.resolvedDate && (
+                        <div className="text-xs text-green-600">
+                          Giải quyết: {formatDate(dispute.resolvedDate)}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Nút hành động */}
+                  <div className="flex justify-between items-center mt-4">
+                    <div className="flex gap-2">
+                      <select
+                        value={dispute.status}
+                        onChange={(e) => handleStatusChange(dispute.id, e.target.value as Dispute['status'])}
+                        className="text-xs border rounded px-2 py-1 bg-white"
                       >
-                        <td className="px-4 py-3">
-                          <div className="text-sm font-medium text-gray-900 dark:text-white">
-                            {dispute.disputeCode}
-                          </div>
-                          <div className="text-sm text-gray-500 dark:text-gray-400">
-                            {dispute.serviceCode}
-                          </div>
-                        </td>
-                        <td className="px-4 py-3">
-                          <div className="text-sm font-medium text-gray-900 dark:text-white">
-                            {dispute.customerName}
-                          </div>
-                          <div className="text-sm text-gray-500 dark:text-gray-400">
-                            {dispute.vehicle}
-                          </div>
-                        </td>
-                        <td className="px-4 py-3">
-                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${typeBadge.color}`}>
-                            {typeBadge.label}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3">
-                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getPriorityBadge(dispute.priority)}`}>
-                            {getPriorityText(dispute.priority)}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3">
-                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusBadge(dispute.status)}`}>
-                            {getStatusText(dispute.status)}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3">
-                          <div className="flex items-center gap-2">
-                            {dispute.status === 'open' && (
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  updateDisputeStatus(dispute.id, 'investigating');
-                                }}
-                                className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 transition-colors"
-                              >
-                                Bắt đầu điều tra
-                              </button>
-                            )}
-                            {dispute.status === 'investigating' && (
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  updateDisputeStatus(dispute.id, 'resolved');
-                                }}
-                                className="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700 transition-colors"
-                              >
-                                Giải quyết
-                              </button>
-                            )}
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleViewDetail(dispute);
-                              }}
-                              className="bg-purple-600 text-white px-3 py-1 rounded text-sm hover:bg-purple-700 transition-colors"
-                            >
-                              Chi tiết
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
+                        <option value="open">Mở</option>
+                        <option value="investigating">Đang điều tra</option>
+                        <option value="resolved">Đã giải quyết</option>
+                        <option value="closed">Đã đóng</option>
+                      </select>
+                    </div>
 
-        {/* Chi tiết tranh chấp */}
-        <div className="col-span-1">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow sticky top-6">
-            <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Chi tiết tranh chấp
-              </h2>
-            </div>
-            <div className="p-4">
-              {selectedDispute ? (
-                <div className="space-y-4">
-                  <div>
-                    <label className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                      Mã tranh chấp
-                    </label>
-                    <p className="text-sm text-gray-900 dark:text-white font-semibold">
-                      {selectedDispute.disputeCode}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                      Khách hàng & Xe
-                    </label>
-                    <p className="text-sm text-gray-900 dark:text-white">
-                      {selectedDispute.customerName}
-                    </p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {selectedDispute.vehicle}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                      Dịch vụ liên quan
-                    </label>
-                    <p className="text-sm text-gray-900 dark:text-white">
-                      {selectedDispute.serviceCode}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                      Người phụ trách
-                    </label>
-                    <p className="text-sm text-gray-900 dark:text-white">
-                      {selectedDispute.assignedTo}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                      Mô tả
-                    </label>
-                    <p className="text-sm text-gray-900 dark:text-white">
-                      {selectedDispute.description}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                      Ngày tạo
-                    </label>
-                    <p className="text-sm text-gray-900 dark:text-white">
-                      {selectedDispute.createdDate}
-                    </p>
-                  </div>
-                  {selectedDispute.resolvedDate && (
-                    <div>
-                      <label className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                        Ngày giải quyết
-                      </label>
-                      <p className="text-sm text-gray-900 dark:text-white">
-                        {selectedDispute.resolvedDate}
-                      </p>
+                    <div className="flex gap-2">
+
+
+                      {dispute.status !== 'resolved' && dispute.status !== 'closed' && (
+                        <button
+                          onClick={() => handleResolve(dispute)}
+                          className="px-3 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700 transition-colors"
+                        >
+                          Giải quyết
+                        </button>
+                      )}
+
+                      {dispute.status === 'resolved' && (
+                        <button
+                          onClick={() => handleCloseDispute(dispute.id)}
+                          className="px-3 py-1 bg-gray-600 text-white text-xs rounded hover:bg-gray-700 transition-colors"
+                        >
+                          Đóng
+                        </button>
+                      )}
                     </div>
-                  )}
-                  {selectedDispute.resolution && (
-                    <div>
-                      <label className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                        Giải pháp
-                      </label>
-                      <p className="text-sm text-gray-900 dark:text-white">
-                        {selectedDispute.resolution}
+                  </div>
+
+                  {dispute.resolution && (
+                    <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+                      <p className="text-sm text-green-800">
+                        <span className="font-medium">Giải pháp:</span> {dispute.resolution}
                       </p>
                     </div>
                   )}
                 </div>
-              ) : (
-                <div className="text-center py-8">
-                  <svg className="w-12 h-12 text-gray-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                  </svg>
-                  <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                    Chọn một tranh chấp để xem chi tiết
-                  </p>
-                </div>
-              )}
-            </div>
+              );
+            })}
           </div>
         </div>
       </div>
+
+      {/* Modal giải quyết khiếu nại */}
+      {isResolveModalOpen && selectedDispute && (
+        <div className="fixed inset-0 bg-gray bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-md w-full">
+            <div className="p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Giải quyết khiếu nại: {selectedDispute.disputeCode}
+              </h3>
+
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Giải pháp/Phản hồi
+                </label>
+                <textarea
+                  value={resolutionText}
+                  onChange={(e) => setResolutionText(e.target.value)}
+                  rows={4}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Nhập giải pháp hoặc phản hồi cho khách hàng..."
+                />
+              </div>
+
+              <div className="flex justify-end gap-3">
+                <button
+                  onClick={() => setIsResolveModalOpen(false)}
+                  className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                >
+                  Hủy
+                </button>
+                <button
+                  onClick={handleSaveResolution}
+                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                  disabled={!resolutionText.trim()}
+                >
+                  Lưu giải pháp
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal phân công */}
+      {isAssignModalOpen && selectedDispute && (
+        <div className="fixed inset-0 bg-gray bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-md w-full">
+            <div className="p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Phân công khiếu nại: {selectedDispute.disputeCode}
+              </h3>
+
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Phân công cho
+                </label>
+                <select
+                  value={assignTo}
+                  onChange={(e) => setAssignTo(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="">Chọn nhân viên...</option>
+                  {staffList.map(staff => (
+                    <option key={staff} value={staff}>{staff}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="flex justify-end gap-3">
+                <button
+                  onClick={() => setIsAssignModalOpen(false)}
+                  className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                >
+                  Hủy
+                </button>
+                <button
+                  onClick={handleSaveAssignment}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  disabled={!assignTo.trim()}
+                >
+                  Phân công
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
